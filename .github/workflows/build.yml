@@ -1,15 +1,17 @@
 name: Build
 
 concurrency:
-  group: "build"
+  group: "main-release-build"
   cancel-in-progress: true
 
 on:
   push:
     branches:
-      - master
+      - main
     paths-ignore:
-      - "*.md"
+      - "**/*.md"
+      - "docs/**"
+  workflow_dispatch:
 
 permissions:
   contents: write
@@ -25,11 +27,11 @@ jobs:
           fetch-depth: 2
           path: src
 
-      - name: Checkout builds branch
+      - name: Checkout release branch
         uses: actions/checkout@v4
         with:
-          ref: builds
-          path: builds
+          ref: release
+          path: release
 
       - name: Detect changed plugins
         id: changed
@@ -37,15 +39,18 @@ jobs:
           cd $GITHUB_WORKSPACE/src
 
           echo "=== Changed Files ==="
-          git diff --name-only HEAD^ HEAD
+          if git rev-parse HEAD^ >/dev/null 2>&1; then
+            changed_files=$(git diff --name-only HEAD^ HEAD)
+          else
+            changed_files=$(git ls-files)
+          fi
+          echo "$changed_files"
 
-          # Memeriksa apakah ada perubahan pada konfigurasi global dasar
           global_change=false
-          if git diff --name-only HEAD^ HEAD | grep -E "^(build\.gradle\.kts|settings\.gradle\.kts|gradle\.properties|\.github/)"; then
+          if echo "$changed_files" | grep -E "^(build\.gradle\.kts|settings\.gradle\.kts|gradle\.properties)$"; then
             global_change=true
           fi
 
-          # Mendata seluruh provider aktif yang tersedia di dalam proyek
           all_plugins=""
           for dir in *; do
             if [ -d "$dir" ] && [ -f "$dir/build.gradle.kts" ] && [ "$dir" != "buildSrc" ]; then
@@ -55,11 +60,10 @@ jobs:
           all_plugins=$(echo $all_plugins | xargs)
 
           if [ "$global_change" = "true" ]; then
-            echo "Global configuration changed. Rebuilding all plugins."
+            echo "Global build configuration changed. Rebuilding all plugins."
             plugins="$all_plugins"
           else
-            # Mengambil nama folder utama dari berkas-berkas yang dimodifikasi
-            changed_dirs=$(git diff --name-only HEAD^ HEAD | awk -F/ '{print $1}' | sort -u)
+            changed_dirs=$(echo "$changed_files" | awk -F/ '{print $1}' | sort -u)
             plugins=""
             for dir in $changed_dirs; do
               if [ -d "$dir" ] && [ -f "$dir/build.gradle.kts" ] && [ "$dir" != "buildSrc" ]; then
@@ -125,7 +129,7 @@ jobs:
           echo SUPERSTREAM_THIRD_API=$SUPERSTREAM_THIRD_API >> local.properties
           echo SUPERSTREAM_FOURTH_API=$SUPERSTREAM_FOURTH_API >> local.properties
 
-      - name: Build Changed Plugins
+      - name: Build changed plugins
         run: |
           cd $GITHUB_WORKSPACE/src
           chmod +x gradlew
@@ -138,44 +142,41 @@ jobs:
             exit 0
           fi
 
-          # Langkah 1: Memulihkan berkas binary .cs3 lama milik provider yang TIDAK berubah
           for plugin in $all_plugins; do
             if [[ ! " $plugins " =~ " $plugin " ]]; then
-              echo "Restoring cached binary for unchanged plugin: $plugin"
+              echo "Restoring cached release binary for unchanged plugin: $plugin"
               mkdir -p "$plugin/build"
-              if [ -f "$GITHUB_WORKSPACE/builds/$plugin.cs3" ]; then
-                cp "$GITHUB_WORKSPACE/builds/$plugin.cs3" "$plugin/build/$plugin.cs3"
-              elif [ -f "$GITHUB_WORKSPACE/builds/${plugin}-debug.cs3" ]; then
-                cp "$GITHUB_WORKSPACE/builds/${plugin}-debug.cs3" "$plugin/build/${plugin}-debug.cs3"
+              if [ -f "$GITHUB_WORKSPACE/release/$plugin.cs3" ]; then
+                cp "$GITHUB_WORKSPACE/release/$plugin.cs3" "$plugin/build/$plugin.cs3"
+              elif [ -f "$GITHUB_WORKSPACE/release/${plugin}-debug.cs3" ]; then
+                cp "$GITHUB_WORKSPACE/release/${plugin}-debug.cs3" "$plugin/build/${plugin}-debug.cs3"
               else
-                cp $GITHUB_WORKSPACE/builds/*$plugin*.cs3 "$plugin/build/" 2>/dev/null || true
+                cp $GITHUB_WORKSPACE/release/*$plugin*.cs3 "$plugin/build/" 2>/dev/null || true
               fi
             fi
           done
 
-          # Langkah 2: Hanya membangun kompilasi ulang pada provider yang berubah saja
           for plugin in $plugins; do
             echo "======================="
-            echo "Building $plugin"
+            echo "Building $plugin for release"
             echo "======================="
 
             ./gradlew ":$plugin:make"
 
-            mkdir -p $GITHUB_WORKSPACE/builds
-            find "$plugin/build" -name "*.cs3" -exec cp {} $GITHUB_WORKSPACE/builds \;
+            mkdir -p $GITHUB_WORKSPACE/release
+            find "$plugin/build" -name "*.cs3" -exec cp {} $GITHUB_WORKSPACE/release \;
           done
 
-          # Langkah 3: Membuat ulang metadata berkas perekam plugins.json secara penuh
           ./gradlew makePluginsJson
-          cp build/plugins.json $GITHUB_WORKSPACE/builds/
+          cp build/plugins.json $GITHUB_WORKSPACE/release/
 
-      - name: Push builds
+      - name: Push release
         run: |
-          cd $GITHUB_WORKSPACE/builds
+          cd $GITHUB_WORKSPACE/release
 
           git config --local user.email "actions@github.com"
           git config --local user.name "GitHub Actions"
 
           git add .
-          git commit -m "Build updated plugins: ${{ steps.changed.outputs.plugins }} ($GITHUB_SHA)" || exit 0
+          git commit -m "Release build updated plugins: ${{ steps.changed.outputs.plugins }} ($GITHUB_SHA)" || exit 0
           git push
