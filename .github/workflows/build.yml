@@ -168,6 +168,7 @@ jobs:
           done
 
           ./gradlew makePluginsJson
+          sed -i 's|/BetbetMiro-Extension/builds/|/BetbetMiro-Extension/release/|g' build/plugins.json
           cp build/plugins.json $GITHUB_WORKSPACE/release/
 
       - name: Push release
