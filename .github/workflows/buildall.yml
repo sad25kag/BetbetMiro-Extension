@@ -80,6 +80,7 @@ jobs:
           cd $GITHUB_WORKSPACE/src
           chmod +x gradlew
           ./gradlew make makePluginsJson
+          sed -i 's|/BetbetMiro-Extension/builds/|/BetbetMiro-Extension/release/|g' build/plugins.json
           cp **/build/*.cs3 $GITHUB_WORKSPACE/release
           cp build/plugins.json $GITHUB_WORKSPACE/release
 
@@ -89,5 +90,5 @@ jobs:
           git config --local user.email "actions@github.com"
           git config --local user.name "GitHub Actions"
           git add -A
-          git commit --amend -m "Release full rebuild: $GITHUB_SHA" || exit 0
-          git push --force-with-lease
+          git commit -m "Release full rebuild: $GITHUB_SHA" || exit 0
+          git push
