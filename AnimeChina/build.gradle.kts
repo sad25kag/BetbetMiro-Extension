@@ -1,0 +1,11 @@
+// use an integer for version numbers
+version = 7
+
+cloudstream {
+    description = "AnimeChina - Nonton Anime China, Donghua Subtitle Indonesia"
+    language = "id"
+    authors = listOf("sad25kag")
+    status = 1
+    tvTypes = listOf("Anime", "AnimeMovie", "OVA")
+    iconUrl = "https://www.google.com/s2/favicons?domain=animechina.my.id&sz=256"
+}
