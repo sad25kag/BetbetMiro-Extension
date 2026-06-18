@@ -1,10 +1,10 @@
-# BetbetMiro Extension
+# BetbetMiro Extension — NSFW Channel
 
 <div align="center">
 
 ### CloudStream provider repository maintained by @sad25kag
 
-Anime • Donghua • Drama • Movie • Multi-Source • NSFW
+NSFW • 18+ • Age-Restricted Providers • Multi-Source
 
 <img src="https://img.shields.io/github/stars/sad25kag/BetbetMiro-Extension?style=for-the-badge&color=yellow" />
 <img src="https://img.shields.io/github/forks/sad25kag/BetbetMiro-Extension?style=for-the-badge&color=blue" />
@@ -21,19 +21,18 @@ Anime • Donghua • Drama • Movie • Multi-Source • NSFW
 
 ---
 
-## English Documentation
+## About This Branch
 
-This file is an additional English README for international users.
+Branch `main` is a dedicated channel for NSFW, 18+, age-restricted, or region-restricted providers. This channel is separated from branch `master` so documentation, workflow behavior, and build output can be managed independently.
 
-The original `README.md` is not replaced. It remains the main repository README, while this file provides an English explanation of the repository purpose, installation method, build process, maintenance rules, issue reporting, and contribution expectations.
+Branch flow:
 
----
+```text
+main    = source and progress for NSFW providers
+release = build output from main
+```
 
-## About This Repository
-
-**BetbetMiro Extension** is a custom CloudStream extension repository containing multiple providers from different sources.
-
-The repository focuses on provider maintenance, parser fixes, domain updates, category validation, playback stability, and compatibility with the CloudStream extension system.
+This repository focuses on provider maintenance, parser fixes, domain updates, category validation, playback stability, and compatibility with the CloudStream extension system.
 
 Development priorities:
 
@@ -50,23 +49,21 @@ Development priorities:
 
 The provider list is dynamic and may change over time. Providers can be added, updated, disabled, or removed depending on source availability, website changes, playback stability, and maintenance requirements.
 
-Providers in this repository depend on third-party websites. Domain changes, page structure changes, access protection, player endpoint changes, or video host changes may affect provider behavior without prior notice.
+Providers in this branch depend on third-party websites. Domain changes, page structure changes, access protection, player endpoint changes, or video host changes may affect provider behavior without prior notice.
 
 ---
 
 ## Content Categories
 
-This repository may include providers for categories such as:
+This branch may include providers for categories such as:
 
-- Anime
-- Donghua
-- Asian drama
-- Indonesian movies
-- Western and Asian movies
-- Multi-source providers
-- Adult/NSFW content for users who meet the legal age requirement in their region
+- NSFW
+- 18+
+- Age-restricted providers
+- Adult-oriented source providers
+- Multi-source providers with age or region restrictions
 
-The actual availability of each category depends on the active providers in the repository.
+The actual availability of each category depends on the active providers in this branch.
 
 ---
 
@@ -77,7 +74,7 @@ The actual availability of each category depends on the active providers in the 
 Open this link on an Android device with CloudStream installed:
 
 ```text
-cloudstreamrepo://raw.githubusercontent.com/sad25kag/BetbetMiro-Extension/master/repo.json
+cloudstreamrepo://raw.githubusercontent.com/sad25kag/BetbetMiro-Extension/main/repo.json
 ```
 
 ### Manual Installation
@@ -89,7 +86,7 @@ cloudstreamrepo://raw.githubusercontent.com/sad25kag/BetbetMiro-Extension/master
 5. Enter this repository URL:
 
 ```text
-https://raw.githubusercontent.com/sad25kag/BetbetMiro-Extension/master/repo.json
+https://raw.githubusercontent.com/sad25kag/BetbetMiro-Extension/main/repo.json
 ```
 
 6. Save the repository.
@@ -104,6 +101,7 @@ Clone the repository:
 ```bash
 git clone https://github.com/sad25kag/BetbetMiro-Extension.git
 cd BetbetMiro-Extension
+git checkout main
 ```
 
 Build all providers:
@@ -112,10 +110,10 @@ Build all providers:
 ./gradlew make
 ```
 
-Build output is expected in:
+GitHub Actions output for branch `main` is published to branch:
 
 ```text
-/builds
+/release
 ```
 
 ---
@@ -223,15 +221,16 @@ Before opening a PR, please check:
 
 ---
 
-## Adult Content Warning
+## NSFW / 18+ Content Warning
 
-Some providers in this repository may access adult/NSFW content.
+This branch is intended for providers that may point to NSFW, 18+, age-restricted, or region-restricted sources.
 
-By using this repository, users confirm that they:
+By using this branch, users confirm that they:
 
 - Meet the legal age requirement in their region.
 - Are fully responsible for their own use of the repository and providers.
 - Understand the applicable laws, rules, and risks in their region.
+- Use this repository only in an appropriate and legal environment.
 
 ---
 
@@ -259,7 +258,7 @@ Thanks to:
 
 <div align="center">
 
-### BetbetMiro Extension
+### BetbetMiro Extension — NSFW Channel
 
 Maintained with parser fixes, extractor patches, source validation, and many Gradle rebuilds.
 
