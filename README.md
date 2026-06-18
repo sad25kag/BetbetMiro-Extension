@@ -1,10 +1,10 @@
-# BetbetMiro Extension
+# BetbetMiro Extension — NSFW Channel
 
 <div align="center">
 
 ### CloudStream provider repository maintained by @sad25kag
 
-Anime • Donghua • Drama • Movie • Multi-Source • Age-Restricted Providers
+NSFW • 18+ • Age-Restricted Providers • Multi-Source
 
 <img src="https://img.shields.io/github/stars/sad25kag/BetbetMiro-Extension?style=for-the-badge&color=yellow" />
 <img src="https://img.shields.io/github/forks/sad25kag/BetbetMiro-Extension?style=for-the-badge&color=blue" />
@@ -21,9 +21,18 @@ Anime • Donghua • Drama • Movie • Multi-Source • Age-Restricted Provid
 
 ---
 
-## Tentang Repository
+## Tentang Branch Ini
 
-**BetbetMiro Extension** adalah repository ekstensi CloudStream yang berisi kumpulan provider dari berbagai sumber. Repository ini berfokus pada pemeliharaan provider, perbaikan parser, pembaruan domain, validasi kategori, serta stabilitas playback.
+Branch `main` adalah channel khusus untuk provider NSFW, 18+, atau sumber yang memiliki pembatasan usia/wilayah. Channel ini dipisahkan dari branch `master` agar dokumentasi, workflow, dan output build dapat dikelola secara terpisah.
+
+Alur branch ini:
+
+```text
+main   = source dan progress provider NSFW
+release = output build dari main
+```
+
+Repository ini berfokus pada pemeliharaan provider, perbaikan parser, pembaruan domain, validasi kategori, serta stabilitas playback.
 
 Prioritas pengembangan repository ini:
 
@@ -40,21 +49,19 @@ Prioritas pengembangan repository ini:
 
 Daftar provider bersifat dinamis dan dikelola secara berkala. Provider dapat ditambahkan, diperbarui, dinonaktifkan, atau dihapus sewaktu-waktu berdasarkan kondisi sumber, stabilitas, dan kebutuhan pemeliharaan.
 
-Provider dalam repository ini bergantung pada sumber pihak ketiga. Perubahan domain, struktur halaman, proteksi akses, endpoint player, atau host video dapat memengaruhi fungsi provider tanpa pemberitahuan sebelumnya.
+Provider dalam branch ini bergantung pada sumber pihak ketiga. Perubahan domain, struktur halaman, proteksi akses, endpoint player, atau host video dapat memengaruhi fungsi provider tanpa pemberitahuan sebelumnya.
 
 ---
 
 ## Kategori Konten
 
-Repository ini dapat memuat provider untuk beberapa kategori berikut:
+Branch ini dapat memuat provider untuk kategori berikut:
 
-- Anime
-- Donghua
-- Drama Asia
-- Film Indonesia
-- Film Barat dan Asia
-- Multi-source provider
-- Provider terbatas usia sesuai aturan wilayah masing-masing
+- NSFW
+- 18+
+- Age-restricted provider
+- Adult-oriented source provider
+- Multi-source provider dengan pembatasan usia atau wilayah
 
 Ketersediaan kategori mengikuti provider yang sedang aktif dan dapat berubah sewaktu-waktu.
 
@@ -67,7 +74,7 @@ Ketersediaan kategori mengikuti provider yang sedang aktif dan dapat berubah sew
 Buka link berikut dari perangkat Android yang sudah terpasang CloudStream:
 
 ```text
-cloudstreamrepo://raw.githubusercontent.com/sad25kag/BetbetMiro-Extension/master/repo.json
+cloudstreamrepo://raw.githubusercontent.com/sad25kag/BetbetMiro-Extension/main/repo.json
 ```
 
 ### Instalasi Manual
@@ -79,7 +86,7 @@ cloudstreamrepo://raw.githubusercontent.com/sad25kag/BetbetMiro-Extension/master
 5. Masukkan URL berikut:
 
 ```text
-https://raw.githubusercontent.com/sad25kag/BetbetMiro-Extension/master/repo.json
+https://raw.githubusercontent.com/sad25kag/BetbetMiro-Extension/main/repo.json
 ```
 
 6. Simpan repository.
@@ -94,6 +101,7 @@ Clone repository:
 ```bash
 git clone https://github.com/sad25kag/BetbetMiro-Extension.git
 cd BetbetMiro-Extension
+git checkout main
 ```
 
 Build semua provider:
@@ -102,10 +110,10 @@ Build semua provider:
 ./gradlew make
 ```
 
-Output build akan tersedia di:
+Output GitHub Actions untuk branch `main` dipublikasikan ke branch:
 
 ```text
-/builds
+/release
 ```
 
 ---
@@ -224,6 +232,19 @@ Checklist sebelum membuat PR:
 
 ---
 
+## Peringatan Konten NSFW / 18+
+
+Branch ini ditujukan untuk provider yang dapat mengarah ke sumber NSFW, 18+, age-restricted, atau sumber dengan pembatasan wilayah.
+
+Dengan menggunakan branch ini, pengguna menyatakan bahwa:
+
+- Telah memenuhi batas usia yang berlaku di wilayah masing-masing.
+- Bertanggung jawab penuh atas penggunaan repository dan provider di dalamnya.
+- Memahami hukum, aturan, dan risiko penggunaan sumber di wilayah masing-masing.
+- Menggunakan repository ini hanya pada lingkungan yang sesuai dan legal.
+
+---
+
 ## Disclaimer
 
 Repository ini tidak menyimpan, meng-host, atau mendistribusikan konten video apa pun.
@@ -231,18 +252,6 @@ Repository ini tidak menyimpan, meng-host, atau mendistribusikan konten video ap
 Semua konten berasal dari sumber pihak ketiga yang tersedia di internet. Repository ini hanya menyediakan parser dan integrasi provider untuk CloudStream.
 
 Pemilik repository tidak berafiliasi dengan CloudStream maupun sumber pihak ketiga yang digunakan oleh provider.
-
----
-
-## Peringatan Konten Terbatas Usia
-
-Sebagian provider dalam repository ini dapat mengakses sumber yang dibatasi usia atau wilayah.
-
-Dengan menggunakan repository ini, pengguna menyatakan bahwa:
-
-- Telah memenuhi batas usia yang berlaku di wilayah masing-masing.
-- Bertanggung jawab penuh atas penggunaan repository dan provider di dalamnya.
-- Memahami hukum, aturan, dan risiko penggunaan sumber di wilayah masing-masing.
 
 ---
 
@@ -260,7 +269,7 @@ Terima kasih kepada:
 
 <div align="center">
 
-### BetbetMiro Extension
+### BetbetMiro Extension — NSFW Channel
 
 Maintained with parser fixes, extractor patches, source validation, and countless Gradle rebuilds.
 
