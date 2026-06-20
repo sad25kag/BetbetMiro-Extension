@@ -1,7 +1,7 @@
 package com.sad25kag.javorb
 
 import com.lagradost.cloudstream3.utils.httpsify
-import org.jsoup.Jsoup
+import org.jsoup.parser.Parser
 import java.net.URI
 import java.util.Base64
 
@@ -16,7 +16,7 @@ object JavOrbUtils {
     }
 
     fun cleanHtml(value: String?): String {
-        return Jsoup.unescape(value.orEmpty())
+        return Parser.unescapeEntities(value.orEmpty(), false)
             .replace("\\/", "/")
             .replace("\\u0026", "&")
             .replace("\\u003d", "=")

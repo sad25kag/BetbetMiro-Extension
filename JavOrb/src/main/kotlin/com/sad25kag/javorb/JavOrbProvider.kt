@@ -303,7 +303,7 @@ class JavOrbProvider : MainAPI() {
         }
     }
 
-    private fun emitDirect(url: String, referer: String, callback: (ExtractorLink) -> Unit) {
+    private suspend fun emitDirect(url: String, referer: String, callback: (ExtractorLink) -> Unit) {
         val type = if (url.contains(".m3u8", ignoreCase = true)) ExtractorLinkType.M3U8 else ExtractorLinkType.VIDEO
         callback(
             newExtractorLink(name, name, url, type) {
