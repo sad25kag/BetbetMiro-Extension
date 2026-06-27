@@ -111,7 +111,7 @@ subprojects {
 
     android {
 
-        namespace = "com.excloud"
+        namespace = "com.sad25kag"
 
         defaultConfig {
 
