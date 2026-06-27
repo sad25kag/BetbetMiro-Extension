@@ -103,7 +103,7 @@ subprojects {
 
         setRepo(
             System.getenv("GITHUB_REPOSITORY")
-                ?: "https://github.com/duro92/ExtCloud"
+                ?: "https://github.com/sad25kag/BetbetMiro-Extension"
         )
 
         authors = listOf("sad25kag")
