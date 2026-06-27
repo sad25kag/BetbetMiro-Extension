@@ -1,0 +1,54 @@
+# IntelliJ / Android Studio
+*.iml
+.idea/
+
+# Gradle
+.gradle/
+.gradle
+**/build/
+!**/src/**/build/
+.gradle-task-name-cache
+.gradletasknamecache
+gradle-app.setting
+
+# Keep Gradle wrapper files tracked
+!gradle/wrapper/gradle-wrapper.jar
+!gradle/wrapper/gradle-wrapper.properties
+!gradle-wrapper.jar
+!gradle-wrapper.properties
+
+# Android local config
+/local.properties
+local.properties
+captures/
+.externalNativeBuild/
+.cxx/
+
+# VS Code local scratch/test files
+.vscode/.ropeproject/
+.vscodetest.txt
+
+# Eclipse
+.project
+.classpath
+.settings/
+
+# OS files
+.DS_Store
+Thumbs.db
+
+# Logs
+*.log
+
+# Python cache / virtual environments
+__pycache__/
+*.py[cod]
+.venv/
+venv/
+
+# Local build artifacts
+/builds/
+*.apk
+*.ap_
+*.dex
+*.class

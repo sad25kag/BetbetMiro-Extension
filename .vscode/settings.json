@@ -1,0 +1,53 @@
+{
+  "java.configuration.updateBuildConfiguration": "automatic",
+
+  "[kotlin]": {
+    "editor.defaultFormatter": "fwcd.kotlin"
+  },
+
+  "[xml]": {
+    "editor.defaultFormatter": "redhat.vscode-xml"
+  },
+
+  "editor.detectIndentation": false,
+  "editor.insertSpaces": true,
+  "editor.tabSize": 4,
+
+  "files.eol": "\n",
+  "files.insertFinalNewline": true,
+  "files.trimTrailingWhitespace": true,
+
+  "terminal.integrated.profiles.windows": {
+    "CS3 Log": {
+      "overrideName": true,
+      "source": "PowerShell",
+      "args": [
+        "-NoExit",
+        "-Command",
+        "adb logcat -b all -c; adb logcat --pid=$(adb shell pidof -s com.lagradost.cloudstream3.prerelease)"
+      ]
+    }
+  },
+
+  "terminal.integrated.profiles.linux": {
+    "CS3 Log": {
+      "overrideName": true,
+      "path": "bash",
+      "args": [
+        "-lc",
+        "adb logcat -b all -c; adb logcat --pid=$(adb shell pidof -s com.lagradost.cloudstream3.prerelease)"
+      ]
+    }
+  },
+
+  "terminal.integrated.profiles.osx": {
+    "CS3 Log": {
+      "overrideName": true,
+      "path": "zsh",
+      "args": [
+        "-lc",
+        "adb logcat -b all -c; adb logcat --pid=$(adb shell pidof -s com.lagradost.cloudstream3.prerelease)"
+      ]
+    }
+  }
+}
