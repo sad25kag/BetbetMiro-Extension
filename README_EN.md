@@ -33,6 +33,42 @@ The `Welcome` branch only serves as the entry page and navigation hub. For insta
 
 ---
 
+## Install the CloudStream App
+
+Before adding the BetbetMiro Extension repository, make sure the **CloudStream** app is already installed on your Android device.
+
+CloudStream is available in two build options:
+
+| Build | Best For | Notes |
+|---|---|---|
+| **Stable** | General users | Recommended for daily use |
+| **Pre-release** | Users who want the newest fixes or features | May change faster and may contain bugs |
+
+### Download CloudStream
+
+Use the official CloudStream release page:
+
+```text
+https://github.com/recloudstream/cloudstream/releases
+```
+
+Choose one of the following:
+
+- **Stable / Latest Release** for normal usage.
+- **Pre-release Build** if you need newer updates or want to test changes earlier.
+
+After downloading the APK file:
+
+1. Open the APK file on your Android device.
+2. Allow installation from unknown sources if requested.
+3. Install the CloudStream app.
+4. Open CloudStream.
+5. Continue to the repository channel selection section below.
+
+> New users should start with the **Stable** build. Use **Pre-release** only if you understand the risk of bugs or specifically need the newest fixes/features.
+
+---
+
 ## Choose a Channel
 
 | Shortcode | Branch | Channel | Purpose |
