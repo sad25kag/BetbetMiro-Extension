@@ -17,13 +17,18 @@ NSFW • 18+ • Age-Restricted Providers • Multi-Source
   English
 </p>
 
+<p>
+  <strong>Channel Shortcode:</strong>
+  <code>BME-NFSW</code>
+</p>
+
 </div>
 
 ---
 
 ## About This Branch
 
-Branch `main` is a dedicated channel for NSFW, 18+, age-restricted, or region-restricted providers. This channel is separated from branch `master` so documentation, workflow behavior, and build output can be managed independently.
+Branch `main` (`BME-NFSW`) is a dedicated channel for NSFW, 18+, age-restricted, or region-restricted providers. This channel is separated from branch `master` so documentation, workflow behavior, and build output can be managed independently.
 
 Branch flow:
 
