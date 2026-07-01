@@ -11,6 +11,7 @@ import com.lagradost.cloudstream3.utils.getQualityFromName
 import com.lagradost.cloudstream3.utils.newExtractorLink
 import org.json.JSONArray
 import java.net.URI
+import com.lagradost.cloudstream3.utils.newSubtitleFile
 
 class DonghuaFilmGeoDailyMotion : DonghuaFilmDailyMotion() {
     override val name = "GeoDailyMotion"

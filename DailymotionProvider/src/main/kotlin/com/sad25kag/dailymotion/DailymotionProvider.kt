@@ -29,6 +29,7 @@ import java.net.URI
 import java.net.URLDecoder
 import java.net.URLEncoder
 import java.util.Locale
+import com.lagradost.cloudstream3.utils.newSubtitleFile
 
 class DailymotionProvider : MainAPI() {
 
