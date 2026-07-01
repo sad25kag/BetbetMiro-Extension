@@ -36,7 +36,6 @@ val cloudstreamApiVersion = providers.gradleProperty("cloudstream.api.version").
 val kotlinxCoroutinesVersion = providers.gradleProperty("kotlinx.coroutines.version").orElse("1.10.1").get()
 val kotlinxSerializationVersion = providers.gradleProperty("kotlinx.serialization.version").orElse("1.7.3").get()
 val androidCompileSdkVersion = providers.gradleProperty("android.compileSdk.version").orElse("35").get().toInt()
-val androidTargetSdkVersion = providers.gradleProperty("android.targetSdk.version").orElse(androidCompileSdkVersion.toString()).get().toInt()
 
 allprojects {
     repositories {
@@ -65,7 +64,6 @@ subprojects {
 
         defaultConfig {
             minSdk = 21
-            targetSdkVersion = androidTargetSdkVersion
         }
 
         compileOptions {
