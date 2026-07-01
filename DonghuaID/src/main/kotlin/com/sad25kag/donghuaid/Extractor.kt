@@ -70,7 +70,7 @@ open class DonghuaIDDailyMotion : ExtractorApi() {
                 .forEach { match ->
                     val lang = match.groupValues[1]
                     val subUrl = match.groupValues[2].decodePlayerText()
-                    if (subUrl.startsWith("http")) subtitleCallback(SubtitleFile(url = subUrl, lang = lang))
+                    if (subUrl.startsWith("http")) subtitleCallback(newnewSubtitleFile(lang, subUrl))
                 }
         }
     }

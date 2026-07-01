@@ -282,7 +282,7 @@ class DailymotionProvider : MainAPI() {
         fun emit(label: String?, url: String?) {
             val cleanUrl = url?.trim()?.takeIf { it.startsWith("http", ignoreCase = true) } ?: return
             if (!seen.add(cleanUrl)) return
-            subtitleCallback.invoke(SubtitleFile(label?.takeIf { it.isNotBlank() } ?: "Subtitle", cleanUrl))
+            subtitleCallback.invoke(newSubtitleFile(label?.takeIf { it.isNotBlank() } ?: "Subtitle", cleanUrl))
         }
 
         when {

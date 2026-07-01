@@ -252,7 +252,7 @@ class DrakorAsiaProvider : MainAPI() {
             if (!isContentUrl(href)) return@mapNotNull null
 
             val text = cleanTitle(
-                anchor.text().ifBlank { anchor.attr("title") }
+                anchor.text().ifBlank { null }.ifBlank { anchor.attr("title") }
                     .ifBlank { href.substringAfterLast('/').substringBeforeLast('.').replace('-', ' ') }
             )
             val slugTitle = cleanTitle(href.substringAfterLast('/').substringBeforeLast('.').replace('-', ' '))
@@ -332,7 +332,7 @@ class DrakorAsiaProvider : MainAPI() {
             ?: anchor.attr("title").ifBlank { null }
             ?: anchor.selectFirst("img")?.attr("alt")?.ifBlank { null }
             ?: element.selectFirst("h1, h2, h3, .entry-title, .post-title")?.text()?.ifBlank { null }
-            ?: anchor.text()
+            ?: anchor.text().ifBlank { null }
             ?: href.substringAfterLast('/').substringBeforeLast('.').replace('-', ' ')
 
         val title = cleanTitle(rawTitle)

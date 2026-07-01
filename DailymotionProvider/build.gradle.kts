@@ -1,4 +1,4 @@
-version = 11
+version = 12
 
 cloudstream {
     description = "Dailymotion public video catalog with source-backed homepage, search, detail, and internal HLS playback resolver."

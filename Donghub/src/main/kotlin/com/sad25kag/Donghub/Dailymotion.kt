@@ -46,7 +46,7 @@ open class Dailymotion : ExtractorApi() {
             val subRegex = Regex("""\{\s*"label"\s*:\s*"([^"]+)",\s*"urls"\s*:\s*\["([^"]+)"""")
             subRegex.findAll(subtitleJson).forEach { match ->
                 subtitleCallback(
-                    SubtitleFile(
+                    newSubtitleFile(
                         match.groupValues[1],
                         match.groupValues[2].replace("\\/", "/")
                     )
