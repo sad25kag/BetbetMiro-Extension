@@ -11,7 +11,6 @@ import com.lagradost.cloudstream3.utils.getQualityFromName
 import com.lagradost.cloudstream3.utils.newExtractorLink
 import org.json.JSONArray
 import java.net.URI
-import com.lagradost.cloudstream3.utils.newSubtitleFile
 
 class DonghuaFilmGeoDailyMotion : DonghuaFilmDailyMotion() {
     override val name = "GeoDailyMotion"
@@ -47,7 +46,7 @@ open class DonghuaFilmDailyMotion : ExtractorApi() {
             .forEach { match ->
                 val lang = match.groupValues[1]
                 val subUrl = match.groupValues[2].replace("\\/", "/")
-                if (subUrl.startsWith("http")) subtitleCallback(newSubtitleFile(lang, subUrl))
+                if (subUrl.startsWith("http")) subtitleCallback(SubtitleFile(lang, subUrl))
             }
     }
 
