@@ -1,10 +1,9 @@
-import com.android.build.gradle.LibraryExtension
+import com.android.build.api.dsl.LibraryExtension
 import com.lagradost.cloudstream3.gradle.CloudstreamExtension
 import org.jetbrains.kotlin.gradle.dsl.JvmTarget
 import org.jetbrains.kotlin.gradle.tasks.KotlinJvmCompile
 
 buildscript {
-
     val cloudstreamGradlePluginVersion = project
         .findProperty("cloudstream.gradle.plugin.version")
         ?.toString()
@@ -47,8 +46,9 @@ allprojects {
     }
 }
 
-fun Project.cloudstream(configuration: CloudstreamExtension.() -> Unit) = extensions.getByName<CloudstreamExtension>("cloudstream").configuration()
-fun Project.android(configuration: LibraryExtension.() -> Unit) = extensions.getByName<LibraryExtension>("android").configuration()
+// Menggunakan tipe yang benar untuk AGP 9+
+fun Project.cloudstream(configuration: CloudstreamExtension.() -> Unit) = extensions.getByType<CloudstreamExtension>().configuration()
+fun Project.android(configuration: LibraryExtension.() -> Unit) = extensions.getByType<LibraryExtension>().configuration()
 
 subprojects {
     apply(plugin = "com.android.library")
@@ -61,9 +61,10 @@ subprojects {
 
     android {
         namespace = "com.sad25kag"
+        compileSdk = androidCompileSdkVersion
+
         defaultConfig {
             minSdk = 21
-            compileSdkVersion(androidCompileSdkVersion)
             targetSdk = androidTargetSdkVersion
         }
 
