@@ -88,9 +88,9 @@ fun Project.cloudstream(
     .configuration()
 
 fun Project.android(
-    configuration: BaseExtension.() -> Unit
+    configuration: LibraryExtension.() -> Unit
 ) = extensions
-    .getByName<BaseExtension>("android")
+    .getByName<LibraryExtension>("android")
     .configuration()
 
 subprojects {
