@@ -13,6 +13,7 @@ import org.jsoup.Jsoup
 import org.jsoup.nodes.Document
 import java.net.URLEncoder
 import java.util.Base64
+import com.lagradost.cloudstream3.newSubtitleFile
 
 object DrakorKitaResolver {
     data class ApiPayload(
@@ -99,7 +100,7 @@ object DrakorKitaResolver {
                 .ifBlank { element.attr("label") }
                 .ifBlank { element.text() }
                 .ifBlank { "Indonesia" }
-            SubtitleFile(label, url)
+            newSubtitleFile(label, url)
         }.distinctBy { it.url }
     }
 
