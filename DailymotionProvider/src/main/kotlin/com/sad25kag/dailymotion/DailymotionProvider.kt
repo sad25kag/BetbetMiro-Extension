@@ -29,6 +29,7 @@ import java.net.URI
 import java.net.URLDecoder
 import java.net.URLEncoder
 import java.util.Locale
+import com.lagradost.cloudstream3.newSubtitleFile
 
 class DailymotionProvider : MainAPI() {
 
@@ -282,7 +283,7 @@ class DailymotionProvider : MainAPI() {
         fun emit(label: String?, url: String?) {
             val cleanUrl = url?.trim()?.takeIf { it.startsWith("http", ignoreCase = true) } ?: return
             if (!seen.add(cleanUrl)) return
-            subtitleCallback.invoke(SubtitleFile(label?.takeIf { it.isNotBlank() } ?: "Subtitle", cleanUrl))
+            subtitleCallback.invoke(newSubtitleFile(label?.takeIf { it.isNotBlank() } ?: "Subtitle", cleanUrl))
         }
 
         when {

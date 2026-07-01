@@ -16,6 +16,7 @@ import java.net.URI
 import java.net.URLDecoder
 import java.net.URLEncoder
 import java.util.Locale
+import com.lagradost.cloudstream3.newSubtitleFile
 
 class DonghuaIDGeoDailyMotion : DonghuaIDDailyMotion() {
     override val name = "GeoDailyMotion"
@@ -70,7 +71,7 @@ open class DonghuaIDDailyMotion : ExtractorApi() {
                 .forEach { match ->
                     val lang = match.groupValues[1]
                     val subUrl = match.groupValues[2].decodePlayerText()
-                    if (subUrl.startsWith("http")) subtitleCallback(newnewSubtitleFile(lang, subUrl))
+                    if (subUrl.startsWith("http")) subtitleCallback(newSubtitleFile(lang, subUrl))
                 }
         }
     }
