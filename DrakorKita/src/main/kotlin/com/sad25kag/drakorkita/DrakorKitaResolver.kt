@@ -101,7 +101,7 @@ object DrakorKitaResolver {
                 .ifBlank { element.attr("label") }
                 .ifBlank { element.text() }
                 .ifBlank { "Indonesia" }
-            newnewSubtitleFile(label, url)
+            newSubtitleFile(label, url)
         }.distinctBy { it.url }
     }
 
