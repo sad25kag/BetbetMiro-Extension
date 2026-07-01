@@ -80,7 +80,7 @@ cloudstream {
 
 dependencies {
     // FIXME remove this when crossplatform is fully supported
-    val cloudstream by configurations
+    val cloudstream = configurations.getByName("cloudstream")
     implementation("com.google.android.material:material:1.14.0")
     implementation("androidx.browser:browser:1.10.0")
     cloudstream("com.lagradost:cloudstream3:pre-release")
