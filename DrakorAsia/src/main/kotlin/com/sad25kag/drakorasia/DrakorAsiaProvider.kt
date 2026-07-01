@@ -252,8 +252,9 @@ class DrakorAsiaProvider : MainAPI() {
             if (!isContentUrl(href)) return@mapNotNull null
 
             val text = cleanTitle(
-                anchor.text().ifBlank { null }.ifBlank { anchor.attr("title") }
-                    .ifBlank { href.substringAfterLast('/').substringBeforeLast('.').replace('-', ' ') }
+                (anchor.text().takeIf { it.isNotBlank() }
+                    ?: anchor.attr("title").takeIf { it.isNotBlank() }
+                    ?: href.substringAfterLast('/').substringBeforeLast('.').replace('-', ' '))
             )
             val slugTitle = cleanTitle(href.substringAfterLast('/').substringBeforeLast('.').replace('-', ' '))
             val ep = episodeNumber(text) ?: episodeNumber(slugTitle) ?: episodeNumber(href)
