@@ -102,7 +102,7 @@ class Filmapik : MainAPI() {
         )
     }
 
-    override suspend fun search(query: String): List<SearchResponse> {
+    override suspend fun search(query: String, isCasting: Boolean): List<SearchResponse> {
         val q = URLEncoder.encode(query.trim(), "UTF-8")
 
         val endpoints = listOf(
