@@ -1,6 +1,6 @@
 package com.sad25kag.drakorkita
 
-import com.lagradost.cloudstream3.SubtitleFile
+import com.lagradost.cloudstream3.newSubtitleFile
 import com.lagradost.cloudstream3.app
 import com.lagradost.cloudstream3.utils.ExtractorLink
 import com.lagradost.cloudstream3.utils.ExtractorLinkType
