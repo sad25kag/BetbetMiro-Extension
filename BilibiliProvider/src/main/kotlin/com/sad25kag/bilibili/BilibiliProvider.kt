@@ -749,7 +749,7 @@ class BilibiliProvider : MainAPI() {
                     }
                 )
                 foundVideo = true
-                Log.d(TAG, "Added video stream: $qualityName with ${audioTracksList.size} audio tracks, url: ${urlVideo?.take(100)}")
+                Log.d(TAG, "Added video stream: $qualityName with ${audioTracksList.size} audio tracks, url: ${urlVideo.take(100)}")
             }
             
             // Also add other available qualities with audio tracks

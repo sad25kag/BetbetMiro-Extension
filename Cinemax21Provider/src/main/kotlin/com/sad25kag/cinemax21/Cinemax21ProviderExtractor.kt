@@ -211,12 +211,12 @@ object Cinemax21ProviderExtractor : Cinemax21Provider() {
         } catch (e: Exception) { e.printStackTrace() }
     }
     
-    private data class KisskhMedia(@JsonProperty("id") val id: Int?, @JsonProperty("title") val title: String?)
-    private data class KisskhDetail(@JsonProperty("episodes") val episodes: ArrayList<KisskhEpisode>?)
-    private data class KisskhEpisode(@JsonProperty("id") val id: Int?, @JsonProperty("number") val number: Double?)
-    private data class KisskhKey(@JsonProperty("key") val key: String?)
-    private data class KisskhSources(@JsonProperty("Video") val video: String?, @JsonProperty("ThirdParty") val thirdParty: String?)
-    private data class KisskhSubtitle(@JsonProperty("src") val src: String?, @JsonProperty("label") val label: String?)
+    private data class KisskhMedia(@field:JsonProperty("id") val id: Int?, @field:JsonProperty("title") val title: String?)
+    private data class KisskhDetail(@field:JsonProperty("episodes") val episodes: ArrayList<KisskhEpisode>?)
+    private data class KisskhEpisode(@field:JsonProperty("id") val id: Int?, @field:JsonProperty("number") val number: Double?)
+    private data class KisskhKey(@field:JsonProperty("key") val key: String?)
+    private data class KisskhSources(@field:JsonProperty("Video") val video: String?, @field:JsonProperty("ThirdParty") val thirdParty: String?)
+    private data class KisskhSubtitle(@field:JsonProperty("src") val src: String?, @field:JsonProperty("label") val label: String?)
 
     suspend fun invokeMoviebox(
         title: String, year: Int?, season: Int?, episode: Int?,
