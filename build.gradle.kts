@@ -45,9 +45,11 @@ allprojects {
     }
 }
 
-// Menggunakan tipe yang benar untuk AGP 9+
-fun Project.cloudstream(configuration: CloudstreamExtension.() -> Unit) = extensions.getByType<CloudstreamExtension>().configuration()
-fun Project.android(configuration: LibraryExtension.() -> Unit) = extensions.getByType<LibraryExtension>().configuration()
+fun Project.cloudstream(configuration: CloudstreamExtension.() -> Unit) =
+    extensions.getByType<CloudstreamExtension>().configuration()
+
+fun Project.android(configuration: LibraryExtension.() -> Unit) =
+    extensions.getByType<LibraryExtension>().configuration()
 
 subprojects {
     apply(plugin = "com.android.library")
@@ -74,7 +76,15 @@ subprojects {
         tasks.withType<KotlinJvmCompile>().configureEach {
             compilerOptions {
                 jvmTarget.set(JvmTarget.JVM_17)
-                freeCompilerArgs.addAll("-Xno-call-assertions", "-Xno-param-assertions", "-Xno-receiver-assertions")
+
+                freeCompilerArgs.addAll(
+                    "-Xno-call-assertions",
+                    "-Xno-param-assertions",
+                    "-Xno-receiver-assertions",
+
+                    // ✅ FIX KT-73255 GLOBAL
+                    "-Xannotation-default-target=param-property"
+                )
             }
         }
     }
