@@ -6,6 +6,7 @@ import com.lagradost.cloudstream3.utils.ExtractorApi
 import com.lagradost.cloudstream3.utils.ExtractorLink
 import com.lagradost.cloudstream3.utils.M3u8Helper.Companion.generateM3u8
 import java.net.URI
+import com.lagradost.cloudstream3.newSubtitleFile
 
 class Geodailymotion : Dailymotion() {
     override val name = "GeoDailymotion"
@@ -46,7 +47,7 @@ open class Dailymotion : ExtractorApi() {
             val subRegex = Regex("""\{\s*"label"\s*:\s*"([^"]+)",\s*"urls"\s*:\s*\["([^"]+)"""")
             subRegex.findAll(subtitleJson).forEach { match ->
                 subtitleCallback(
-                    newSubtitleFile(
+                    com.lagradost.cloudstream3.newSubtitleFile(
                         match.groupValues[1],
                         match.groupValues[2].replace("\\/", "/")
                     )
