@@ -716,7 +716,7 @@ class BilibiliProvider : MainAPI() {
                 val audioTracksList = mutableListOf<AudioFile>()
                 if (!urlAudio.isNullOrEmpty()) {
                     audioTracksList.add(
-                        newAudioFile(urlAudio!!) {
+                        newAudioFile(urlAudio) {
                             this.headers = streamHeaders
                         }
                     )
@@ -739,7 +739,7 @@ class BilibiliProvider : MainAPI() {
                     newExtractorLink(
                         source = name,
                         name = "$name - $qualityName",
-                        url = urlVideo!!,
+                        url = urlVideo,
                         type = INFER_TYPE
                     ) {
                         this.quality = qualityValue
@@ -787,7 +787,7 @@ class BilibiliProvider : MainAPI() {
                     val altAudioTracks = mutableListOf<AudioFile>()
                     if (!urlAudio.isNullOrEmpty()) {
                         altAudioTracks.add(
-                            newAudioFile(urlAudio!!) {
+                            newAudioFile(urlAudio) {
                                 this.headers = altStreamHeaders
                             }
                         )
@@ -1230,206 +1230,206 @@ class BilibiliProvider : MainAPI() {
 
     // Data class for Episode Data
     data class EpisodeData(
-        @JsonProperty("epId") val epId: String? = null,
-        @JsonProperty("seasonId") val seasonId: String? = null,
-        @JsonProperty("aid") val aid: String? = null,
+        @field:JsonProperty("epId") val epId: String? = null,
+        @field:JsonProperty("seasonId") val seasonId: String? = null,
+        @field:JsonProperty("aid") val aid: String? = null,
     )
 
     // Data classes for Search API response
     data class BiliSearchResponse(
-        @JsonProperty("code") val code: Int? = null,
-        @JsonProperty("message") val message: String? = null,
-        @JsonProperty("data") val data: BiliSearchData? = null,
+        @field:JsonProperty("code") val code: Int? = null,
+        @field:JsonProperty("message") val message: String? = null,
+        @field:JsonProperty("data") val data: BiliSearchData? = null,
     )
     
     data class BiliSearchData(
-        @JsonProperty("modules") val modules: List<BiliSearchModule>? = null,
-        @JsonProperty("has_next") val hasNext: Boolean? = null,
+        @field:JsonProperty("modules") val modules: List<BiliSearchModule>? = null,
+        @field:JsonProperty("has_next") val hasNext: Boolean? = null,
     )
     
     data class BiliSearchModule(
-        @JsonProperty("type") val type: String? = null,
-        @JsonProperty("title") val title: String? = null,
-        @JsonProperty("items") val items: List<BiliSearchItem>? = null,
+        @field:JsonProperty("type") val type: String? = null,
+        @field:JsonProperty("title") val title: String? = null,
+        @field:JsonProperty("items") val items: List<BiliSearchItem>? = null,
     )
     
     data class BiliSearchItem(
-        @JsonProperty("title") val title: String? = null,
-        @JsonProperty("season_id") val seasonId: String? = null,
-        @JsonProperty("cover") val cover: String? = null,
-        @JsonProperty("aid") val aid: String? = null,
-        @JsonProperty("view") val view: String? = null,
-        @JsonProperty("season_type") val seasonType: String? = null,
-        @JsonProperty("description") val description: String? = null,
+        @field:JsonProperty("title") val title: String? = null,
+        @field:JsonProperty("season_id") val seasonId: String? = null,
+        @field:JsonProperty("cover") val cover: String? = null,
+        @field:JsonProperty("aid") val aid: String? = null,
+        @field:JsonProperty("view") val view: String? = null,
+        @field:JsonProperty("season_type") val seasonType: String? = null,
+        @field:JsonProperty("description") val description: String? = null,
     )
 
     // Data classes for Season Info API response
     data class BiliSeasonInfoResponse(
-        @JsonProperty("code") val code: Int? = null,
-        @JsonProperty("message") val message: String? = null,
-        @JsonProperty("data") val data: BiliSeasonInfoData? = null,
+        @field:JsonProperty("code") val code: Int? = null,
+        @field:JsonProperty("message") val message: String? = null,
+        @field:JsonProperty("data") val data: BiliSeasonInfoData? = null,
     )
     
     data class BiliSeasonInfoData(
-        @JsonProperty("season") val season: BiliSeason? = null,
+        @field:JsonProperty("season") val season: BiliSeason? = null,
     )
     
     data class BiliSeason(
-        @JsonProperty("season_id") val seasonId: String? = null,
-        @JsonProperty("title") val title: String? = null,
-        @JsonProperty("description") val description: String? = null,
-        @JsonProperty("vertical_cover") val verticalCover: String? = null,
-        @JsonProperty("horizontal_cover") val horizontalCover: String? = null,
-        @JsonProperty("player_date") val playerDate: String? = null,
-        @JsonProperty("styles") val styles: List<BiliStyle>? = null,
-        @JsonProperty("view") val view: String? = null,
-        @JsonProperty("season_type") val seasonType: String? = null,
+        @field:JsonProperty("season_id") val seasonId: String? = null,
+        @field:JsonProperty("title") val title: String? = null,
+        @field:JsonProperty("description") val description: String? = null,
+        @field:JsonProperty("vertical_cover") val verticalCover: String? = null,
+        @field:JsonProperty("horizontal_cover") val horizontalCover: String? = null,
+        @field:JsonProperty("player_date") val playerDate: String? = null,
+        @field:JsonProperty("styles") val styles: List<BiliStyle>? = null,
+        @field:JsonProperty("view") val view: String? = null,
+        @field:JsonProperty("season_type") val seasonType: String? = null,
     )
     
     data class BiliStyle(
-        @JsonProperty("id") val id: Int? = null,
-        @JsonProperty("title") val title: String? = null,
+        @field:JsonProperty("id") val id: Int? = null,
+        @field:JsonProperty("title") val title: String? = null,
     )
 
     // Data classes for Episodes API response
     data class BiliEpisodesResponse(
-        @JsonProperty("code") val code: Int? = null,
-        @JsonProperty("message") val message: String? = null,
-        @JsonProperty("data") val data: BiliEpisodesData? = null,
+        @field:JsonProperty("code") val code: Int? = null,
+        @field:JsonProperty("message") val message: String? = null,
+        @field:JsonProperty("data") val data: BiliEpisodesData? = null,
     )
     
     data class BiliEpisodesData(
-        @JsonProperty("sections") val sections: List<BiliSection>? = null,
+        @field:JsonProperty("sections") val sections: List<BiliSection>? = null,
     )
     
     data class BiliSection(
-        @JsonProperty("title") val title: String? = null,
-        @JsonProperty("ep_list_title") val epListTitle: String? = null,
-        @JsonProperty("episodes") val episodes: List<BiliEpisode>? = null,
+        @field:JsonProperty("title") val title: String? = null,
+        @field:JsonProperty("ep_list_title") val epListTitle: String? = null,
+        @field:JsonProperty("episodes") val episodes: List<BiliEpisode>? = null,
     )
     
     data class BiliEpisode(
-        @JsonProperty("episode_id") val episodeId: String? = null,
-        @JsonProperty("cover") val cover: String? = null,
-        @JsonProperty("title_display") val titleDisplay: String? = null,
-        @JsonProperty("short_title_display") val shortTitleDisplay: String? = null,
-        @JsonProperty("long_title_display") val longTitleDisplay: String? = null,
-        @JsonProperty("publish_time") val publishTime: String? = null,
+        @field:JsonProperty("episode_id") val episodeId: String? = null,
+        @field:JsonProperty("cover") val cover: String? = null,
+        @field:JsonProperty("title_display") val titleDisplay: String? = null,
+        @field:JsonProperty("short_title_display") val shortTitleDisplay: String? = null,
+        @field:JsonProperty("long_title_display") val longTitleDisplay: String? = null,
+        @field:JsonProperty("publish_time") val publishTime: String? = null,
     )
 
     // Data classes for Subtitle API response
     data class BiliSubtitleResponse(
-        @JsonProperty("code") val code: Int? = null,
-        @JsonProperty("message") val message: String? = null,
-        @JsonProperty("data") val data: BiliSubtitleData? = null,
+        @field:JsonProperty("code") val code: Int? = null,
+        @field:JsonProperty("message") val message: String? = null,
+        @field:JsonProperty("data") val data: BiliSubtitleData? = null,
     )
     
     data class BiliSubtitleData(
-        @JsonProperty("subtitles") val subtitles: List<BiliSubtitle>? = null,
+        @field:JsonProperty("subtitles") val subtitles: List<BiliSubtitle>? = null,
     )
     
     data class BiliSubtitle(
-        @JsonProperty("url") val url: String? = null,
-        @JsonProperty("lang") val lang: String? = null,
-        @JsonProperty("lang_doc") val langDoc: String? = null,
+        @field:JsonProperty("url") val url: String? = null,
+        @field:JsonProperty("lang") val lang: String? = null,
+        @field:JsonProperty("lang_doc") val langDoc: String? = null,
     )
 
     // Data classes for PlayInfo (from page script)
     data class BiliPlayInfo(
-        @JsonProperty("code") val code: Int? = null,
-        @JsonProperty("data") val data: BiliPlayInfoData? = null,
+        @field:JsonProperty("code") val code: Int? = null,
+        @field:JsonProperty("data") val data: BiliPlayInfoData? = null,
     )
     
     data class BiliPlayInfoData(
-        @JsonProperty("dash") val dash: BiliDash? = null,
+        @field:JsonProperty("dash") val dash: BiliDash? = null,
     )
     
     data class BiliDash(
-        @JsonProperty("video") val video: List<BiliDashVideo>? = null,
-        @JsonProperty("audio") val audio: List<BiliDashAudio>? = null,
+        @field:JsonProperty("video") val video: List<BiliDashVideo>? = null,
+        @field:JsonProperty("audio") val audio: List<BiliDashAudio>? = null,
     )
     
     data class BiliDashVideo(
-        @JsonProperty("id") val id: Int? = null,
-        @JsonProperty("baseUrl") val baseUrl: String? = null,
-        @JsonProperty("base_url") val base_url: String? = null,
-        @JsonProperty("bandwidth") val bandwidth: Int? = null,
-        @JsonProperty("codecid") val codecid: Int? = null,
+        @field:JsonProperty("id") val id: Int? = null,
+        @field:JsonProperty("baseUrl") val baseUrl: String? = null,
+        @field:JsonProperty("base_url") val base_url: String? = null,
+        @field:JsonProperty("bandwidth") val bandwidth: Int? = null,
+        @field:JsonProperty("codecid") val codecid: Int? = null,
     )
     
     data class BiliDashAudio(
-        @JsonProperty("id") val id: Int? = null,
-        @JsonProperty("baseUrl") val baseUrl: String? = null,
-        @JsonProperty("base_url") val base_url: String? = null,
-        @JsonProperty("bandwidth") val bandwidth: Int? = null,
+        @field:JsonProperty("id") val id: Int? = null,
+        @field:JsonProperty("baseUrl") val baseUrl: String? = null,
+        @field:JsonProperty("base_url") val base_url: String? = null,
+        @field:JsonProperty("bandwidth") val bandwidth: Int? = null,
     )
 
     // Data classes for Timeline API response
     data class BiliTimelineResponse(
-        @JsonProperty("code") val code: Int? = null,
-        @JsonProperty("message") val message: String? = null,
-        @JsonProperty("data") val data: BiliTimelineData? = null,
+        @field:JsonProperty("code") val code: Int? = null,
+        @field:JsonProperty("message") val message: String? = null,
+        @field:JsonProperty("data") val data: BiliTimelineData? = null,
     )
     
     data class BiliTimelineData(
-        @JsonProperty("items") val items: List<BiliTimelineDay>? = null,
+        @field:JsonProperty("items") val items: List<BiliTimelineDay>? = null,
     )
     
     data class BiliTimelineDay(
-        @JsonProperty("day_of_week") val dayOfWeek: String? = null,
-        @JsonProperty("date_text") val dateText: String? = null,
-        @JsonProperty("cards") val cards: List<BiliTimelineCard>? = null,
+        @field:JsonProperty("day_of_week") val dayOfWeek: String? = null,
+        @field:JsonProperty("date_text") val dateText: String? = null,
+        @field:JsonProperty("cards") val cards: List<BiliTimelineCard>? = null,
     )
     
     data class BiliTimelineCard(
-        @JsonProperty("title") val title: String? = null,
-        @JsonProperty("season_id") val seasonId: String? = null,
-        @JsonProperty("episode_id") val episodeId: String? = null,
-        @JsonProperty("cover") val cover: String? = null,
-        @JsonProperty("view") val view: String? = null,
-        @JsonProperty("index_show") val indexShow: String? = null,
-        @JsonProperty("style_list") val styleList: List<String>? = null,
+        @field:JsonProperty("title") val title: String? = null,
+        @field:JsonProperty("season_id") val seasonId: String? = null,
+        @field:JsonProperty("episode_id") val episodeId: String? = null,
+        @field:JsonProperty("cover") val cover: String? = null,
+        @field:JsonProperty("view") val view: String? = null,
+        @field:JsonProperty("index_show") val indexShow: String? = null,
+        @field:JsonProperty("style_list") val styleList: List<String>? = null,
     )
 
     // Data classes for Playurl API response (yt-dlp style)
     data class BiliPlayurlResponse(
-        @JsonProperty("code") val code: Int? = null,
-        @JsonProperty("message") val message: String? = null,
-        @JsonProperty("data") val data: BiliPlayurlData? = null,
+        @field:JsonProperty("code") val code: Int? = null,
+        @field:JsonProperty("message") val message: String? = null,
+        @field:JsonProperty("data") val data: BiliPlayurlData? = null,
     )
     
     data class BiliPlayurlData(
-        @JsonProperty("playurl") val playurl: BiliPlayurlInfo? = null,
+        @field:JsonProperty("playurl") val playurl: BiliPlayurlInfo? = null,
     )
     
     data class BiliPlayurlInfo(
-        @JsonProperty("video") val video: List<BiliVideoStream>? = null,
-        @JsonProperty("audio_resource") val audioResource: List<BiliAudioResource>? = null,
+        @field:JsonProperty("video") val video: List<BiliVideoStream>? = null,
+        @field:JsonProperty("audio_resource") val audioResource: List<BiliAudioResource>? = null,
     )
     
     data class BiliVideoStream(
-        @JsonProperty("video_resource") val videoResource: BiliVideoResource? = null,
-        @JsonProperty("stream_info") val streamInfo: BiliStreamInfo? = null,
+        @field:JsonProperty("video_resource") val videoResource: BiliVideoResource? = null,
+        @field:JsonProperty("stream_info") val streamInfo: BiliStreamInfo? = null,
     )
     
     data class BiliVideoResource(
-        @JsonProperty("url") val url: String? = null,
-        @JsonProperty("width") val width: Int? = null,
-        @JsonProperty("height") val height: Int? = null,
-        @JsonProperty("bandwidth") val bandwidth: Int? = null,
-        @JsonProperty("codecs") val codecs: String? = null,
-        @JsonProperty("size") val size: Long? = null,
+        @field:JsonProperty("url") val url: String? = null,
+        @field:JsonProperty("width") val width: Int? = null,
+        @field:JsonProperty("height") val height: Int? = null,
+        @field:JsonProperty("bandwidth") val bandwidth: Int? = null,
+        @field:JsonProperty("codecs") val codecs: String? = null,
+        @field:JsonProperty("size") val size: Long? = null,
     )
     
     data class BiliStreamInfo(
-        @JsonProperty("desc_words") val descWords: String? = null,
-        @JsonProperty("quality") val quality: Int? = null,
+        @field:JsonProperty("desc_words") val descWords: String? = null,
+        @field:JsonProperty("quality") val quality: Int? = null,
     )
     
     data class BiliAudioResource(
-        @JsonProperty("url") val url: String? = null,
-        @JsonProperty("bandwidth") val bandwidth: Int? = null,
-        @JsonProperty("codecs") val codecs: String? = null,
-        @JsonProperty("size") val size: Long? = null,
+        @field:JsonProperty("url") val url: String? = null,
+        @field:JsonProperty("bandwidth") val bandwidth: Int? = null,
+        @field:JsonProperty("codecs") val codecs: String? = null,
+        @field:JsonProperty("size") val size: Long? = null,
     )
 }
