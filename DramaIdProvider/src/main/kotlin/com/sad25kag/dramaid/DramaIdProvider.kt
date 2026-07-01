@@ -934,87 +934,87 @@ class DramaIdProvider : MainAPI() {
     )
 
     data class TmdbSearchResponse(
-        @JsonProperty("results")
+        @param:JsonProperty("results")
         val results: List<TmdbSearchItem>? = null,
     )
 
     data class TmdbSearchItem(
-        @JsonProperty("id")
+        @param:JsonProperty("id")
         val id: Int? = null,
-        @JsonProperty("name")
+        @param:JsonProperty("name")
         val name: String? = null,
-        @JsonProperty("title")
+        @param:JsonProperty("title")
         val title: String? = null,
-        @JsonProperty("original_name")
+        @param:JsonProperty("original_name")
         val originalName: String? = null,
-        @JsonProperty("original_title")
+        @param:JsonProperty("original_title")
         val originalTitle: String? = null,
-        @JsonProperty("first_air_date")
+        @param:JsonProperty("first_air_date")
         val firstAirDate: String? = null,
-        @JsonProperty("release_date")
+        @param:JsonProperty("release_date")
         val releaseDate: String? = null,
-        @JsonProperty("vote_count")
+        @param:JsonProperty("vote_count")
         val voteCount: Int? = null,
     )
 
     data class TmdbDetail(
-        @JsonProperty("id")
+        @param:JsonProperty("id")
         val id: Int? = null,
-        @JsonProperty("name")
+        @param:JsonProperty("name")
         val name: String? = null,
-        @JsonProperty("title")
+        @param:JsonProperty("title")
         val title: String? = null,
-        @JsonProperty("overview")
+        @param:JsonProperty("overview")
         val overview: String? = null,
-        @JsonProperty("poster_path")
+        @param:JsonProperty("poster_path")
         val posterPath: String? = null,
-        @JsonProperty("backdrop_path")
+        @param:JsonProperty("backdrop_path")
         val backdropPath: String? = null,
-        @JsonProperty("first_air_date")
+        @param:JsonProperty("first_air_date")
         val firstAirDate: String? = null,
-        @JsonProperty("release_date")
+        @param:JsonProperty("release_date")
         val releaseDate: String? = null,
-        @JsonProperty("vote_average")
+        @param:JsonProperty("vote_average")
         val voteAverage: Double? = null,
-        @JsonProperty("episode_run_time")
+        @param:JsonProperty("episode_run_time")
         val episodeRunTime: List<Int>? = null,
-        @JsonProperty("runtime")
+        @param:JsonProperty("runtime")
         val runtime: Int? = null,
-        @JsonProperty("status")
+        @param:JsonProperty("status")
         val status: String? = null,
-        @JsonProperty("genres")
+        @param:JsonProperty("genres")
         val genres: List<TmdbNamed>? = null,
-        @JsonProperty("keywords")
+        @param:JsonProperty("keywords")
         val keywords: TmdbKeywords? = null,
-        @JsonProperty("credits")
+        @param:JsonProperty("credits")
         val credits: TmdbCredits? = null,
     )
 
     data class TmdbNamed(
-        @JsonProperty("name")
+        @param:JsonProperty("name")
         val name: String? = null,
     )
 
     data class TmdbKeywords(
-        @JsonProperty("results")
+        @param:JsonProperty("results")
         val results: List<TmdbNamed>? = null,
-        @JsonProperty("keywords")
+        @param:JsonProperty("keywords")
         val keywords: List<TmdbNamed>? = null,
     )
 
     data class TmdbCredits(
-        @JsonProperty("cast")
+        @param:JsonProperty("cast")
         val cast: List<TmdbCast>? = null,
     )
 
     data class TmdbCast(
-        @JsonProperty("name")
+        @param:JsonProperty("name")
         val name: String? = null,
-        @JsonProperty("original_name")
+        @param:JsonProperty("original_name")
         val originalName: String? = null,
-        @JsonProperty("character")
+        @param:JsonProperty("character")
         val character: String? = null,
-        @JsonProperty("profile_path")
+        @param:JsonProperty("profile_path")
         val profilePath: String? = null,
     )
 }
