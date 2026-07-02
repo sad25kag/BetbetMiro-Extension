@@ -32,34 +32,16 @@ buildscript {
     }
 }
 
-val cloudstreamApiVersion = providers.gradleProperty("cloudstream.api.version")
-    .orElse("pre-release")
-    .get()
-
-val kotlinxCoroutinesVersion = providers.gradleProperty("kotlinx.coroutines.version")
-    .orElse("1.10.1")
-    .get()
-
-val kotlinxSerializationVersion = providers.gradleProperty("kotlinx.serialization.version")
-    .orElse("1.7.3")
-    .get()
-
-val androidCompileSdkVersion = providers.gradleProperty("android.compileSdk.version")
-    .orElse("35")
-    .get()
-    .toInt()
+val cloudstreamApiVersion = providers.gradleProperty("cloudstream.api.version").orElse("pre-release").get()
+val kotlinxCoroutinesVersion = providers.gradleProperty("kotlinx.coroutines.version").orElse("1.10.1").get()
+val kotlinxSerializationVersion = providers.gradleProperty("kotlinx.serialization.version").orElse("1.7.3").get()
+val androidCompileSdkVersion = providers.gradleProperty("android.compileSdk.version").orElse("35").get().toInt()
 
 allprojects {
     repositories {
         google()
         mavenCentral()
         maven("https://jitpack.io")
-    }
-
-    configurations.all {
-        resolutionStrategy {
-            failOnVersionConflict()
-        }
     }
 }
 
@@ -74,10 +56,7 @@ subprojects {
     apply(plugin = "com.lagradost.cloudstream3.gradle")
 
     cloudstream {
-        setRepo(
-            System.getenv("GITHUB_REPOSITORY")
-                ?: "https://github.com/sad25kag/BetbetMiro-Extension"
-        )
+        setRepo(System.getenv("GITHUB_REPOSITORY") ?: "https://github.com/sad25kag/BetbetMiro-Extension")
         authors = listOf("sad25kag")
     }
 
@@ -102,6 +81,8 @@ subprojects {
                     "-Xno-call-assertions",
                     "-Xno-param-assertions",
                     "-Xno-receiver-assertions",
+
+                    // ✅ FIX KT-73255 GLOBAL
                     "-Xannotation-default-target=param-property"
                 )
             }
@@ -110,23 +91,18 @@ subprojects {
 
     dependencies {
         add("cloudstream", "com.lagradost:cloudstream3:$cloudstreamApiVersion")
-
         add("implementation", kotlin("stdlib"))
         add("implementation", "org.jetbrains.kotlinx:kotlinx-coroutines-android:$kotlinxCoroutinesVersion")
         add("implementation", "org.jetbrains.kotlinx:kotlinx-coroutines-core:$kotlinxCoroutinesVersion")
         add("implementation", "org.jetbrains.kotlinx:kotlinx-serialization-json:$kotlinxSerializationVersion")
-
         add("implementation", "com.github.Blatzar:NiceHttp:0.4.18")
         add("implementation", "com.squareup.okhttp3:okhttp:4.12.0")
         add("implementation", "org.jsoup:jsoup:1.22.1")
-
         add("implementation", "com.fasterxml.jackson.module:jackson-module-kotlin:2.13.1")
         add("implementation", "com.fasterxml.jackson.core:jackson-databind:2.13.1")
         add("implementation", "com.google.code.gson:gson:2.11.0")
-
         add("implementation", "com.faendir.rhino:rhino-android:1.6.0")
         add("implementation", "app.cash.quickjs:quickjs-android:0.9.2")
-
         add("implementation", "me.xdrop:fuzzywuzzy:1.4.0")
         add("implementation", "androidx.core:core-ktx:1.18.0")
     }
