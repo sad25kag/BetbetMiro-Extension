@@ -135,10 +135,13 @@ open class DutaMovie : MainAPI() {
 
     // Poster dari elemen img di content-thumbnail
     val img = selectFirst("div.content-thumbnail img")
-    val posterUrl =
-        img?.attr("src")
-            ?.ifBlank { img.attr("data-src") }
-            ?.ifBlank { img.attr("srcset")?.split(" ")?.firstOrNull() }
+    val posterUrl = img?.let {
+        it.attr("src").ifBlank {
+            it.attr("data-src")
+        }.ifBlank {
+            it.attr("srcset")?.split(" ")?.firstOrNull()
+        }
+    }
 
     return newMovieSearchResponse(title, href, TvType.Movie) {
         this.posterUrl = fixUrlNull(posterUrl)
@@ -172,10 +175,10 @@ open class DutaMovie : MainAPI() {
     val tags = document.select("strong:contains(Genre) ~ a").eachText()
 
     val year =
-        document.select("div.gmr-moviedata strong:contains(Year:) > a")
-            ?.text()
-            ?.trim()
-            ?.toIntOrNull()
+    val year = document.select("div.gmr-moviedata strong:contains(Year:) > a")
+        .text()
+        .trim()
+        .toIntOrNull()
 
     val tvType = if (url.contains("/tv/")) TvType.TvSeries else TvType.Movie
     val description = document.selectFirst("div[itemprop=description] > p")?.text()?.trim()
