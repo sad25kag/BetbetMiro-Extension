@@ -12,12 +12,12 @@ buildscript {
     val kotlinVersion = project
         .findProperty("kotlin.version")
         ?.toString()
-        ?: "2.3.0"
+        ?: "2.4.0"
 
     val androidGradlePluginVersion = project
         .findProperty("android.gradle.plugin.version")
         ?.toString()
-        ?: "9.1.0"
+        ?: "9.1.1"
 
     repositories {
         google()
