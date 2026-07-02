@@ -272,7 +272,7 @@ class Filmapik : MainAPI() {
 
     override suspend fun loadLinks(
         data: String,
-        isCaster: Boolean,
+        isCasting: Boolean,
         subtitleCallback: (SubtitleFile) -> Unit,
         callback: (ExtractorLink) -> Unit
     ): Boolean {
