@@ -1332,7 +1332,7 @@ object DrakorProviderExtractor : DrakorProvider() {
 
     private fun extractPlayer4uLinks(document: Document, season: Int?, episode: Int?, title: String, year: Int?): List<Player4uLinkData> {
         return document.select(".playbtnx").mapNotNull { element ->
-            val titleText = element.text()?.split(" | ")?.lastOrNull() ?: return@mapNotNull null
+            val titleText = element.text().split(" | ")?.lastOrNull() ?: return@mapNotNull null
             if (season == null && episode == null) {
                 if (year != null && (titleText.startsWith("$title $year", ignoreCase = true) ||
                             titleText.startsWith("$title ($year)", ignoreCase = true))) {
