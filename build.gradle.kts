@@ -81,9 +81,7 @@ subprojects {
                     "-Xno-call-assertions",
                     "-Xno-param-assertions",
                     "-Xno-receiver-assertions",
-
-                    // ✅ FIX KT-73255 GLOBAL
-                    "-Xannotation-default-target=param-property"
+                    
                 )
             }
         }
