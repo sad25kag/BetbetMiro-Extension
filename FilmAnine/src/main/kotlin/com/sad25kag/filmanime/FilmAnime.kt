@@ -224,7 +224,7 @@ class FilmAnime : MainAPI() {
             info.videoStreams
                 .orEmpty()
                 .mapNotNull { stream ->
-                    val streamUrl = stream.link.takeIf { it.isNotBlank() } ?: return@mapNotNull null
+                    val streamUrl = stream.url.takeIf { it.isNotBlank() } ?: return@mapNotNull null
                     streamUrl to (stream.getResolution())
                 }
                 .distinctBy { it.first }
