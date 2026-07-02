@@ -1,24 +1,11 @@
 import com.android.build.api.dsl.LibraryExtension
 import com.lagradost.cloudstream3.gradle.CloudstreamExtension
+import org.gradle.api.plugins.JavaPluginExtension
+import org.gradle.kotlin.dsl.register
 import org.jetbrains.kotlin.gradle.dsl.JvmTarget
 import org.jetbrains.kotlin.gradle.tasks.KotlinJvmCompile
 
 buildscript {
-    val cloudstreamGradlePluginVersion = project
-        .findProperty("cloudstream.gradle.plugin.version")
-        ?.toString()
-        ?: "master-SNAPSHOT"
-
-    val kotlinVersion = project
-        .findProperty("kotlin.version")
-        ?.toString()
-        ?: "2.3.0"
-
-    val androidGradlePluginVersion = project
-        .findProperty("android.gradle.plugin.version")
-        ?.toString()
-        ?: "9.1.0"
-
     repositories {
         google()
         mavenCentral()
@@ -26,16 +13,11 @@ buildscript {
     }
 
     dependencies {
-        classpath("com.android.tools.build:gradle:$androidGradlePluginVersion")
-        classpath("com.github.recloudstream:gradle:$cloudstreamGradlePluginVersion")
-        classpath("org.jetbrains.kotlin:kotlin-gradle-plugin:$kotlinVersion")
+        classpath("com.android.tools.build:gradle:9.1.1")
+        classpath("com.github.recloudstream.gradle:gradle:81b1d424d")
+        classpath("org.jetbrains.kotlin:kotlin-gradle-plugin:2.4.0")
     }
 }
-
-val cloudstreamApiVersion = providers.gradleProperty("cloudstream.api.version").orElse("pre-release").get()
-val kotlinxCoroutinesVersion = providers.gradleProperty("kotlinx.coroutines.version").orElse("1.10.1").get()
-val kotlinxSerializationVersion = providers.gradleProperty("kotlinx.serialization.version").orElse("1.7.3").get()
-val androidCompileSdkVersion = providers.gradleProperty("android.compileSdk.version").orElse("35").get().toInt()
 
 allprojects {
     repositories {
@@ -43,68 +25,92 @@ allprojects {
         mavenCentral()
         maven("https://jitpack.io")
     }
+
+    configurations.all {
+        resolutionStrategy {
+            failOnVersionConflict()
+
+            force(
+                "com.fasterxml.jackson.module:jackson-module-kotlin:2.13.1",
+                "com.fasterxml.jackson.core:jackson-databind:2.13.1",
+                "org.mozilla:rhino:1.8.1"
+            )
+        }
+    }
 }
 
 fun Project.cloudstream(configuration: CloudstreamExtension.() -> Unit) =
-    extensions.getByType<CloudstreamExtension>().configuration()
+    extensions.getByName<CloudstreamExtension>("cloudstream").configuration()
 
-fun Project.android(configuration: LibraryExtension.() -> Unit) =
-    extensions.getByType<LibraryExtension>().configuration()
+fun Project.android(configuration: LibraryExtension.() -> Unit) {
+    extensions.getByName<LibraryExtension>("android").apply {
+        project.extensions.findByType(JavaPluginExtension::class.java)?.apply {
+            toolchain {
+                languageVersion.set(JavaLanguageVersion.of(17))
+            }
+        }
+        configuration()
+    }
+}
 
 subprojects {
     apply(plugin = "com.android.library")
     apply(plugin = "com.lagradost.cloudstream3.gradle")
 
     cloudstream {
-        setRepo(System.getenv("GITHUB_REPOSITORY") ?: "https://github.com/sad25kag/BetbetMiro-Extension")
-        authors = listOf("sad25kag")
+        setRepo(System.getenv("GITHUB_REPOSITORY") ?: "https://github.com/phisher98/cloudstream-extensions-phisher")
+        authors = listOf("Phisher98")
     }
 
     android {
-        namespace = "com.sad25kag"
-        compileSdk = androidCompileSdkVersion
+        namespace = "com.phisher98"
+        compileSdk = 36
 
         defaultConfig {
             minSdk = 21
         }
 
-        compileOptions {
-            sourceCompatibility = JavaVersion.VERSION_17
-            targetCompatibility = JavaVersion.VERSION_17
+        lint {
+            targetSdk = 36
         }
 
-        tasks.withType<KotlinJvmCompile>().configureEach {
-            compilerOptions {
-                jvmTarget.set(JvmTarget.JVM_17)
+        compileOptions {
+            sourceCompatibility = JavaVersion.VERSION_1_8
+            targetCompatibility = JavaVersion.VERSION_1_8
+        }
 
+        tasks.withType<KotlinJvmCompile> {
+            compilerOptions {
+                jvmTarget.set(JvmTarget.JVM_1_8)
                 freeCompilerArgs.addAll(
                     "-Xno-call-assertions",
                     "-Xno-param-assertions",
-                    "-Xno-receiver-assertions",
-
-                    // ✅ FIX KT-73255 GLOBAL
-                    "-Xannotation-default-target=param-property"
+                    "-Xno-receiver-assertions"
                 )
             }
         }
     }
 
     dependencies {
-        add("cloudstream", "com.lagradost:cloudstream3:$cloudstreamApiVersion")
-        add("implementation", kotlin("stdlib"))
-        add("implementation", "org.jetbrains.kotlinx:kotlinx-coroutines-android:$kotlinxCoroutinesVersion")
-        add("implementation", "org.jetbrains.kotlinx:kotlinx-coroutines-core:$kotlinxCoroutinesVersion")
-        add("implementation", "org.jetbrains.kotlinx:kotlinx-serialization-json:$kotlinxSerializationVersion")
-        add("implementation", "com.github.Blatzar:NiceHttp:0.4.18")
-        add("implementation", "com.squareup.okhttp3:okhttp:4.12.0")
-        add("implementation", "org.jsoup:jsoup:1.22.1")
-        add("implementation", "com.fasterxml.jackson.module:jackson-module-kotlin:2.13.1")
-        add("implementation", "com.fasterxml.jackson.core:jackson-databind:2.13.1")
-        add("implementation", "com.google.code.gson:gson:2.11.0")
-        add("implementation", "com.faendir.rhino:rhino-android:1.6.0")
-        add("implementation", "app.cash.quickjs:quickjs-android:0.9.2")
-        add("implementation", "me.xdrop:fuzzywuzzy:1.4.0")
-        add("implementation", "androidx.core:core-ktx:1.18.0")
+        val implementation by configurations
+        val cloudstream by configurations
+
+        cloudstream("com.lagradost:cloudstream3:pre-release")
+
+        implementation(kotlin("stdlib"))
+        implementation("com.github.Blatzar:NiceHttp:0.4.18")
+        implementation("org.jsoup:jsoup:1.22.2")
+        implementation("androidx.annotation:annotation:1.10.0")
+
+        implementation("com.fasterxml.jackson.module:jackson-module-kotlin:2.13.1")
+        implementation("com.fasterxml.jackson.core:jackson-databind:2.13.1")
+        implementation("org.jetbrains.kotlinx:kotlinx-coroutines-android:1.10.2")
+
+        implementation("org.mozilla:rhino:1.8.1")
+        implementation("me.xdrop:fuzzywuzzy:1.4.0")
+        implementation("com.google.code.gson:gson:2.14.0")
+        implementation("org.jetbrains.kotlinx:kotlinx-serialization-json:1.11.0")
+        implementation("org.bouncycastle:bcpkix-jdk18on:1.84")
     }
 }
 
