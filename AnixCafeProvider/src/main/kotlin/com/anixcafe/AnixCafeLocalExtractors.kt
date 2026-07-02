@@ -159,6 +159,7 @@ open class AnixCafeDailymotion : ExtractorApi() {
         subtitles?.keys()?.forEach { lang ->
             val value = subtitles.opt(lang)
             val entries = when (value) {
+                null -> JSONArray()
                 is JSONArray -> value
                 is JSONObject -> value.optJSONArray("data") ?: JSONArray().put(value)
                 else -> JSONArray()
