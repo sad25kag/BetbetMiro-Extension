@@ -224,7 +224,7 @@ class FilmAnime : MainAPI() {
             info.videoStreams
                 .orEmpty()
                 .mapNotNull { stream ->
-                    val streamUrl = stream.url?.takeIf { it.isNotBlank() } ?: return@mapNotNull null
+                    val streamUrl = stream.url.orEmpty().takeIf { it.isNotBlank() } ?: return@mapNotNull null
                     streamUrl to stream.resolution.orEmpty()
                 }
                 .distinctBy { it.first }
@@ -389,8 +389,9 @@ class FilmAnime : MainAPI() {
     private fun Element.toSearchResponse(): SearchResponse? {
         val card = bestCard()
         val anchor = card.selectFirst("a.tip[href], a[href*='/anime/'], a[href*='episode'], a[href*='/movie/'], a[href*='movie'], a[href*='ova'], a[href]")
-            ?: if (tagName().equals("a", true)) this else null
-            ?: return null
+        ?: if (tagName().equals("a", true)) this else null
+
+        if (anchor == null) return null
         val href = anchor.attr("href").toAbsoluteUrl() ?: return null
         if (!href.startsWith(mainUrl, true) || href.isBlockedUrl()) return null
 
