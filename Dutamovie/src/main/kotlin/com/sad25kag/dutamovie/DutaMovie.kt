@@ -174,8 +174,7 @@ open class DutaMovie : MainAPI() {
 
     val tags = document.select("strong:contains(Genre) ~ a").eachText()
 
-    val year =
-    val year = document.select("div.gmr-moviedata strong:contains(Year:) > a")
+     val year = document.select("div.gmr-moviedata strong:contains(Year:) > a")
         .text()
         .trim()
         .toIntOrNull()
