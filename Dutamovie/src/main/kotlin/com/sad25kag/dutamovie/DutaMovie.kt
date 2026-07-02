@@ -139,7 +139,7 @@ open class DutaMovie : MainAPI() {
         it.attr("src").ifBlank {
             it.attr("data-src")
         }.ifBlank {
-            it.attr("srcset")?.split(" ")?.firstOrNull()
+            it.attr("srcset").split(" ").firstOrNull()
         }
     }
 
