@@ -1,7 +1,7 @@
 name: Build All
 
 concurrency:
-  group: "quarantine-maintenance-build-all"
+  group: "main-maintenance-build-all"
   cancel-in-progress: true
 
 on:
@@ -38,7 +38,7 @@ jobs:
       - name: Setup Android SDK
         uses: android-actions/setup-android@v3.2.2
 
-      #  FIX: lock Node version to remove GitHub Actions warning
+      # 🔧 FIX: lock Node version to remove GitHub Actions warning
       - name: Setup Node 20
         uses: actions/setup-node@v4
         with:
@@ -97,5 +97,5 @@ jobs:
           git config --local user.email "actions@github.com"
           git config --local user.name "GitHub Actions"
           git add -A
-          git commit -m "Maintenance full rebuild: $GITHUB_SHA" || exit 0
+          git commit -m "maintenance full rebuild: $GITHUB_SHA" || exit 0
           git push

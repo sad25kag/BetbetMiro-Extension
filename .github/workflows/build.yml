@@ -179,5 +179,5 @@ jobs:
           git config --local user.name "GitHub Actions"
 
           git add .
-          git commit -m "Maintenance build updated plugins: ${{ steps.changed.outputs.plugins }} ($GITHUB_SHA)" || exit 0
+          git commit -m "maintenance build updated plugins: ${{ steps.changed.outputs.plugins }} ($GITHUB_SHA)" || exit 0
           git push
