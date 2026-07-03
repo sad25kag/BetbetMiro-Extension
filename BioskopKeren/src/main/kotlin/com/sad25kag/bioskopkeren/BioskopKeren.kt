@@ -758,21 +758,21 @@ class BioskopKeren : MainAPI() {
         }
     }
 
+    
     private fun String.cleanTitle(): String {
         return decodeEscaped()
-            .replace(Regex("""(?i)^s*permalinks+kes*:s*"""), "")
-            .replace(Regex("""(?i)^s*permalinks+tos*:s*"""), "")
-            .replace(Regex("""(?i)^s*BIOSKOPKERENs*[-|:]s*"""), "")
-            .replace(Regex("""s+-s+BIOSKOPKEREN.*$""", RegexOption.IGNORE_CASE), "")
-            .replace(Regex("""s+|s+BIOSKOPKEREN.*$""", RegexOption.IGNORE_CASE), "")
-            .replace(Regex("""^Nontons+Films+""", RegexOption.IGNORE_CASE), "")
-            .replace(Regex("""s+Streamings+Online.*$""", RegexOption.IGNORE_CASE), "")
-            .replace(Regex("""s+Download.*$""", RegexOption.IGNORE_CASE), "")
-            .replace(Regex("""s+Subtitles+Indonesia.*$""", RegexOption.IGNORE_CASE), "")
-            .replace(Regex("""s+Subs+Indo.*$""", RegexOption.IGNORE_CASE), "")
-            .replace(Regex("""s+Fulls+Movie.*$""", RegexOption.IGNORE_CASE), "")
-            .replace(Regex("""s+…$"""), "")
-            .replace(Regex("""s+"""), " ")
+            .replace(Regex("""(?i)^\s*permalink\s*(kes|tos)\s*:\s*"""), "")
+            .replace(Regex("""(?i)^\s*bioskopkeren\s*[-|:]\s*"""), "")
+            .replace(Regex("""\s+-\s+bioskopkeren.*$""", RegexOption.IGNORE_CASE), "")
+            .replace(Regex("""\s+\|\s+bioskopkeren.*$""", RegexOption.IGNORE_CASE), "")
+            .replace(Regex("""(?i)^nonton\s+film\s*"""), "")
+            .replace(Regex("""\s+streaming\s+online.*$""", RegexOption.IGNORE_CASE), "")
+            .replace(Regex("""\s+download.*$""", RegexOption.IGNORE_CASE), "")
+            .replace(Regex("""\s+subtitle\s+indonesia.*$""", RegexOption.IGNORE_CASE), "")
+            .replace(Regex("""\s+subs\s+indo.*$""", RegexOption.IGNORE_CASE), "")
+            .replace(Regex("""\s+full\s+movie.*$""", RegexOption.IGNORE_CASE), "")
+            .replace(Regex("""\s+…$"""), "")
+            .replace(Regex("""\s+"""), " ")
             .trim()
     }
 
