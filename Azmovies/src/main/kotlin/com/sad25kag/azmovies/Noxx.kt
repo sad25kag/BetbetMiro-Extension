@@ -360,7 +360,7 @@ class Noxx : MainAPI() {
         val subtitleUrl = url.substringAfter("c1_file=", "").substringBefore("&").urlDecode()
         if (subtitleUrl.isBlank() || !subtitleUrl.contains(".vtt", true)) return null
         val label = url.substringAfter("c1_label=", "English").substringBefore("&").urlDecode()
-        return newSubtitleFile(label.ifBlank { "English" }, subtitleUrl)
+        return kotlinx.coroutines.runBlocking { newSubtitleFile(label.ifBlank { "English" }, subtitleUrl) }
     }
 
     private fun normalizeVidsrcUrl(url: String): String {

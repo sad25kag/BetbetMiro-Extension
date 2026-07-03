@@ -68,7 +68,7 @@ internal object IndonesianSubtitleResolver {
         return subtitles
     }
 
-    fun extractFromText(text: String, baseUrl: String): List<SubtitleFile> {
+    suspend fun extractFromText(text: String, baseUrl: String): List<SubtitleFile> {
         val subtitles = mutableListOf<SubtitleFile>()
         val seen = linkedSetOf<String>()
 
@@ -101,7 +101,7 @@ internal object IndonesianSubtitleResolver {
         return subtitles
     }
 
-    private fun extractFromUrls(urls: List<String>, baseUrl: String): List<SubtitleFile> {
+    private suspend fun extractFromUrls(urls: List<String>, baseUrl: String): List<SubtitleFile> {
         return urls.mapNotNull { rawUrl ->
             val url = rawUrl.replace("&amp;", "&").trim()
             val subtitleUrl = url.queryValue("c1_file") ?: return@mapNotNull null
