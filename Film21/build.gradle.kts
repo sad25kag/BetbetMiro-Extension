@@ -4,7 +4,7 @@ cloudstream {
     authors = listOf("sad25kag")
     language = "id"
     description = "Film21 provider untuk streaming film subtitle Indonesia dari palacepalace.com dengan parser listing, detail movie/series, dan extractor modular Muvipro/P2PPlay/PlayerP2P/EditDulu/PlayDulu berbasis evidence source aktif."
-    status = 0
+    status = 1
 
     tvTypes = listOf(
         "Movie",
