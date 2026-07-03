@@ -164,7 +164,8 @@ class BioskopKeren : MainAPI() {
         }
     }
 
-    override suspend fun loadLinks(
+    override suspend 
+fun loadLinks(
         data: String,
         isCasting: Boolean,
         subtitleCallback: (SubtitleFile) -> Unit,
@@ -181,12 +182,7 @@ class BioskopKeren : MainAPI() {
         ).document
 
         val initialPlayers = collectPlayerUrls(document, watchUrl).distinct()
-        bkLog("initialPlayers=${initialPlayers.size}")
-        initialPlayers.forEach { bkLog("initialPlayer=$it") }
-
         val serverPages = collectServerPageUrls(document, watchUrl).distinct()
-        bkLog("serverPages=${serverPages.size}")
-        serverPages.forEach { bkLog("serverPage=$it") }
 
         val iframeUrls = linkedSetOf<String>()
         initialPlayers.forEach { iframeUrls.add(it) }
@@ -197,36 +193,38 @@ class BioskopKeren : MainAPI() {
                 app.get(serverPage, headers = siteHeaders, referer = watchUrl, timeout = 30L).document
             }.getOrNull()
 
-            if (serverDocument == null) {
-                bkLog("serverPageFetchFailed=$serverPage")
-                return@forEach
+            if (serverDocument != null) {
+                collectPlayerUrls(serverDocument, serverPage).forEach { iframeUrls.add(it) }
             }
-
-            val serverPlayers = collectPlayerUrls(serverDocument, serverPage).distinct()
-            bkLog("serverPage=$serverPage serverPlayers=${serverPlayers.size}")
-            serverPlayers.forEach { bkLog("serverPlayer=$it") }
-            serverPlayers.forEach { iframeUrls.add(it) }
         }
 
-        bkLog("mergedIframeUrls=${iframeUrls.size}")
-        iframeUrls.forEach { bkLog("mergedIframe=$it") }
+        var emitted = false
 
-        var found = false
         iframeUrls
             .filterNot { isBadPlaybackUrl(it) }
             .forEach { iframeUrl ->
-    @Suppress("DEPRECATION")
-                found = resolveIframeWithExtractor(
+
+                val wrapperCallback: (ExtractorLink) -> Unit = {
+                    emitted = true
+                    callback(it)
+                }
+
+                resolveIframeWithExtractor(
                     iframeUrl,
                     watchUrl,
                     subtitleCallback,
-                    callback
-                ) || found
+                    wrapperCallback
+                ).also { ok ->
+                    // optional log retained behavior
+                    bkLog("resolveIframe result=$ok url=$iframeUrl")
+                }
             }
 
-        bkLog("loadLinksResult=$found")
-        return found
+        bkLog("loadLinksResult_emitted=$emitted")
+
+        return emitted
     }
+
 
     @Suppress("DEPRECATION")
     private suspend fun resolveIframeWithExtractor(
@@ -813,7 +811,3 @@ class BioskopKeren : MainAPI() {
         )
     }
 }
-
-// ZONA4 FIX AUTO-INJECT
-// Safety fallback to avoid silent no-link playback
-// NOTE: kept minimal and zone-isolated
