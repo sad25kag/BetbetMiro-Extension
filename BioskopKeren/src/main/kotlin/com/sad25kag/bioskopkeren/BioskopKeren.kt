@@ -41,25 +41,9 @@ class BioskopKeren : MainAPI() {
         "Accept-Language" to "id-ID,id;q=0.9,en-US;q=0.8,en;q=0.7"
     )
 
-    
-
-
-
-private fun String.isUiText(): Boolean {
-    val lower = trim().lowercase()
-    if (lower.isBlank()) return true
-    if (lower.length <= 1) return true
-    if (lower.matches(Regex("""^\d+$"""))) return true
-
-    return lower in setOf(
-        "home","next","previous","prev","movies","series","search",
-        "genre","watch","download","login","register","trailer","play"
-    )
-}
-
-
-
-
+    private fun bkLog(message: String) {
+        println("BIOSKOPKEREN-Z4 $message")
+    }
 
     override val mainPage = mainPageOf(
         "best-rating/" to "Best Rating",
@@ -524,14 +508,20 @@ private fun String.isUiText(): Boolean {
             .distinct()
     }
 
-    
-private fun String.cleanPlot(): String? {
-    return decodeEscaped()
-        .replace(Regex("""\s+"""), " ")
-        .trim()
-        .takeIf { it.isNotBlank() && it.length > 20 }
-}
+    private fun extractPlot(document: Document): String? {
+        document.selectFirst("meta[property=og:description], meta[name=description]")
+            ?.attr("content")
+            ?.cleanPlot()
+            ?.let { return it }
 
+        val entry = document.selectFirst(".entry-content.entry-content-single, .entry-content")
+            ?: return null
+
+        val clone = entry.clone()
+        clone.select("script, style, .content-moviedata, .gmr-moviedata, h1, h2, h3").remove()
+
+        return clone.selectFirst("p")?.text()?.cleanPlot() ?: clone.text().cleanPlot()
+    }
 
     private fun hasNextPage(document: Document, page: Int): Boolean {
         return document.selectFirst(
