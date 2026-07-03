@@ -5,7 +5,7 @@ cloudstream {
     language = "id"
     authors = listOf("BetbetMiro")
 
-    status = 1
+    status = 3
     tvTypes = listOf(
         "Movie",
         "TvSeries",

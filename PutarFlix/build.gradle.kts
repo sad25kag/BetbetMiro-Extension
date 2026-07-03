@@ -5,7 +5,7 @@ cloudstream {
     authors = listOf("sad25kag")
     description = "PutarFlix provider with approved source-backed categories and Semawur/FilePress playback fallback for current mirror links."
 
-    status = 1
+    status = 3
 
     tvTypes = listOf(
         "Movie",

@@ -22,6 +22,7 @@ object SurgeFilm21Parser {
             .mapNotNull { it.toSearchResponse(api, baseUrl, defaultType) }
             .distinctBy { it.url }
             .filter { it.name.length >= 2 }
+            .filterNot { it.name.isNsfwContentSf21() || it.url.isNsfwContentSf21() }
     }
 
     fun parseSectionItems(api: MainAPI, document: Document, sectionName: String, baseUrl: String, defaultType: TvType = TvType.Movie): List<SearchResponse> {
@@ -38,6 +39,7 @@ object SurgeFilm21Parser {
         val scoped = scopes.flatMap { scope ->
             scope.select(cardSelectors).mapNotNull { it.toSearchResponse(api, baseUrl, defaultType) }
         }.distinctBy { it.url }
+            .filterNot { it.name.isNsfwContentSf21() || it.url.isNsfwContentSf21() }
 
         return scoped.ifEmpty { parseHomeItems(api, document, baseUrl, defaultType) }
     }
@@ -57,6 +59,7 @@ object SurgeFilm21Parser {
 
         if (title.length < 2) return null
         if (title.equals("lihat semua", true) || title.equals("watch now", true) || title.equals("favorite", true)) return null
+        if (title.isNsfwContentSf21() || href.isNsfwContentSf21()) return null
 
         val poster = posterUrl(this, baseUrl)
         val type = inferType(title, href, defaultType)
@@ -119,6 +122,7 @@ object SurgeFilm21Parser {
         return document.select("a[href*='/genre/'], a[href*='/category/'], a[href*='/country/'], .genre a, .genres a, .category a, .tag a")
             .map { it.text().cleanSf21() }
             .filter { it.isNotBlank() && it.length <= 40 }
+            .filterNot { it.isNsfwContentSf21() }
             .distinct()
     }
 
@@ -140,6 +144,7 @@ object SurgeFilm21Parser {
             val href = element.attr("href").absUrlSf21(pageUrl) ?: return@mapNotNull null
             if (!href.contains("/series/episode/", true)) return@mapNotNull null
             if (href.trimEnd('/') == pageUrl.trimEnd('/')) return@mapNotNull null
+            if (href.isNsfwContentSf21() || element.text().isNsfwContentSf21()) return@mapNotNull null
 
             val number = Regex("""(?i)(?:episode|eps|ep|e)[-_\s]*(\d+)""").find(href)?.groupValues?.getOrNull(1)?.toIntOrNull()
                 ?: Regex("""(?i)\bEpisode\s*(\d+)\b""").find(element.text().trim())?.groupValues?.getOrNull(1)?.toIntOrNull()
@@ -160,7 +165,6 @@ object SurgeFilm21Parser {
             text.contains("animation") || text.contains("animasi") || text.contains("cartoon") -> TvType.Cartoon
             text.contains("/series/") || text.contains("series") || text.contains("season") || text.contains("episode") || url.isSeriesLikeSf21() -> TvType.TvSeries
             text.contains("drama china") || text.contains("drama korea") || text.contains("thai") || text.contains("thailand") || text.contains("philippines") -> TvType.AsianDrama
-            text.contains("semi") || text.contains("dewasa") -> TvType.NSFW
             else -> defaultType
         }
     }

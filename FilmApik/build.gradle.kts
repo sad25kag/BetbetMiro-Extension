@@ -12,7 +12,7 @@ cloudstream {
      * 2: Slow
      * 3: Beta only
      */
-    status = 1
+    status = 3
 
     tvTypes = listOf(
         "Movie",

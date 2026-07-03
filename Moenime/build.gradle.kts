@@ -12,7 +12,7 @@ cloudstream {
      * 2: Slow
      * 3: Beta only
      */
-    status = 1
+    status = 3
 
     tvTypes = listOf("Anime", "AnimeMovie", "OVA")
     iconUrl = "https://www.google.com/s2/favicons?domain=moenime.com&sz=%size%"

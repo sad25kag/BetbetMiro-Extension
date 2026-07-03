@@ -4,7 +4,7 @@ cloudstream {
     authors = listOf("sad25kag")
     language = "id"
     description = "JavOrb provider evidence-based dari javorb.com dengan homepage categories, listing cards, detail movie metadata, dan playback resolver untuk iframe/API/direct media dari source aktif."
-    status = 1
+    status = 3
 
     tvTypes = listOf(
         "Movie"

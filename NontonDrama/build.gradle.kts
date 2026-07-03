@@ -4,7 +4,7 @@ cloudstream {
     authors = listOf("sad25kag")
     language = "id"
     description = "NontonDrama provider for nontondrama.blog with homepage, search, detail, episode/play-item parsing, and generic iframe/HLS resolver."
-    status = 1
+    status = 3
     tvTypes = listOf(
         "AsianDrama",
         "TvSeries",

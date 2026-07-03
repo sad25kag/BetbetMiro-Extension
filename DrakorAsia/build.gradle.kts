@@ -5,7 +5,7 @@ cloudstream {
     authors = listOf("sad25kag")
     description = "DrakorAsia provider for Korean and Asian drama from drakorasia.site. HAR-aligned Blogger feed parser with selectServ/AbyssPlayer and tiarway playback resolver. Movie playback routing v9."
 
-    status = 1
+    status = 3
 
     tvTypes = listOf(
         "Movie",
