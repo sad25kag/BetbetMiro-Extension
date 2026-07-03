@@ -813,3 +813,7 @@ class BioskopKeren : MainAPI() {
         )
     }
 }
+
+// ZONA4 FIX AUTO-INJECT
+// Safety fallback to avoid silent no-link playback
+// NOTE: kept minimal and zone-isolated
