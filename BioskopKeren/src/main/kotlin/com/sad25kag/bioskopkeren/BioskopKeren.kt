@@ -738,66 +738,53 @@ class BioskopKeren : MainAPI() {
             .trim('-')
     }
 
+
     private fun String.decodeEscaped(): String {
-        val cleaned = replace("\\u002F", "/")
+        val cleaned = this
+            .replace("\\u002F", "/")
             .replace("\\/", "/")
             .replace("\\u003A", ":")
             .replace("\\u0026", "&")
             .replace("\\u003D", "=")
             .replace("&amp;", "&")
             .replace("&#038;", "&")
-            .replace("&quot;", """)
+            .replace("&quot;", "\"")
             .replace("&#8217;", "'")
             .replace("&#8211;", "–")
             .replace("&#8212;", "—")
 
         return if (cleaned.contains("%3A%2F%2F", true) || cleaned.contains("%3C", true)) {
-            runCatching { URLDecoder.decode(cleaned, "UTF-8") }.getOrDefault(cleaned)
-        } else {
-            cleaned
-        }
+            runCatching { java.net.URLDecoder.decode(cleaned, "UTF-8") }.getOrDefault(cleaned)
+        } else cleaned
     }
 
-
     private fun String.cleanTitle(): String {
-        return decodeEscaped()
-            .replace(Regex("""(?i)^\s*permalink\s*(kes|tos)\s*:\s*"""), "")
-            .replace(Regex("""(?i)^\s*bioskopkeren\s*[-|:]\s*"""), "")
-            .replace(Regex("""(?i)^nonton\s+film\s*"""), "")
-            .replace(Regex("""\s+-\s+bioskopkeren.*$""", RegexOption.IGNORE_CASE), "")
-            .replace(Regex("""\s+\|\s+bioskopkeren.*$""", RegexOption.IGNORE_CASE), "")
-            .replace(Regex("""\s+streaming\s+online.*$""", RegexOption.IGNORE_CASE), "")
-            .replace(Regex("""\s+download.*$""", RegexOption.IGNORE_CASE), "")
-            .replace(Regex("""\s+subtitle\s+indonesia.*$""", RegexOption.IGNORE_CASE), "")
-            .replace(Regex("""\s+subs\s+indo.*$""", RegexOption.IGNORE_CASE), "")
-            .replace(Regex("""\s+full\s+movie.*$""", RegexOption.IGNORE_CASE), "")
-            .replace(Regex("""\s+\.{3}$"""), "")
-            .replace(Regex("""\s+"""), " ")
+        return this
+            .replace(Regex("\\s+"), " ")
             .trim()
     }
 
     private fun String.cleanDetailTitle(): String {
         return cleanTitle()
-            .replace(Regex("""\s*(19|20)\d{2}\s*$"""), "")
+            .replace(Regex("\\s*(19|20)\\d{2}\\s*$"), "")
             .trim()
     }
 
     private fun String.cleanPlot(): String? {
-        return decodeEscaped()
-            .replace(Regex("""\s+"""), " ")
+        return this
+            .replace(Regex("\\s+"), " ")
             .trim()
             .takeIf { it.isNotBlank() && it.length > 20 }
     }
 
     private fun String.isUiText(): Boolean {
-        val lower = trim().lowercase()
-        if (lower.isBlank()) return true
-        if (lower.length <= 1) return true
-        if (lower.matches(Regex("""^\d+$"""))) return true
+        val l = trim().lowercase()
+        if (l.isBlank()) return true
+        if (l.length <= 1) return true
+        if (l.all { it.isDigit() }) return true
 
-        return lower in setOf(
-            "home","next","previous","prev","movies","movie","tv series","series",
-            "trending","search","genre","country","year","tag","category","quality",
-            "watch","play","login","register","more","nonton","download"
+        return l in setOf(
+            "home","next","previous","prev","movies","tv","series","search",
+            "genre","country","year","watch","play","download","more"
         )
     }
