@@ -1,34 +1,32 @@
 name: Build All
 
 concurrency:
-  group: "build"
+  group: "quarantine-maintenance-build-all"
   cancel-in-progress: true
 
 on:
   workflow_dispatch:
-  push:
-    branches:
-      - quarantine
-    paths-ignore:
-      - "*.md"
+
+permissions:
+  contents: write
 
 jobs:
   build:
     runs-on: ubuntu-latest
 
     steps:
-      - name: Checkout
+      - name: Checkout source
         uses: actions/checkout@v4.2.2
         with:
           path: "src"
 
-      - name: Checkout builds
+      - name: Checkout maintenance branch
         uses: actions/checkout@v4.2.2
         with:
           ref: "maintenance"
           path: "maintenance"
 
-      - name: Clean old builds
+      - name: Clean old maintenance builds
         run: rm $GITHUB_WORKSPACE/maintenance/*.cs3 || true
 
       - name: Setup JDK 21
@@ -40,7 +38,7 @@ jobs:
       - name: Setup Android SDK
         uses: android-actions/setup-android@v3.2.2
 
-      # FIX: lock Node version to avoid GitHub Actions Node 24 warning
+      #  FIX: lock Node version to remove GitHub Actions warning
       - name: Setup Node 20
         uses: actions/setup-node@v4
         with:
@@ -84,19 +82,20 @@ jobs:
           echo SUPERSTREAM_THIRD_API=$SUPERSTREAM_THIRD_API >> local.properties
           echo SUPERSTREAM_FOURTH_API=$SUPERSTREAM_FOURTH_API >> local.properties
 
-      - name: Build Plugins
+      - name: Build all plugins
         run: |
           cd $GITHUB_WORKSPACE/src
           chmod +x gradlew
           ./gradlew make makePluginsJson
+          sed -i 's|/BetbetMiro-Extension/builds/|/BetbetMiro-Extension/maintenance/|g' build/plugins.json
           cp **/build/*.cs3 $GITHUB_WORKSPACE/maintenance
           cp build/plugins.json $GITHUB_WORKSPACE/maintenance
 
-      - name: Push builds
+      - name: Push maintenance
         run: |
           cd $GITHUB_WORKSPACE/maintenance
           git config --local user.email "actions@github.com"
           git config --local user.name "GitHub Actions"
-          git add .
-          git commit --amend -m "Build $GITHUB_SHA" || exit 0
-          git push --force
+          git add -A
+          git commit -m "Maintenance full rebuild: $GITHUB_SHA" || exit 0
+          git push
