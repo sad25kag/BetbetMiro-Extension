@@ -8,7 +8,7 @@ on:
   workflow_dispatch:
   push:
     branches:
-      - error # 1. TRIGGER DIUBAH DARI 'master' KE 'error'
+      - error
     paths-ignore:
       - "*.md"
 
@@ -22,22 +22,20 @@ jobs:
         with:
           path: "src"
 
-      - name: Checkout maintenance branch
+      - name: Checkout builds
         uses: actions/checkout@v4.2.2
         with:
-          ref: "maintenance" # 2. REFEERENSI TARGET DIUBAH KE 'maintenance'
-          path: "maintenance" # 3. FOLDER LOKAL DIUBAH KE 'maintenance'
+          ref: "maintenance"
+          path: "maintenance"
 
-      - name: Clean old maintenance builds
-        run: rm $GITHUB_WORKSPACE/maintenance/*.cs3 || true # 4. PATH DIUBAH KE 'maintenance'
+      - name: Clean old builds
+        run: rm $GITHUB_WORKSPACE/maintenance/*.cs3 || true
 
       - name: Setup JDK 21
         uses: actions/setup-java@v4.6.0
         with:
           distribution: "adopt"
           java-version: 21
-          # ⚡ OPTIMASI: Mengaktifkan cache Gradle untuk mempercepat build selanjutnya
-          cache: 'gradle'
 
       - name: Setup Android SDK
         uses: android-actions/setup-android@v3.2.2
@@ -90,19 +88,15 @@ jobs:
         run: |
           cd $GITHUB_WORKSPACE/src
           chmod +x gradlew
-          
-          # ⚡ OPTIMASI: Menambahkan --no-daemon agar penggunaan RAM runner lebih hemat dan stabil
-          ./gradlew make makePluginsJson --no-daemon
-          
-          # 5. BERKAS OUTPUT DIALIKHAN KE FOLDER LOKAL 'maintenance'
+          ./gradlew make makePluginsJson
           cp **/build/*.cs3 $GITHUB_WORKSPACE/maintenance
           cp build/plugins.json $GITHUB_WORKSPACE/maintenance
 
-      - name: Push maintenance
+      - name: Push builds
         run: |
-          cd $GITHUB_WORKSPACE/maintenance # 6. PINDAH KE FOLDER 'maintenance'
+          cd $GITHUB_WORKSPACE/maintenance
           git config --local user.email "actions@github.com"
           git config --local user.name "GitHub Actions"
           git add .
-          git commit --amend -m "Maintenance Build $GITHUB_SHA" || exit 0
+          git commit --amend -m "Build $GITHUB_SHA" || exit 0
           git push --force
