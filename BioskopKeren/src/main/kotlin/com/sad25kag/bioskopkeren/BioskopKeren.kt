@@ -1,5 +1,3 @@
-@file:Suppress("DEPRECATION")
-
 package com.sad25kag.bioskopkeren
 
 import com.lagradost.cloudstream3.HomePageList
@@ -126,8 +124,7 @@ class BioskopKeren : MainAPI() {
             ?: fixedUrl.slugTitle().cleanDetailTitle()
 
         val poster = document.selectFirst(
-            "meta[property=og:image], meta[name=twitter:image], " +
-                ".gmr-movie-data img, .entry-content img, img.wp-post-image"
+            "meta[property=og:image], meta[name=twitter:image], .gmr-movie-data img, .entry-content img, img.wp-post-image"
         )?.let { if (it.hasAttr("content")) it.attr("content") else it.getImageAttr() }
             ?.let { resolveUrl(it, fixedUrl) ?: fixUrlNull(it) }
             ?.takeIf { !isBadImage(it) }
@@ -164,8 +161,7 @@ class BioskopKeren : MainAPI() {
         }
     }
 
-    override suspend 
-fun loadLinks(
+    override suspend fun loadLinks(
         data: String,
         isCasting: Boolean,
         subtitleCallback: (SubtitleFile) -> Unit,
@@ -174,57 +170,66 @@ fun loadLinks(
         val watchUrl = normalizeProviderUrl(fixUrl(data))
         bkLog("watchUrl=$watchUrl")
 
-        val document = app.get(
-            watchUrl,
-            headers = siteHeaders,
-            referer = "$mainUrl/",
-            timeout = 30L
-        ).document
+        val document = runCatching {
+            app.get(
+                watchUrl,
+                headers = siteHeaders,
+                referer = "$mainUrl/",
+                timeout = 30L
+            ).document
+        }.getOrNull() ?: return false
 
-        val initialPlayers = collectPlayerUrls(document, watchUrl).distinct()
-        val serverPages = collectServerPageUrls(document, watchUrl).distinct()
+        val candidates = linkedSetOf<String>()
+        candidates.addAll(collectPlayerUrls(document, watchUrl))
+        candidates.addAll(collectServerPageUrls(document, watchUrl))
 
         val iframeUrls = linkedSetOf<String>()
-        initialPlayers.forEach { iframeUrls.add(it) }
 
-        serverPages.forEach { serverPage ->
-            if (serverPage == watchUrl) return@forEach
-            val serverDocument = runCatching {
-                app.get(serverPage, headers = siteHeaders, referer = watchUrl, timeout = 30L).document
-            }.getOrNull()
-
-            if (serverDocument != null) {
-                collectPlayerUrls(serverDocument, serverPage).forEach { iframeUrls.add(it) }
-            }
+        candidates.forEach { url ->
+            if (url == watchUrl) return@forEach
+            iframeUrls.add(url)
         }
+
+        val extraCandidates = linkedSetOf<String>()
+        iframeUrls.forEach { pageUrl ->
+            val serverDocument = runCatching {
+                app.get(pageUrl, headers = siteHeaders, referer = watchUrl, timeout = 30L).document
+            }.getOrNull() ?: return@forEach
+
+            extraCandidates.addAll(collectPlayerUrls(serverDocument, pageUrl))
+            extraCandidates.addAll(collectServerPageUrls(serverDocument, pageUrl))
+            extraCandidates.addAll(extractMediaUrls(serverDocument.html(), pageUrl))
+            extraCandidates.addAll(extractMediaUrls(serverDocument.text(), pageUrl))
+        }
+
+        val allUrls = linkedSetOf<String>()
+        allUrls.addAll(candidates)
+        allUrls.addAll(extraCandidates)
+
+        bkLog("candidateCount=${allUrls.size}")
+        allUrls.forEach { bkLog("candidate=$it") }
 
         var emitted = false
 
-        iframeUrls
+        allUrls
             .filterNot { isBadPlaybackUrl(it) }
-            .forEach { iframeUrl ->
-
-                val wrapperCallback: (ExtractorLink) -> Unit = {
-                    emitted = true
-                    callback(it)
-                }
-
-                resolveIframeWithExtractor(
-                    iframeUrl,
+            .distinct()
+            .forEach { candidate ->
+                val ok = resolveIframeWithExtractor(
+                    candidate,
                     watchUrl,
-                    subtitleCallback,
-                    wrapperCallback
-                ).also { ok ->
-                    // optional log retained behavior
-                    bkLog("resolveIframe result=$ok url=$iframeUrl")
+                    subtitleCallback
+                ) { link ->
+                    emitted = true
+                    callback(link)
                 }
+
+                bkLog("candidateResult url=$candidate ok=$ok")
             }
 
         bkLog("loadLinksResult_emitted=$emitted")
-
         return emitted
     }
-
 
     @Suppress("DEPRECATION")
     private suspend fun resolveIframeWithExtractor(
@@ -236,7 +241,8 @@ fun loadLinks(
         val extractorReferer = getExtractorReferer(iframeUrl, pageUrl)
         bkLog("resolveIframe url=$iframeUrl host=${safeHost(iframeUrl)} referer=$extractorReferer")
 
-        if (tryLoadExtractorWithReferers(
+        if (
+            tryLoadExtractorWithReferers(
                 iframeUrl,
                 listOf(extractorReferer, pageUrl, iframeUrl, "$mainUrl/"),
                 subtitleCallback,
@@ -254,19 +260,15 @@ fun loadLinks(
                 referer = extractorReferer,
                 timeout = 30L
             )
-        }.getOrNull()
-
-        if (iframeResponse == null) {
-            bkLog("iframeFetchFailed url=$iframeUrl")
-            return false
-        }
+        }.getOrNull() ?: return false
 
         val iframeHtml = iframeResponse.text.decodeEscaped()
-        bkLog("iframeFetched url=$iframeUrl htmlSize=${iframeHtml.length}")
         val iframeDocument = Jsoup.parse(iframeHtml, iframeUrl)
 
         val nestedPlayers = linkedSetOf<String>()
-        collectPlayerUrls(iframeDocument, iframeUrl).forEach { nestedPlayers.add(it) }
+        nestedPlayers.addAll(collectPlayerUrls(iframeDocument, iframeUrl))
+        nestedPlayers.addAll(collectServerPageUrls(iframeDocument, iframeUrl))
+        nestedPlayers.addAll(extractMediaUrls(iframeHtml, iframeUrl))
 
         iframeDocument.select("#servers a[data-url], a[data-url*='/embed/'], form[action*='/embed/']")
             .mapNotNull { element ->
@@ -277,13 +279,6 @@ fun loadLinks(
             .mapNotNull { resolveUrl(it, iframeUrl) }
             .filterNot { isBadPlaybackUrl(it) }
             .forEach { nestedPlayers.add(it) }
-
-        extractWindowUrl(iframeHtml, "downloadURL")
-            ?.let { resolveUrl(it, iframeUrl) }
-            ?.filterNotBad()
-            ?.let { nestedPlayers.add(it) }
-
-        extractMediaUrls(iframeHtml, iframeUrl).forEach { nestedPlayers.add(it) }
 
         bkLog("nestedPlayers=${nestedPlayers.size} parent=$iframeUrl")
         nestedPlayers.forEach { bkLog("nestedPlayer=$it") }
@@ -298,7 +293,6 @@ fun loadLinks(
             ) || found
         }
 
-        bkLog("resolveIframe nestedResult=$found url=$iframeUrl")
         return found
     }
 
@@ -309,13 +303,10 @@ fun loadLinks(
         callback: (ExtractorLink) -> Unit
     ): Boolean {
         val fixed = resolveUrl(url, mainUrl) ?: return false
-        if (isBadPlaybackUrl(fixed)) {
-            bkLog("skipBadPlayback url=$fixed")
-            return false
-        }
+        if (isBadPlaybackUrl(fixed)) return false
 
         return referers
-            .mapNotNull { it.takeIf { ref -> ref.isNotBlank() } }
+            .mapNotNull { it.takeIf(String::isNotBlank) }
             .distinct()
             .any { referer ->
                 var emitted = false
@@ -323,17 +314,18 @@ fun loadLinks(
                     emitted = true
                     callback.invoke(link)
                 }
-                bkLog("tryExtractor url=$fixed host=${safeHost(fixed)} referer=$referer")
+
                 val loaded = runCatching {
                     loadExtractor(fixed, referer, subtitleCallback, countingCallback)
                 }.getOrDefault(false)
-                bkLog("extractorResult url=$fixed host=${safeHost(fixed)} referer=$referer loaded=$loaded emitted=$emitted")
+
+                bkLog("extractorResult url=$fixed referer=$referer loaded=$loaded emitted=$emitted")
                 emitted
             }
     }
 
     private fun extractWindowUrl(html: String, key: String): String? {
-        return Regex("""(?:window\.)?$key\s*=\s*["']([^"']+)["']""")
+        return Regex("""(?:window.)?$keys*=s*["']([^"']+)["']""")
             .find(html)
             ?.groupValues
             ?.getOrNull(1)
@@ -345,21 +337,21 @@ fun loadLinks(
         val cleaned = text.decodeEscaped()
         val results = linkedSetOf<String>()
 
-        Regex("""https?://[^"'<>\s\\]+?\.(?:m3u8|mp4|webm|mkv)(?:\?[^"'<>\s\\]*)?""", RegexOption.IGNORE_CASE)
+        Regex("""https?://[^"'<>s\\]+?.(?:m3u8|mp4|webm|mkv)(?:?[^"'<>s\\]*)?""", RegexOption.IGNORE_CASE)
             .findAll(cleaned)
             .map { it.value }
             .mapNotNull { resolveUrl(it, pageUrl) }
             .filterNot { isBadPlaybackUrl(it) }
             .forEach { results.add(it) }
 
-        Regex("""//[^"'<>\s\\]+?\.(?:m3u8|mp4|webm|mkv)(?:\?[^"'<>\s\\]*)?""", RegexOption.IGNORE_CASE)
+        Regex("""//[^"'<>s\\]+?.(?:m3u8|mp4|webm|mkv)(?:?[^"'<>s\\]*)?""", RegexOption.IGNORE_CASE)
             .findAll(cleaned)
             .map { "https:${it.value}" }
             .mapNotNull { resolveUrl(it, pageUrl) }
             .filterNot { isBadPlaybackUrl(it) }
             .forEach { results.add(it) }
 
-        Regex("""(?:file|src|source|url|video|videoUrl|streamUrl|downloadURL)\s*[:=]\s*["']([^"']+)["']""", RegexOption.IGNORE_CASE)
+        Regex("""(?:file|src|source|url|video|videoUrl|streamUrl|downloadURL)s*[:=]s*["']([^"']+)["']""", RegexOption.IGNORE_CASE)
             .findAll(cleaned)
             .mapNotNull { resolveUrl(it.groupValues[1], pageUrl) }
             .filter { it.contains(".m3u8", true) || it.contains(".mp4", true) || it.contains(".webm", true) || it.contains(".mkv", true) }
@@ -367,10 +359,6 @@ fun loadLinks(
             .forEach { results.add(it) }
 
         return results.toList()
-    }
-
-    private fun String.filterNotBad(): String? {
-        return takeIf { !isBadPlaybackUrl(it) }
     }
 
     private fun getExtractorReferer(iframeUrl: String, pageUrl: String): String {
@@ -390,8 +378,7 @@ fun loadLinks(
         val results = linkedMapOf<String, SearchResponse>()
 
         document.select(
-            "article.item-infinite, article.item, " +
-                ".gmr-box-content:has(h2.entry-title a), .item:has(h2.entry-title a)"
+            "article.item-infinite, article.item, .gmr-box-content:has(h2.entry-title a), .item:has(h2.entry-title a)"
         ).forEach { element ->
             element.toSearchResult()?.let { results[it.url] = it }
         }
@@ -442,18 +429,16 @@ fun loadLinks(
             ".player-wrap iframe[src], .player-wrap iframe[data-src], " +
                 ".gmr-pagi-player iframe[src], .gmr-pagi-player iframe[data-src], " +
                 ".gmr-embed-responsive iframe[src], .gmr-embed-responsive iframe[data-src], " +
-                "iframe[src], iframe[data-src], embed[src], source[src], video[src]"
+                "iframe[src], iframe[data-src], embed[src], source[src], video[src], object[data]"
         ).forEach { element ->
-            listOf("src", "data-src", "href")
+            listOf("src", "data-src", "data", "href")
                 .mapNotNull { attr -> element.attr(attr).takeIf { it.isNotBlank() } }
                 .mapNotNull { resolveUrl(it, pageUrl) }
                 .forEach { results.add(it) }
         }
 
         document.select(
-            ".player-wrap option[value], .gmr-pagi-player option[value], " +
-                ".server option[value], .mirror option[value], select option[value], " +
-                "[data-iframe], [data-frame], [data-src], [data-url], [data-link]"
+            ".player-wrap option[value], .gmr-pagi-player option[value], .server option[value], .mirror option[value], select option[value], [data-iframe], [data-frame], [data-src], [data-url], [data-link]"
         ).forEach { element ->
             listOf("value", "data-iframe", "data-frame", "data-src", "data-url", "data-link")
                 .mapNotNull { attr -> element.attr(attr).takeIf { it.isNotBlank() } }
@@ -461,13 +446,24 @@ fun loadLinks(
                 .forEach { results.add(it) }
         }
 
+        document.select("a[href]").forEach { a ->
+            val url = resolveUrl(a.attr("href"), pageUrl) ?: return@forEach
+            if (
+                url.contains("/embed/", true) ||
+                url.contains("/player/", true) ||
+                url.contains("/watch/", true) ||
+                url.contains("/video/", true)
+            ) {
+                results.add(url)
+            }
+        }
+
         return results.toList()
     }
 
     private fun collectServerPageUrls(document: Document, pageUrl: String): List<String> {
         return document.select(
-            ".muvipro-player-tabs a[href], .gmr-player-tabs a[href], " +
-                ".server a[href], .mirror a[href], .player-nav a[href]"
+            ".muvipro-player-tabs a[href], .gmr-player-tabs a[href], .server a[href], .mirror a[href], .player-nav a[href]"
         ).mapNotNull { resolveUrl(it.attr("href"), pageUrl) }
             .map { normalizeProviderUrl(it) }
             .filter { isProviderUrl(it) && !isBlockedUrl(it) }
@@ -501,9 +497,9 @@ fun loadLinks(
 
     private fun extractIframeUrls(html: String, pageUrl: String): List<String> {
         val doc = Jsoup.parse(html.decodeEscaped(), pageUrl)
-        return doc.select("iframe[src], iframe[data-src], embed[src], source[src], video[src], a[href]")
+        return doc.select("iframe[src], iframe[data-src], embed[src], source[src], video[src], a[href], object[data]")
             .mapNotNull { element ->
-                listOf("src", "data-src", "href")
+                listOf("src", "data-src", "data", "href")
                     .mapNotNull { attr -> element.attr(attr).takeIf { it.isNotBlank() } }
                     .firstOrNull()
             }
@@ -524,14 +520,12 @@ fun loadLinks(
         val clone = entry.clone()
         clone.select("script, style, .content-moviedata, .gmr-moviedata, h1, h2, h3").remove()
 
-        return clone.selectFirst("p")?.text()?.cleanPlot()
-            ?: clone.text().cleanPlot()
+        return clone.selectFirst("p")?.text()?.cleanPlot() ?: clone.text().cleanPlot()
     }
 
     private fun hasNextPage(document: Document, page: Int): Boolean {
         return document.selectFirst(
-            "a[rel=next], .pagination a:contains(Next), .pagination a:contains(Berikutnya), " +
-                ".page-numbers.next, .nav-links a[href*='/page/${page + 1}'], a[href*='/page/${page + 1}/']" 
+            "a[rel=next], .pagination a:contains(Next), .pagination a:contains(Berikutnya), .page-numbers.next, .nav-links a[href*='/page/${page + 1}'], a[href*='/page/${page + 1}/']"
         ) != null
     }
 
@@ -552,9 +546,11 @@ fun loadLinks(
             ?.takeIf { it.isNotBlank() && it != "#" && !it.equals("none", true) && !it.equals("null", true) }
             ?: return null
 
-        if (clean.startsWith("javascript", true) || clean.startsWith("mailto:", true) || clean.startsWith("tel:", true)) {
-            return null
-        }
+        if (
+            clean.startsWith("javascript", true) ||
+            clean.startsWith("mailto:", true) ||
+            clean.startsWith("tel:", true)
+        ) return null
 
         return runCatching {
             when {
@@ -580,7 +576,8 @@ fun loadLinks(
 
     private fun isProviderUrl(url: String): Boolean {
         return runCatching {
-            URI(url).host.orEmpty().lowercase().removePrefix("www.") == "134.209.20.140"
+            val host = URI(url).host.orEmpty().lowercase().removePrefix("www.")
+            host == "134.209.20.140"
         }.getOrDefault(url.startsWith(mainUrl))
     }
 
@@ -592,8 +589,7 @@ fun loadLinks(
 
         val blockedPrefixes = listOf(
             "genre/", "country/", "quality/", "year/", "tag/", "director/", "cast/",
-            "author/",
-            "blog/", "page/", "search", "feed", "wp-json", "wp-content", "wp-admin"
+            "author/", "blog/", "page/", "search", "feed", "wp-json", "wp-content", "wp-admin"
         )
 
         val blockedExact = setOf(
@@ -659,16 +655,14 @@ fun loadLinks(
             anchor.parent()?.parent()
         ).distinct()
 
-        candidates.forEach { box ->
+        for (box in candidates) {
             val image = box.selectFirst(
-                "img[data-src], img[data-lazy-src], img[data-original], img[data-img], img[data-image], " +
-                    "img[data-poster], img[src], source[data-srcset], source[srcset]"
-            ) ?: return@forEach
+                "img[data-src], img[data-lazy-src], img[data-original], img[data-img], img[data-image], img[data-poster], img[src], source[data-srcset], source[srcset]"
+            ) ?: continue
 
-            image.getImageAttr()
-                ?.let { raw -> resolveUrl(raw, mainUrl) ?: fixUrlNull(raw) }
-                ?.takeIf { !isBadImage(it) }
-                ?.let { return it }
+            val raw = image.getImageAttr() ?: continue
+            val resolved = resolveUrl(raw, mainUrl) ?: fixUrlNull(raw)
+            if (resolved != null && !isBadImage(resolved)) return resolved
         }
 
         return null
@@ -711,7 +705,7 @@ fun loadLinks(
     }
 
     private fun extractYear(text: String): Int? {
-        return Regex("""\b(19\d{2}|20\d{2})\b""")
+        return Regex("""\b(19d{2}|20d{2})\b""")
             .find(text)
             ?.groupValues
             ?.getOrNull(1)
@@ -752,10 +746,10 @@ fun loadLinks(
             .replace("\\u003D", "=")
             .replace("&amp;", "&")
             .replace("&#038;", "&")
-            .replace("&quot;", "\"")
+            .replace("&quot;", """)
             .replace("&#8217;", "'")
-            .replace("&#8211;", "\u2013")
-            .replace("&#8212;", "\u2014")
+            .replace("&#8211;", "–")
+            .replace("&#8212;", "—")
 
         return if (cleaned.contains("%3A%2F%2F", true) || cleaned.contains("%3C", true)) {
             runCatching { URLDecoder.decode(cleaned, "UTF-8") }.getOrDefault(cleaned)
@@ -766,32 +760,32 @@ fun loadLinks(
 
     private fun String.cleanTitle(): String {
         return decodeEscaped()
-            .replace(Regex("""(?i)^\s*permalink\s+ke\s*:\s*"""), "")
-            .replace(Regex("""(?i)^\s*permalink\s+to\s*:\s*"""), "")
-            .replace(Regex("""(?i)^\s*BIOSKOPKEREN\s*[-|:]\s*"""), "")
-            .replace(Regex("""\s+-\s+BIOSKOPKEREN.*$""", RegexOption.IGNORE_CASE), "")
-            .replace(Regex("""\s+\|\s+BIOSKOPKEREN.*$""", RegexOption.IGNORE_CASE), "")
-            .replace(Regex("""^Nonton\s+Film\s+""", RegexOption.IGNORE_CASE), "")
-            .replace(Regex("""\s+Streaming\s+Online.*$""", RegexOption.IGNORE_CASE), "")
-            .replace(Regex("""\s+Download.*$""", RegexOption.IGNORE_CASE), "")
-            .replace(Regex("""\s+Subtitle\s+Indonesia.*$""", RegexOption.IGNORE_CASE), "")
-            .replace(Regex("""\s+Sub\s+Indo.*$""", RegexOption.IGNORE_CASE), "")
-            .replace(Regex("""\s+Full\s+Movie.*$""", RegexOption.IGNORE_CASE), "")
-            .replace(Regex("""\s+\u2026$"""), "")
-            .replace(Regex("""\s+"""), " ")
+            .replace(Regex("""(?i)^s*permalinks+kes*:s*"""), "")
+            .replace(Regex("""(?i)^s*permalinks+tos*:s*"""), "")
+            .replace(Regex("""(?i)^s*BIOSKOPKERENs*[-|:]s*"""), "")
+            .replace(Regex("""s+-s+BIOSKOPKEREN.*$""", RegexOption.IGNORE_CASE), "")
+            .replace(Regex("""s+|s+BIOSKOPKEREN.*$""", RegexOption.IGNORE_CASE), "")
+            .replace(Regex("""^Nontons+Films+""", RegexOption.IGNORE_CASE), "")
+            .replace(Regex("""s+Streamings+Online.*$""", RegexOption.IGNORE_CASE), "")
+            .replace(Regex("""s+Download.*$""", RegexOption.IGNORE_CASE), "")
+            .replace(Regex("""s+Subtitles+Indonesia.*$""", RegexOption.IGNORE_CASE), "")
+            .replace(Regex("""s+Subs+Indo.*$""", RegexOption.IGNORE_CASE), "")
+            .replace(Regex("""s+Fulls+Movie.*$""", RegexOption.IGNORE_CASE), "")
+            .replace(Regex("""s+…$"""), "")
+            .replace(Regex("""s+"""), " ")
             .trim()
     }
 
     private fun String.cleanDetailTitle(): String {
         return cleanTitle()
-            .replace(Regex("""\s*\((?:19|20)\d{2}\)\s*$"""), "")
-            .replace(Regex("""\s+"""), " ")
+            .replace(Regex("""s*((?:19|20)d{2})s*$"""), "")
+            .replace(Regex("""s+"""), " ")
             .trim()
     }
 
     private fun String.cleanPlot(): String? {
         return decodeEscaped()
-            .replace(Regex("""\s+"""), " ")
+            .replace(Regex("""s+"""), " ")
             .trim()
             .takeIf { it.isNotBlank() && it.length > 20 }
     }
@@ -800,7 +794,7 @@ fun loadLinks(
         val lower = trim().lowercase()
         if (lower.isBlank()) return true
         if (lower.length <= 1) return true
-        if (lower.matches(Regex("""^\d+$"""))) return true
+        if (lower.matches(Regex("""^d+$"""))) return true
 
         return lower in setOf(
             "home", "next", "previous", "prev", "movies", "movie", "tv series", "series",
