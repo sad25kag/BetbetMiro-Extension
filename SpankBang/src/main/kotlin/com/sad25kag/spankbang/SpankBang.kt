@@ -11,7 +11,7 @@ import java.net.URLEncoder
 
 class SpankBang : MainAPI() {
     override var mainUrl = "https://spankbang.party"
-    override var name = "SpankBang (Deprecated use Stable Version)"
+    override var name = "SpankBang"
     override var lang = "en"
 
     override val hasMainPage = true
