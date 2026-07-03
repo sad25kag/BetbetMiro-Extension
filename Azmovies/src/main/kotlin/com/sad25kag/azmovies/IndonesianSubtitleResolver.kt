@@ -75,7 +75,7 @@ internal object IndonesianSubtitleResolver {
         fun add(label: String, rawUrl: String?) {
             val url = rawUrl.decodeJsonUrlOrNull().toAbsoluteUrl(baseUrl) ?: return
             if (!isSubtitleUrl(url) || !isIndonesianLabel(label)) return
-            if (seen.add(url)) subtitles += newSubtitleFile(INDONESIAN_LABEL, url)
+            if (seen.add(url)) subtitles += kotlinx.coroutines.runBlocking { newSubtitleFile(INDONESIAN_LABEL, url) }
         }
 
         Jsoup.parse(text).select("track[src], source[src]").forEach { track ->
