@@ -1,7 +1,7 @@
 name: Build All
 
 concurrency:
-  group: "error-release-build-all"
+  group: "main-release-build-all"
   cancel-in-progress: true
 
 on:
