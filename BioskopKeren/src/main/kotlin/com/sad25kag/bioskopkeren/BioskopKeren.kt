@@ -161,7 +161,8 @@ class BioskopKeren : MainAPI() {
         }
     }
 
-    override suspend fun loadLinks(
+    override suspend 
+fun loadLinks(
         data: String,
         isCasting: Boolean,
         subtitleCallback: (SubtitleFile) -> Unit,
@@ -170,66 +171,48 @@ class BioskopKeren : MainAPI() {
         val watchUrl = normalizeProviderUrl(fixUrl(data))
         bkLog("watchUrl=$watchUrl")
 
-        val document = runCatching {
-            app.get(
-                watchUrl,
-                headers = siteHeaders,
-                referer = "$mainUrl/",
-                timeout = 30L
-            ).document
-        }.getOrNull() ?: return false
+        val document = app.get(
+            watchUrl,
+            headers = siteHeaders,
+            referer = "$mainUrl/",
+            timeout = 30L
+        ).document
 
-        val candidates = linkedSetOf<String>()
-        candidates.addAll(collectPlayerUrls(document, watchUrl))
-        candidates.addAll(collectServerPageUrls(document, watchUrl))
+        val initialPlayers = collectPlayerUrls(document, watchUrl).distinct()
+
+        val serverPages = collectServerPageUrls(document, watchUrl).distinct()
 
         val iframeUrls = linkedSetOf<String>()
+        initialPlayers.forEach { iframeUrls.add(it) }
 
-        candidates.forEach { url ->
-            if (url == watchUrl) return@forEach
-            iframeUrls.add(url)
-        }
-
-        val extraCandidates = linkedSetOf<String>()
-        iframeUrls.forEach { pageUrl ->
+        serverPages.forEach { serverPage ->
+            if (serverPage == watchUrl) return@forEach
             val serverDocument = runCatching {
-                app.get(pageUrl, headers = siteHeaders, referer = watchUrl, timeout = 30L).document
-            }.getOrNull() ?: return@forEach
+                app.get(serverPage, headers = siteHeaders, referer = watchUrl, timeout = 30L).document
+            }.getOrNull()
 
-            extraCandidates.addAll(collectPlayerUrls(serverDocument, pageUrl))
-            extraCandidates.addAll(collectServerPageUrls(serverDocument, pageUrl))
-            extraCandidates.addAll(extractMediaUrls(serverDocument.html(), pageUrl))
-            extraCandidates.addAll(extractMediaUrls(serverDocument.text(), pageUrl))
+            if (serverDocument != null) {
+                collectPlayerUrls(serverDocument, serverPage).forEach { iframeUrls.add(it) }
+            }
         }
 
-        val allUrls = linkedSetOf<String>()
-        allUrls.addAll(candidates)
-        allUrls.addAll(extraCandidates)
+        var found = false
 
-        bkLog("candidateCount=${allUrls.size}")
-        allUrls.forEach { bkLog("candidate=$it") }
-
-        var emitted = false
-
-        allUrls
+        iframeUrls
             .filterNot { isBadPlaybackUrl(it) }
-            .distinct()
-            .forEach { candidate ->
-                val ok = resolveIframeWithExtractor(
-                    candidate,
+            .forEach { iframeUrl ->
+                found = resolveIframeWithExtractor(
+                    iframeUrl,
                     watchUrl,
-                    subtitleCallback
-                ) { link ->
-                    emitted = true
-                    callback(link)
-                }
-
-                bkLog("candidateResult url=$candidate ok=$ok")
+                    subtitleCallback,
+                    callback
+                ) || found
             }
 
-        bkLog("loadLinksResult_emitted=$emitted")
-        return emitted
+        bkLog("loadLinksResult=$found")
+        return found
     }
+
 
     @Suppress("DEPRECATION")
     private suspend fun resolveIframeWithExtractor(
