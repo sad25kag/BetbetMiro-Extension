@@ -41,9 +41,25 @@ class BioskopKeren : MainAPI() {
         "Accept-Language" to "id-ID,id;q=0.9,en-US;q=0.8,en;q=0.7"
     )
 
-    private fun bkLog(message: String) {
-        println("BIOSKOPKEREN-Z4 $message")
-    }
+    
+
+
+
+private fun String.isUiText(): Boolean {
+    val lower = trim().lowercase()
+    if (lower.isBlank()) return true
+    if (lower.length <= 1) return true
+    if (lower.matches(Regex("""^\d+$"""))) return true
+
+    return lower in setOf(
+        "home","next","previous","prev","movies","series","search",
+        "genre","watch","download","login","register","trailer","play"
+    )
+}
+
+
+
+
 
     override val mainPage = mainPageOf(
         "best-rating/" to "Best Rating",
@@ -508,20 +524,14 @@ class BioskopKeren : MainAPI() {
             .distinct()
     }
 
-    private fun extractPlot(document: Document): String? {
-        document.selectFirst("meta[property=og:description], meta[name=description]")
-            ?.attr("content")
-            ?.cleanPlot()
-            ?.let { return it }
+    
+private fun String.cleanPlot(): String? {
+    return decodeEscaped()
+        .replace(Regex("""\s+"""), " ")
+        .trim()
+        .takeIf { it.isNotBlank() && it.length > 20 }
+}
 
-        val entry = document.selectFirst(".entry-content.entry-content-single, .entry-content")
-            ?: return null
-
-        val clone = entry.clone()
-        clone.select("script, style, .content-moviedata, .gmr-moviedata, h1, h2, h3").remove()
-
-        return clone.selectFirst("p")?.text()?.cleanPlot() ?: clone.text().cleanPlot()
-    }
 
     private fun hasNextPage(document: Document, page: Int): Boolean {
         return document.selectFirst(
@@ -704,15 +714,13 @@ class BioskopKeren : MainAPI() {
             lower.endsWith(".svg")
     }
 
-    
-private fun extractYear(text: String): Int? {
-    return Regex("""\b(19\d{2}|20\d{2})\b""")
-        .find(text)
-        ?.groupValues
-        ?.getOrNull(1)
-        ?.toIntOrNull()
-}
-
+    private fun extractYear(text: String): Int? {
+        return Regex("""\b(19d{2}|20d{2})\b""")
+            .find(text)
+            ?.groupValues
+            ?.getOrNull(1)
+            ?.toIntOrNull()
+    }
 
     private fun decodeBase64(value: String): String? {
         val clean = value.trim()
@@ -760,54 +768,50 @@ private fun extractYear(text: String): Int? {
         }
     }
 
-    
-private fun String.cleanTitle(): String {
-    return decodeEscaped()
-        .replace(Regex("""(?i)^\s*permalink\s*(kes|tos)\s*:\s*"""), "")
-        .replace(Regex("""(?i)^\s*bioskopkeren\s*[-|:]\s*"""), "")
-        .replace(Regex("""\s+-\s+bioskopkeren.*$""", RegexOption.IGNORE_CASE), "")
-        .replace(Regex("""\s+\|\s+bioskopkeren.*$""", RegexOption.IGNORE_CASE), "")
-        .replace(Regex("""(?i)^nonton\s+film\s+"""), "")
-        .replace(Regex("""\s+streaming\s+online.*$""", RegexOption.IGNORE_CASE), "")
-        .replace(Regex("""\s+download.*$""", RegexOption.IGNORE_CASE), "")
-        .replace(Regex("""\s+subtitle\s+indonesia.*$""", RegexOption.IGNORE_CASE), "")
-        .replace(Regex("""\s+subs\s+indo.*$""", RegexOption.IGNORE_CASE), "")
-        .replace(Regex("""\s+full\s+movie.*$""", RegexOption.IGNORE_CASE), "")
-        .replace(Regex("""\s+…$"""), "")
-        .replace(Regex("""\s+"""), " ")
-        .trim()
-}
+    private fun String.cleanTitle(): String {
+        return decodeEscaped()
+            .replace(Regex("""(?i)^s*permalinks+kes*:s*"""), "")
+            .replace(Regex("""(?i)^s*permalinks+tos*:s*"""), "")
+            .replace(Regex("""(?i)^s*BIOSKOPKERENs*[-|:]s*"""), "")
+            .replace(Regex("""s+-s+BIOSKOPKEREN.*$""", RegexOption.IGNORE_CASE), "")
+            .replace(Regex("""s+|s+BIOSKOPKEREN.*$""", RegexOption.IGNORE_CASE), "")
+            .replace(Regex("""^Nontons+Films+""", RegexOption.IGNORE_CASE), "")
+            .replace(Regex("""s+Streamings+Online.*$""", RegexOption.IGNORE_CASE), "")
+            .replace(Regex("""s+Download.*$""", RegexOption.IGNORE_CASE), "")
+            .replace(Regex("""s+Subtitles+Indonesia.*$""", RegexOption.IGNORE_CASE), "")
+            .replace(Regex("""s+Subs+Indo.*$""", RegexOption.IGNORE_CASE), "")
+            .replace(Regex("""s+Fulls+Movie.*$""", RegexOption.IGNORE_CASE), "")
+            .replace(Regex("""s+…$"""), "")
+            .replace(Regex("""s+"""), " ")
+            .trim()
+    }
 
+    private fun String.cleanDetailTitle(): String {
+        return cleanTitle()
+            .replace(Regex("""s*((?:19|20)d{2})s*$"""), "")
+            .replace(Regex("""s+"""), " ")
+            .trim()
+    }
 
-    
-private fun String.cleanDetailTitle(): String {
-    return cleanTitle()
-        .replace(Regex("""\s*((?:19|20)\d{2})\s*$"""), "")
-        .replace(Regex("""\s+"""), " ")
-        .trim()
-}
+    private fun String.cleanPlot(): String? {
+        return decodeEscaped()
+            .replace(Regex("""s+"""), " ")
+            .trim()
+            .takeIf { it.isNotBlank() && it.length > 20 }
+    }
 
+    private fun String.isUiText(): Boolean {
+        val lower = trim().lowercase()
+        if (lower.isBlank()) return true
+        if (lower.length <= 1) return true
+        if (lower.matches(Regex("""^d+$"""))) return true
 
-    
-private fun String.cleanPlot(): String? {
-    return decodeEscaped()
-        .replace(Regex("""\s+"""), " ")
-        .trim()
-        .takeIf { it.isNotBlank() && it.length > 20 }
-}
-
-
-    
-private fun String.isUiText(): Boolean {
-    val lower = trim().lowercase()
-    if (lower.isBlank()) return true
-    if (lower.length <= 1) return true
-    if (lower.matches(Regex("""^\d+$"""))) return true
-
-    return lower in setOf(
-        "home","next","previous","prev","movies","series","search","genre",
-        "watch","download","login","register","trailer","play","more"
-    )
-}
-
+        return lower in setOf(
+            "home", "next", "previous", "prev", "movies", "movie", "tv series", "series",
+            "trending", "search", "genre", "country", "year", "tag", "category", "quality",
+            "watch", "watch movie", "watch now", "tonton", "download", "trailer", "play", "login",
+            "register", "read more", "more", "lihat semua", "nonton", "nonton movie", "nonton film",
+            "hd", "sd", "cam", "ts", "hdrip", "bluray", "web-dl", "semua tipe", "film"
+        )
+    }
 }
