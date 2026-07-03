@@ -1,7 +1,7 @@
 name: Build
 
 concurrency:
-  group: "build"
+  group: "main-release-build"
   cancel-in-progress: true
 
 on:
@@ -9,7 +9,9 @@ on:
     branches:
       - error
     paths-ignore:
-      - "*.md"
+      - "**/*.md"
+      - "docs/**"
+  workflow_dispatch:
 
 permissions:
   contents: write
@@ -37,15 +39,19 @@ jobs:
           cd $GITHUB_WORKSPACE/src
 
           echo "=== Changed Files ==="
-          git diff --name-only HEAD^ HEAD
+          if git rev-parse HEAD^ >/dev/null 2>&1; then
+            changed_files=$(git diff --name-only HEAD^ HEAD)
+          else
+            changed_files=$(git ls-files)
+          fi
 
-          # Memeriksa apakah ada perubahan pada konfigurasi global dasar
+          echo "$changed_files"
+
           global_change=false
-          if git diff --name-only HEAD^ HEAD | grep -E "^(build\.gradle\.kts|settings\.gradle\.kts|gradle\.properties|\.github/)"; then
+          if echo "$changed_files" | grep -E "^(build\.gradle\.kts|settings\.gradle\.kts|gradle\.properties)$"; then
             global_change=true
           fi
 
-          # Mendata seluruh provider aktif yang tersedia di dalam proyek
           all_plugins=""
           for dir in *; do
             if [ -d "$dir" ] && [ -f "$dir/build.gradle.kts" ] && [ "$dir" != "buildSrc" ]; then
@@ -55,11 +61,10 @@ jobs:
           all_plugins=$(echo $all_plugins | xargs)
 
           if [ "$global_change" = "true" ]; then
-            echo "Global configuration changed. Rebuilding all plugins."
+            echo "Global build configuration changed. Rebuilding all plugins."
             plugins="$all_plugins"
           else
-            # Mengambil nama folder utama dari berkas-berkas yang dimodifikasi
-            changed_dirs=$(git diff --name-only HEAD^ HEAD | awk -F/ '{print $1}' | sort -u)
+            changed_dirs=$(echo "$changed_files" | awk -F/ '{print $1}' | sort -u)
             plugins=""
             for dir in $changed_dirs; do
               if [ -d "$dir" ] && [ -f "$dir/build.gradle.kts" ] && [ "$dir" != "buildSrc" ]; then
@@ -78,6 +83,8 @@ jobs:
         with:
           distribution: adopt
           java-version: 21
+          # ⚡ OPTIMASI: Mengaktifkan cache Gradle untuk memangkas waktu build
+          cache: 'gradle' 
 
       - name: Setup Android SDK
         uses: android-actions/setup-android@v3
@@ -125,7 +132,7 @@ jobs:
           echo SUPERSTREAM_THIRD_API=$SUPERSTREAM_THIRD_API >> local.properties
           echo SUPERSTREAM_FOURTH_API=$SUPERSTREAM_FOURTH_API >> local.properties
 
-      - name: Build Changed Plugins
+      - name: Build changed plugins
         run: |
           cd $GITHUB_WORKSPACE/src
           chmod +x gradlew
@@ -138,10 +145,9 @@ jobs:
             exit 0
           fi
 
-          # Langkah 1: Memulihkan berkas binary .cs3 lama milik provider yang TIDAK berubah
           for plugin in $all_plugins; do
             if [[ ! " $plugins " =~ " $plugin " ]]; then
-              echo "Restoring cached binary for unchanged plugin: $plugin"
+              echo "Restoring cached maintenance binary for unchanged plugin: $plugin"
               mkdir -p "$plugin/build"
               if [ -f "$GITHUB_WORKSPACE/maintenance/$plugin.cs3" ]; then
                 cp "$GITHUB_WORKSPACE/maintenance/$plugin.cs3" "$plugin/build/$plugin.cs3"
@@ -153,23 +159,24 @@ jobs:
             fi
           done
 
-          # Langkah 2: Hanya membangun kompilasi ulang pada provider yang berubah saja
           for plugin in $plugins; do
             echo "======================="
-            echo "Building $plugin"
+            echo "Building $plugin for maintenance"
             echo "======================="
 
-            ./gradlew ":$plugin:make"
+            # ⚡ OPTIMASI: Tambah --no-daemon agar RAM runner tetap stabil
+            ./gradlew ":$plugin:make" --no-daemon
 
             mkdir -p $GITHUB_WORKSPACE/maintenance
             find "$plugin/build" -name "*.cs3" -exec cp {} $GITHUB_WORKSPACE/maintenance \;
           done
-
-          # Langkah 3: Membuat ulang metadata berkas perekam plugins.json secara penuh
-          ./gradlew makePluginsJson
+          
+          # ⚡ OPTIMASI: Tambah --no-daemon
+          ./gradlew makePluginsJson --no-daemon
+          sed -i 's|/BetbetMiro-Extension/release/|/BetbetMiro-Extension/maintenance/|g' build/plugins.json
           cp build/plugins.json $GITHUB_WORKSPACE/maintenance/
 
-      - name: Push builds
+      - name: Push maintenance
         run: |
           cd $GITHUB_WORKSPACE/maintenance
 
@@ -177,5 +184,5 @@ jobs:
           git config --local user.name "GitHub Actions"
 
           git add .
-          git commit -m "Build updated plugins: ${{ steps.changed.outputs.plugins }} ($GITHUB_SHA)" || exit 0
+          git commit -m "Maintenance build updated plugins: ${{ steps.changed.outputs.plugins }} ($GITHUB_SHA)" || exit 0
           git push
