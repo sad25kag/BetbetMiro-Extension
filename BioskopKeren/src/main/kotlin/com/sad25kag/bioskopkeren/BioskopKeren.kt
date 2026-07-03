@@ -161,8 +161,7 @@ class BioskopKeren : MainAPI() {
         }
     }
 
-    override suspend 
-fun loadLinks(
+    override suspend fun loadLinks(
         data: String,
         isCasting: Boolean,
         subtitleCallback: (SubtitleFile) -> Unit,
@@ -171,48 +170,66 @@ fun loadLinks(
         val watchUrl = normalizeProviderUrl(fixUrl(data))
         bkLog("watchUrl=$watchUrl")
 
-        val document = app.get(
-            watchUrl,
-            headers = siteHeaders,
-            referer = "$mainUrl/",
-            timeout = 30L
-        ).document
+        val document = runCatching {
+            app.get(
+                watchUrl,
+                headers = siteHeaders,
+                referer = "$mainUrl/",
+                timeout = 30L
+            ).document
+        }.getOrNull() ?: return false
 
-        val initialPlayers = collectPlayerUrls(document, watchUrl).distinct()
-
-        val serverPages = collectServerPageUrls(document, watchUrl).distinct()
+        val candidates = linkedSetOf<String>()
+        candidates.addAll(collectPlayerUrls(document, watchUrl))
+        candidates.addAll(collectServerPageUrls(document, watchUrl))
 
         val iframeUrls = linkedSetOf<String>()
-        initialPlayers.forEach { iframeUrls.add(it) }
 
-        serverPages.forEach { serverPage ->
-            if (serverPage == watchUrl) return@forEach
-            val serverDocument = runCatching {
-                app.get(serverPage, headers = siteHeaders, referer = watchUrl, timeout = 30L).document
-            }.getOrNull()
-
-            if (serverDocument != null) {
-                collectPlayerUrls(serverDocument, serverPage).forEach { iframeUrls.add(it) }
-            }
+        candidates.forEach { url ->
+            if (url == watchUrl) return@forEach
+            iframeUrls.add(url)
         }
 
-        var found = false
+        val extraCandidates = linkedSetOf<String>()
+        iframeUrls.forEach { pageUrl ->
+            val serverDocument = runCatching {
+                app.get(pageUrl, headers = siteHeaders, referer = watchUrl, timeout = 30L).document
+            }.getOrNull() ?: return@forEach
 
-        iframeUrls
+            extraCandidates.addAll(collectPlayerUrls(serverDocument, pageUrl))
+            extraCandidates.addAll(collectServerPageUrls(serverDocument, pageUrl))
+            extraCandidates.addAll(extractMediaUrls(serverDocument.html(), pageUrl))
+            extraCandidates.addAll(extractMediaUrls(serverDocument.text(), pageUrl))
+        }
+
+        val allUrls = linkedSetOf<String>()
+        allUrls.addAll(candidates)
+        allUrls.addAll(extraCandidates)
+
+        bkLog("candidateCount=${allUrls.size}")
+        allUrls.forEach { bkLog("candidate=$it") }
+
+        var emitted = false
+
+        allUrls
             .filterNot { isBadPlaybackUrl(it) }
-            .forEach { iframeUrl ->
-                found = resolveIframeWithExtractor(
-                    iframeUrl,
+            .distinct()
+            .forEach { candidate ->
+                val ok = resolveIframeWithExtractor(
+                    candidate,
                     watchUrl,
-                    subtitleCallback,
-                    callback
-                ) || found
+                    subtitleCallback
+                ) { link ->
+                    emitted = true
+                    callback(link)
+                }
+
+                bkLog("candidateResult url=$candidate ok=$ok")
             }
 
-        bkLog("loadLinksResult=$found")
-        return found
+        bkLog("loadLinksResult_emitted=$emitted")
+        return emitted
     }
-
 
     @Suppress("DEPRECATION")
     private suspend fun resolveIframeWithExtractor(
@@ -687,13 +704,15 @@ fun loadLinks(
             lower.endsWith(".svg")
     }
 
-    private fun extractYear(text: String): Int? {
-        return Regex("""\b(19d{2}|20d{2})\b""")
-            .find(text)
-            ?.groupValues
-            ?.getOrNull(1)
-            ?.toIntOrNull()
-    }
+    
+private fun extractYear(text: String): Int? {
+    return Regex("""\b(19\d{2}|20\d{2})\b""")
+        .find(text)
+        ?.groupValues
+        ?.getOrNull(1)
+        ?.toIntOrNull()
+}
+
 
     private fun decodeBase64(value: String): String? {
         val clean = value.trim()
@@ -741,50 +760,54 @@ fun loadLinks(
         }
     }
 
-    private fun String.cleanTitle(): String {
-        return decodeEscaped()
-            .replace(Regex("""(?i)^s*permalinks+kes*:s*"""), "")
-            .replace(Regex("""(?i)^s*permalinks+tos*:s*"""), "")
-            .replace(Regex("""(?i)^s*BIOSKOPKERENs*[-|:]s*"""), "")
-            .replace(Regex("""s+-s+BIOSKOPKEREN.*$""", RegexOption.IGNORE_CASE), "")
-            .replace(Regex("""s+|s+BIOSKOPKEREN.*$""", RegexOption.IGNORE_CASE), "")
-            .replace(Regex("""^Nontons+Films+""", RegexOption.IGNORE_CASE), "")
-            .replace(Regex("""s+Streamings+Online.*$""", RegexOption.IGNORE_CASE), "")
-            .replace(Regex("""s+Download.*$""", RegexOption.IGNORE_CASE), "")
-            .replace(Regex("""s+Subtitles+Indonesia.*$""", RegexOption.IGNORE_CASE), "")
-            .replace(Regex("""s+Subs+Indo.*$""", RegexOption.IGNORE_CASE), "")
-            .replace(Regex("""s+Fulls+Movie.*$""", RegexOption.IGNORE_CASE), "")
-            .replace(Regex("""s+…$"""), "")
-            .replace(Regex("""s+"""), " ")
-            .trim()
-    }
+    
+private fun String.cleanTitle(): String {
+    return decodeEscaped()
+        .replace(Regex("""(?i)^\s*permalink\s*(kes|tos)\s*:\s*"""), "")
+        .replace(Regex("""(?i)^\s*bioskopkeren\s*[-|:]\s*"""), "")
+        .replace(Regex("""\s+-\s+bioskopkeren.*$""", RegexOption.IGNORE_CASE), "")
+        .replace(Regex("""\s+\|\s+bioskopkeren.*$""", RegexOption.IGNORE_CASE), "")
+        .replace(Regex("""(?i)^nonton\s+film\s+"""), "")
+        .replace(Regex("""\s+streaming\s+online.*$""", RegexOption.IGNORE_CASE), "")
+        .replace(Regex("""\s+download.*$""", RegexOption.IGNORE_CASE), "")
+        .replace(Regex("""\s+subtitle\s+indonesia.*$""", RegexOption.IGNORE_CASE), "")
+        .replace(Regex("""\s+subs\s+indo.*$""", RegexOption.IGNORE_CASE), "")
+        .replace(Regex("""\s+full\s+movie.*$""", RegexOption.IGNORE_CASE), "")
+        .replace(Regex("""\s+…$"""), "")
+        .replace(Regex("""\s+"""), " ")
+        .trim()
+}
 
-    private fun String.cleanDetailTitle(): String {
-        return cleanTitle()
-            .replace(Regex("""s*((?:19|20)d{2})s*$"""), "")
-            .replace(Regex("""s+"""), " ")
-            .trim()
-    }
 
-    private fun String.cleanPlot(): String? {
-        return decodeEscaped()
-            .replace(Regex("""s+"""), " ")
-            .trim()
-            .takeIf { it.isNotBlank() && it.length > 20 }
-    }
+    
+private fun String.cleanDetailTitle(): String {
+    return cleanTitle()
+        .replace(Regex("""\s*((?:19|20)\d{2})\s*$"""), "")
+        .replace(Regex("""\s+"""), " ")
+        .trim()
+}
 
-    private fun String.isUiText(): Boolean {
-        val lower = trim().lowercase()
-        if (lower.isBlank()) return true
-        if (lower.length <= 1) return true
-        if (lower.matches(Regex("""^d+$"""))) return true
 
-        return lower in setOf(
-            "home", "next", "previous", "prev", "movies", "movie", "tv series", "series",
-            "trending", "search", "genre", "country", "year", "tag", "category", "quality",
-            "watch", "watch movie", "watch now", "tonton", "download", "trailer", "play", "login",
-            "register", "read more", "more", "lihat semua", "nonton", "nonton movie", "nonton film",
-            "hd", "sd", "cam", "ts", "hdrip", "bluray", "web-dl", "semua tipe", "film"
-        )
-    }
+    
+private fun String.cleanPlot(): String? {
+    return decodeEscaped()
+        .replace(Regex("""\s+"""), " ")
+        .trim()
+        .takeIf { it.isNotBlank() && it.length > 20 }
+}
+
+
+    
+private fun String.isUiText(): Boolean {
+    val lower = trim().lowercase()
+    if (lower.isBlank()) return true
+    if (lower.length <= 1) return true
+    if (lower.matches(Regex("""^\d+$"""))) return true
+
+    return lower in setOf(
+        "home","next","previous","prev","movies","series","search","genre",
+        "watch","download","login","register","trailer","play","more"
+    )
+}
+
 }
