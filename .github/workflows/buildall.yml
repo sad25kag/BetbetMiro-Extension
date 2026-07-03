@@ -1,6 +1,5 @@
 name: Build All
 
-# https://docs.github.com/en/actions/learn-github-actions/workflow-syntax-for-github-actions#concurrency
 concurrency:
   group: "build"
   cancel-in-progress: true
@@ -9,37 +8,45 @@ on:
   workflow_dispatch:
   push:
     branches:
-      # Target diubah ke master sesuai branch repository kamu
-      - error
+      - error # 1. TRIGGER DIUBAH DARI 'master' KE 'error'
     paths-ignore:
       - "*.md"
 
 jobs:
   build:
     runs-on: ubuntu-latest
+
     steps:
       - name: Checkout
         uses: actions/checkout@v4.2.2
         with:
           path: "src"
 
-      - name: Checkout builds
+      - name: Checkout maintenance branch
         uses: actions/checkout@v4.2.2
         with:
-          ref: "maintenance"
-          path: "maintenance"
+          ref: "maintenance" # 2. REFEERENSI TARGET DIUBAH KE 'maintenance'
+          path: "maintenance" # 3. FOLDER LOKAL DIUBAH KE 'maintenance'
 
-      - name: Clean old builds
-        run: rm $GITHUB_WORKSPACE/maintenance/*.cs3 || true
+      - name: Clean old maintenance builds
+        run: rm $GITHUB_WORKSPACE/maintenance/*.cs3 || true # 4. PATH DIUBAH KE 'maintenance'
 
       - name: Setup JDK 21
         uses: actions/setup-java@v4.6.0
         with:
           distribution: "adopt"
           java-version: 21
+          # ⚡ OPTIMASI: Mengaktifkan cache Gradle untuk mempercepat build selanjutnya
+          cache: 'gradle'
 
       - name: Setup Android SDK
         uses: android-actions/setup-android@v3.2.2
+
+      # FIX: lock Node version to avoid GitHub Actions Node 24 warning
+      - name: Setup Node 20
+        uses: actions/setup-node@v4
+        with:
+          node-version: 20
 
       - name: Access Secrets
         env:
@@ -83,15 +90,19 @@ jobs:
         run: |
           cd $GITHUB_WORKSPACE/src
           chmod +x gradlew
-          ./gradlew make makePluginsJson
+          
+          # ⚡ OPTIMASI: Menambahkan --no-daemon agar penggunaan RAM runner lebih hemat dan stabil
+          ./gradlew make makePluginsJson --no-daemon
+          
+          # 5. BERKAS OUTPUT DIALIKHAN KE FOLDER LOKAL 'maintenance'
           cp **/build/*.cs3 $GITHUB_WORKSPACE/maintenance
           cp build/plugins.json $GITHUB_WORKSPACE/maintenance
 
-      - name: Push builds
+      - name: Push maintenance
         run: |
-          cd $GITHUB_WORKSPACE/maintenance
+          cd $GITHUB_WORKSPACE/maintenance # 6. PINDAH KE FOLDER 'maintenance'
           git config --local user.email "actions@github.com"
           git config --local user.name "GitHub Actions"
           git add .
-          git commit --amend -m "Build $GITHUB_SHA" || exit 0   # do not error if nothing to commit
+          git commit --amend -m "Maintenance Build $GITHUB_SHA" || exit 0
           git push --force
