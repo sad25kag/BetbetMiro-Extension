@@ -7,7 +7,7 @@ concurrency:
 on:
   push:
     branches:
-      - master
+      - error
     paths-ignore:
       - "*.md"
 
@@ -28,8 +28,8 @@ jobs:
       - name: Checkout builds branch
         uses: actions/checkout@v4
         with:
-          ref: builds
-          path: builds
+          ref: maintenance
+          path: maintenance
 
       - name: Detect changed plugins
         id: changed
@@ -143,12 +143,12 @@ jobs:
             if [[ ! " $plugins " =~ " $plugin " ]]; then
               echo "Restoring cached binary for unchanged plugin: $plugin"
               mkdir -p "$plugin/build"
-              if [ -f "$GITHUB_WORKSPACE/builds/$plugin.cs3" ]; then
-                cp "$GITHUB_WORKSPACE/builds/$plugin.cs3" "$plugin/build/$plugin.cs3"
-              elif [ -f "$GITHUB_WORKSPACE/builds/${plugin}-debug.cs3" ]; then
-                cp "$GITHUB_WORKSPACE/builds/${plugin}-debug.cs3" "$plugin/build/${plugin}-debug.cs3"
+              if [ -f "$GITHUB_WORKSPACE/maintenance/$plugin.cs3" ]; then
+                cp "$GITHUB_WORKSPACE/maintenance/$plugin.cs3" "$plugin/build/$plugin.cs3"
+              elif [ -f "$GITHUB_WORKSPACE/maintenance/${plugin}-debug.cs3" ]; then
+                cp "$GITHUB_WORKSPACE/maintenance/${plugin}-debug.cs3" "$plugin/build/${plugin}-debug.cs3"
               else
-                cp $GITHUB_WORKSPACE/builds/*$plugin*.cs3 "$plugin/build/" 2>/dev/null || true
+                cp $GITHUB_WORKSPACE/maintenance/*$plugin*.cs3 "$plugin/build/" 2>/dev/null || true
               fi
             fi
           done
@@ -161,17 +161,17 @@ jobs:
 
             ./gradlew ":$plugin:make"
 
-            mkdir -p $GITHUB_WORKSPACE/builds
-            find "$plugin/build" -name "*.cs3" -exec cp {} $GITHUB_WORKSPACE/builds \;
+            mkdir -p $GITHUB_WORKSPACE/maintenance
+            find "$plugin/build" -name "*.cs3" -exec cp {} $GITHUB_WORKSPACE/maintenance \;
           done
 
           # Langkah 3: Membuat ulang metadata berkas perekam plugins.json secara penuh
           ./gradlew makePluginsJson
-          cp build/plugins.json $GITHUB_WORKSPACE/builds/
+          cp build/plugins.json $GITHUB_WORKSPACE/maintenance/
 
       - name: Push builds
         run: |
-          cd $GITHUB_WORKSPACE/builds
+          cd $GITHUB_WORKSPACE/maintenance
 
           git config --local user.email "actions@github.com"
           git config --local user.name "GitHub Actions"
