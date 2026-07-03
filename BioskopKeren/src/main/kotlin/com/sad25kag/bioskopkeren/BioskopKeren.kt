@@ -1,5 +1,3 @@
-@file:Suppress("DEPRECATION")
-
 package com.sad25kag.bioskopkeren
 
 import com.lagradost.cloudstream3.HomePageList
@@ -215,7 +213,6 @@ class BioskopKeren : MainAPI() {
         iframeUrls
             .filterNot { isBadPlaybackUrl(it) }
             .forEach { iframeUrl ->
-    @Suppress("DEPRECATION")
                 found = resolveIframeWithExtractor(
                     iframeUrl,
                     watchUrl,
@@ -228,7 +225,6 @@ class BioskopKeren : MainAPI() {
         return found
     }
 
-    @Suppress("DEPRECATION")
     private suspend fun resolveIframeWithExtractor(
         iframeUrl: String,
         pageUrl: String,
@@ -533,7 +529,7 @@ class BioskopKeren : MainAPI() {
     private fun hasNextPage(document: Document, page: Int): Boolean {
         return document.selectFirst(
             "a[rel=next], .pagination a:contains(Next), .pagination a:contains(Berikutnya), " +
-                ".page-numbers.next, .nav-links a[href*='/page/${page + 1}'], a[href*='/page/${page + 1}/']" 
+                ".page-numbers.next, .nav-links a[href*='/page/${page + 1}'], a[href*='/page/${page + 1}/']"
         ) != null
     }
 

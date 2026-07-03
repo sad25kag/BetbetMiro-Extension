@@ -527,7 +527,6 @@ class CGVIndo : MainAPI() {
         return links.filter { it.isPlaybackCandidate() }.toList()
     }
 
-    @Suppress("DEPRECATION")
     private fun collectSubtitles(document: Document, baseUrl: String, subtitleCallback: (SubtitleFile) -> Unit) {
         document.select("track[src], a[href$=.srt], a[href$=.vtt]").forEach { element ->
             val url = fixUrl(element.attr("src").ifBlank { element.attr("href") }, baseUrl) ?: return@forEach
