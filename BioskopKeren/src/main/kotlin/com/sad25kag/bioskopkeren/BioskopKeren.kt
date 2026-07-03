@@ -758,34 +758,33 @@ class BioskopKeren : MainAPI() {
         }
     }
 
-    
+
     private fun String.cleanTitle(): String {
         return decodeEscaped()
             .replace(Regex("""(?i)^\s*permalink\s*(kes|tos)\s*:\s*"""), "")
             .replace(Regex("""(?i)^\s*bioskopkeren\s*[-|:]\s*"""), "")
+            .replace(Regex("""(?i)^nonton\s+film\s*"""), "")
             .replace(Regex("""\s+-\s+bioskopkeren.*$""", RegexOption.IGNORE_CASE), "")
             .replace(Regex("""\s+\|\s+bioskopkeren.*$""", RegexOption.IGNORE_CASE), "")
-            .replace(Regex("""(?i)^nonton\s+film\s*"""), "")
             .replace(Regex("""\s+streaming\s+online.*$""", RegexOption.IGNORE_CASE), "")
             .replace(Regex("""\s+download.*$""", RegexOption.IGNORE_CASE), "")
             .replace(Regex("""\s+subtitle\s+indonesia.*$""", RegexOption.IGNORE_CASE), "")
             .replace(Regex("""\s+subs\s+indo.*$""", RegexOption.IGNORE_CASE), "")
             .replace(Regex("""\s+full\s+movie.*$""", RegexOption.IGNORE_CASE), "")
-            .replace(Regex("""\s+…$"""), "")
+            .replace(Regex("""\s+\.{3}$"""), "")
             .replace(Regex("""\s+"""), " ")
             .trim()
     }
 
     private fun String.cleanDetailTitle(): String {
         return cleanTitle()
-            .replace(Regex("""s*((?:19|20)d{2})s*$"""), "")
-            .replace(Regex("""s+"""), " ")
+            .replace(Regex("""\s*(19|20)\d{2}\s*$"""), "")
             .trim()
     }
 
     private fun String.cleanPlot(): String? {
         return decodeEscaped()
-            .replace(Regex("""s+"""), " ")
+            .replace(Regex("""\s+"""), " ")
             .trim()
             .takeIf { it.isNotBlank() && it.length > 20 }
     }
@@ -794,14 +793,11 @@ class BioskopKeren : MainAPI() {
         val lower = trim().lowercase()
         if (lower.isBlank()) return true
         if (lower.length <= 1) return true
-        if (lower.matches(Regex("""^d+$"""))) return true
+        if (lower.matches(Regex("""^\d+$"""))) return true
 
         return lower in setOf(
-            "home", "next", "previous", "prev", "movies", "movie", "tv series", "series",
-            "trending", "search", "genre", "country", "year", "tag", "category", "quality",
-            "watch", "watch movie", "watch now", "tonton", "download", "trailer", "play", "login",
-            "register", "read more", "more", "lihat semua", "nonton", "nonton movie", "nonton film",
-            "hd", "sd", "cam", "ts", "hdrip", "bluray", "web-dl", "semua tipe", "film"
+            "home","next","previous","prev","movies","movie","tv series","series",
+            "trending","search","genre","country","year","tag","category","quality",
+            "watch","play","login","register","more","nonton","download"
         )
     }
-}
