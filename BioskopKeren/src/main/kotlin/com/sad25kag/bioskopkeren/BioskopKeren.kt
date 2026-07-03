@@ -325,7 +325,7 @@ class BioskopKeren : MainAPI() {
     }
 
     private fun extractWindowUrl(html: String, key: String): String? {
-        return Regex("""(?:window.)?$keys*=s*["']([^"']+)["']""")
+        return Regex("""(?:window.)?\$keys*=s*["']([^"']+)["']""")
             .find(html)
             ?.groupValues
             ?.getOrNull(1)
@@ -788,3 +788,4 @@ class BioskopKeren : MainAPI() {
             "genre","country","year","watch","play","download","more"
         )
     }
+}
