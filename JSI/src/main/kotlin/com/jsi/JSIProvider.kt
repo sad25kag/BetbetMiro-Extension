@@ -32,7 +32,7 @@ import java.net.URLEncoder
 import java.util.Base64
 
 class JSIProvider : MainAPI() {
-    override var name = "JSI"
+    override var name = "JSI (Deprecates use Stable Version)"
     override var mainUrl = "https://javsubindo.life"
     override var lang = "id"
     override val supportedTypes = setOf(TvType.NSFW)
