@@ -7,6 +7,7 @@ import org.jsoup.Jsoup
 import org.jsoup.nodes.Document
 import java.net.URI
 import java.net.URLDecoder
+import com.lagradost.cloudstream3.newSubtitleFile
 
 internal object IndonesianSubtitleResolver {
     private const val INDONESIAN_LABEL = "Indonesian"
@@ -74,7 +75,7 @@ internal object IndonesianSubtitleResolver {
         fun add(label: String, rawUrl: String?) {
             val url = rawUrl.decodeJsonUrlOrNull().toAbsoluteUrl(baseUrl) ?: return
             if (!isSubtitleUrl(url) || !isIndonesianLabel(label)) return
-            if (seen.add(url)) subtitles += SubtitleFile(INDONESIAN_LABEL, url)
+            if (seen.add(url)) subtitles += newSubtitleFile(INDONESIAN_LABEL, url)
         }
 
         Jsoup.parse(text).select("track[src], source[src]").forEach { track ->
@@ -107,7 +108,7 @@ internal object IndonesianSubtitleResolver {
             val label = url.queryValue("c1_label") ?: ""
             val absoluteUrl = subtitleUrl.toAbsoluteUrl(baseUrl) ?: return@mapNotNull null
             if (!isSubtitleUrl(absoluteUrl) || !isIndonesianLabel(label)) return@mapNotNull null
-            SubtitleFile(INDONESIAN_LABEL, absoluteUrl)
+            newSubtitleFile(INDONESIAN_LABEL, absoluteUrl)
         }.distinctBy { it.url }
     }
 
