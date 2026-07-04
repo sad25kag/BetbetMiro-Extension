@@ -188,22 +188,47 @@ fun decodeBase64(value: String): String {
 
 private var resolvedApiUrl: String = ""
 
-suspend fun resolveApiUrl(): String {
+// Domains that failed verification (e.g. TLS hostname mismatch caused by DNS
+// hijacking/blocking on the user's network) during this process's lifetime.
+// Skipped on subsequent resolutions so a single poisoned domain doesn't keep
+// getting retried once a working one is known to be broken.
+private val blockedNewTvDomains = mutableSetOf<String>()
+
+/**
+ * Resolves the current NewTV API base URL.
+ *
+ * @param forceRefresh if true, ignores any cached value and re-resolves from
+ * the domain list. Callers should set this after a request against the
+ * previously cached apiBase fails (e.g. connection/TLS errors), since that
+ * usually means the resolved domain has since become unreachable or blocked.
+ */
+suspend fun resolveApiUrl(forceRefresh: Boolean = false): String {
+    if (forceRefresh) {
+        blockedNewTvDomains.add(resolvedApiUrl)
+        resolvedApiUrl = ""
+    }
     if (resolvedApiUrl.isNotBlank()) return resolvedApiUrl
     for (encoded in newTvDomains) {
         val base = decodeBase64(encoded).trimEnd('/')
+        if (base in blockedNewTvDomains) continue
         try {
             val response = app.get("$base/checknewtv.php", headers = newTvBaseHeaders)
                 .parsed<NewTvTokenResponse>()
             val tokenHash = response.token_hash
             if (!tokenHash.isNullOrBlank()) {
-                resolvedApiUrl = decodeBase64(tokenHash).trimEnd('/')
+                val candidate = decodeBase64(tokenHash).trimEnd('/')
+                if (candidate in blockedNewTvDomains) continue
+                resolvedApiUrl = candidate
                 return resolvedApiUrl
             }
         } catch (_: Exception) {
             // Try next domain.
         }
     }
+    // Everything failed. Clear the blocklist so the next attempt (e.g. after
+    // the user retries) gets a clean slate instead of permanently refusing
+    // to try domains that might be reachable again by then.
+    blockedNewTvDomains.clear()
     throw Exception("Failed to resolve NewTV API base URL")
 }
 
@@ -214,6 +239,39 @@ fun buildNewTvHeaders(ott: String, extra: Map<String, String> = emptyMap()): Map
         result[key] = value
     }
     return result
+}
+
+/**
+ * Fetches the playable link for a NewTV-backed provider (Netflix, Prime
+ * Video, HotStar, Disney mirrors). Handles resolving the API base URL and
+ * transparently retries once against a freshly re-resolved base if the first
+ * attempt fails to connect (covers cases like the cached domain getting
+ * DNS-hijacked/blocked mid-session), instead of letting a raw connection or
+ * TLS error surface to the user.
+ */
+suspend fun fetchNewTvPlayer(id: String, ott: String): Pair<String, NewTvPlayerResponse>? {
+    var apiBase = resolveApiUrl()
+    try {
+        val response = app.get(
+            "$apiBase/newtv/player.php?id=$id",
+            headers = buildNewTvHeaders(ott, mapOf("Usertoken" to ""))
+        ).parsed<NewTvPlayerResponse>()
+        return apiBase to response
+    } catch (_: Exception) {
+        // The cached apiBase is no longer reachable/trustworthy. Re-resolve
+        // and retry once before giving up.
+    }
+
+    return try {
+        apiBase = resolveApiUrl(forceRefresh = true)
+        val response = app.get(
+            "$apiBase/newtv/player.php?id=$id",
+            headers = buildNewTvHeaders(ott, mapOf("Usertoken" to ""))
+        ).parsed<NewTvPlayerResponse>()
+        apiBase to response
+    } catch (_: Exception) {
+        null
+    }
 }
 
 data class NewTvTokenResponse(
