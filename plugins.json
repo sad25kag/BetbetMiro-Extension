@@ -13,5 +13,20 @@
     "description": "Streaming Movie and TV Series",
     "url": "https://raw.githubusercontent.com/sad25kag/BetbetMiro-Extension/blob/master/Provider/MidasXXi.cs3",
     "name": "MidasXXi"
+  },
+  {
+    "iconUrl": "https://eskipii.com/wp-content/uploads/2023/10/favicon.png",
+    "apiVersion": 1,
+    "repositoryUrl": "https://github.com/sad25kag/BetbetMiro-Extension/tree/master",
+    "fileSize": 21830,
+    "status": 1,
+    "language": "id",
+    "authors": ["sad25kag"],
+    "tvTypes": ["AsianDrama", "TvSeries", "Movie"],
+    "version": 1,
+    "internalName": "Pusatmovie",
+    "description": "Streaming Movie and TV Series",
+    "url": "https://raw.githubusercontent.com/sad25kag/BetbetMiro-Extension/blob/master/Provider/Pusatmovie.cs3",
+    "name": "Pusatmovie"
   }
 ]
