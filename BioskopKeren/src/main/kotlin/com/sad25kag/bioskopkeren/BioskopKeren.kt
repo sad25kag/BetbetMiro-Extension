@@ -183,6 +183,11 @@ class BioskopKeren : MainAPI() {
         candidates.addAll(collectPlayerUrls(document, watchUrl))
         candidates.addAll(collectServerPageUrls(document, watchUrl))
 
+        // Prioritize VidHide and direct media
+        val vidhideCandidates = candidates.filter { it.contains("vidhide", ignoreCase = true) }
+        candidates.removeAll(vidhideCandidates)
+        candidates.addAll(0, vidhideCandidates) // prioritize
+
         val iframeUrls = linkedSetOf<String>()
 
         candidates.forEach { url ->
@@ -325,7 +330,7 @@ class BioskopKeren : MainAPI() {
     }
 
     private fun extractWindowUrl(html: String, key: String): String? {
-        return Regex("""(?:window\.)?keys\s*=\s*["\']([^"\']+)["\']""")
+        return Regex("""(?:window\.)?keys\s*=\s*["']([^"']+)["']""" )
             .find(html)
             ?.groupValues
             ?.getOrNull(1)
@@ -337,14 +342,14 @@ class BioskopKeren : MainAPI() {
         val cleaned = text.decodeEscaped()
         val results = linkedSetOf<String>()
 
-        Regex("""https?://[^"'<>s\\]+?.(?:m3u8|mp4|webm|mkv)(?:?[^"'<>s\\]*)?""", RegexOption.IGNORE_CASE)
+        Regex("""https?://[^"'< >s\\]+?.(?:m3u8|mp4|webm|mkv)(?:?[^"'< >s\\]*)?""", RegexOption.IGNORE_CASE)
             .findAll(cleaned)
             .map { it.value }
             .mapNotNull { resolveUrl(it, pageUrl) }
             .filterNot { isBadPlaybackUrl(it) }
             .forEach { results.add(it) }
 
-        Regex("""//[^"'<>s\\]+?.(?:m3u8|mp4|webm|mkv)(?:?[^"'<>s\\]*)?""", RegexOption.IGNORE_CASE)
+        Regex("""//[^"'< >s\\]+?.(?:m3u8|mp4|webm|mkv)(?:?[^"'< >s\\]*)?""", RegexOption.IGNORE_CASE)
             .findAll(cleaned)
             .map { "https:${it.value}" }
             .mapNotNull { resolveUrl(it, pageUrl) }
@@ -664,38 +669,12 @@ class BioskopKeren : MainAPI() {
             val resolved = resolveUrl(raw, mainUrl) ?: fixUrlNull(raw)
             if (resolved != null && !isBadImage(resolved)) return resolved
         }
-
         return null
-    }
-
-    private fun Element.getImageAttr(): String? {
-        return when {
-            hasAttr("data-src") -> attr("data-src")
-            hasAttr("data-lazy-src") -> attr("data-lazy-src")
-            hasAttr("data-original") -> attr("data-original")
-            hasAttr("data-img") -> attr("data-img")
-            hasAttr("data-image") -> attr("data-image")
-            hasAttr("data-poster") -> attr("data-poster")
-            hasAttr("poster") -> attr("poster")
-            hasAttr("data-srcset") -> pickSrcSet(attr("data-srcset"))
-            hasAttr("srcset") -> pickSrcSet(attr("srcset"))
-            hasAttr("src") -> attr("src")
-            else -> null
-        }
-    }
-
-    private fun pickSrcSet(srcset: String): String? {
-        return srcset.split(",")
-            .map { it.trim().substringBefore(" ").trim() }
-            .filter { it.isNotBlank() }
-            .lastOrNull()
     }
 
     private fun isBadImage(url: String): Boolean {
         val lower = url.lowercase()
-        return lower.isBlank() ||
-            lower.startsWith("data:") ||
-            lower.contains("logo") ||
+        return lower.contains("logo") ||
             lower.contains("icon") ||
             lower.contains("avatar") ||
             lower.contains("favicon") ||
@@ -705,7 +684,7 @@ class BioskopKeren : MainAPI() {
     }
 
     private fun extractYear(text: String): Int? {
-        return Regex("""\b(19d{2}|20d{2})\b""")
+        return Regex("""\b(19\d{2}|20\d{2})\b""")
             .find(text)
             ?.groupValues
             ?.getOrNull(1)
@@ -738,7 +717,6 @@ class BioskopKeren : MainAPI() {
             .trim('-')
     }
 
-
     private fun String.decodeEscaped(): String {
         val cleaned = this
             .replace("\\u002F", "/")
@@ -746,9 +724,9 @@ class BioskopKeren : MainAPI() {
             .replace("\\u003A", ":")
             .replace("\\u0026", "&")
             .replace("\\u003D", "=")
-            .replace("&amp;", "&")
+            .replace("&", "&")
             .replace("&#038;", "&")
-            .replace("&quot;", "\"")
+            .replace(""", "\"")
             .replace("&#8217;", "'")
             .replace("&#8211;", "–")
             .replace("&#8212;", "—")
@@ -760,19 +738,19 @@ class BioskopKeren : MainAPI() {
 
     private fun String.cleanTitle(): String {
         return this
-            .replace(Regex("\\s+"), " ")
+            .replace(Regex("\s+"), " ")
             .trim()
     }
 
     private fun String.cleanDetailTitle(): String {
         return cleanTitle()
-            .replace(Regex("\\s*(19|20)\\d{2}\\s*$"), "")
+            .replace(Regex("\s*(19|20)\d{2}\s*$"), "")
             .trim()
     }
 
     private fun String.cleanPlot(): String? {
         return this
-            .replace(Regex("\\s+"), " ")
+            .replace(Regex("\s+"), " ")
             .trim()
             .takeIf { it.isNotBlank() && it.length > 20 }
     }
@@ -787,5 +765,13 @@ class BioskopKeren : MainAPI() {
             "home","next","previous","prev","movies","tv","series","search",
             "genre","country","year","watch","play","download","more"
         )
+    }
+
+    private fun Element.getImageAttr(): String? {
+        return attr("data-src").takeIf { it.isNotBlank() }
+            ?: attr("data-lazy-src").takeIf { it.isNotBlank() }
+            ?: attr("data-original").takeIf { it.isNotBlank() }
+            ?: attr("src").takeIf { it.isNotBlank() }
+            ?: attr("data-srcset").takeIf { it.isNotBlank() }?.substringBefore(",")
     }
 }
