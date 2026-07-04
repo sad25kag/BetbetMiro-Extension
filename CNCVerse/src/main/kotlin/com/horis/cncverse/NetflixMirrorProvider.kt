@@ -18,7 +18,7 @@ class NetflixMirrorProvider : MainAPI() {
     companion object {
         var context: Context? = null
     }
-    
+
     override val supportedTypes = setOf(
         TvType.Movie,
         TvType.TvSeries,
@@ -27,7 +27,7 @@ class NetflixMirrorProvider : MainAPI() {
     )
     override var lang = "id"
 
-    override var mainUrl = "https://net52.cc"
+    override var mainUrl = "https://net11.cc"
     override var name = "Netflix"
 
     override val hasMainPage = true
