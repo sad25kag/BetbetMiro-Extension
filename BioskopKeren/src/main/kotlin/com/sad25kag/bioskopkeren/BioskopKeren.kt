@@ -184,9 +184,13 @@ class BioskopKeren : MainAPI() {
         candidates.addAll(collectServerPageUrls(document, watchUrl))
 
         // VidHide is the most reliable server on this site, so try it first.
+        // `candidates` is a LinkedHashSet (order = insertion order), not a List, so we
+        // reorder it by clearing and re-inserting rather than calling addAll(index, ...).
         val vidhideCandidates = candidates.filter { it.contains("vidhide", ignoreCase = true) }
-        candidates.removeAll(vidhideCandidates.toSet())
-        candidates.addAll(0, vidhideCandidates)
+        val otherCandidates = candidates.filterNot { it.contains("vidhide", ignoreCase = true) }
+        candidates.clear()
+        candidates.addAll(vidhideCandidates)
+        candidates.addAll(otherCandidates)
 
         val iframeUrls = linkedSetOf<String>()
         candidates.forEach { url ->
