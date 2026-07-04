@@ -17,7 +17,7 @@ buildscript {
     val androidGradlePluginVersion = project
         .findProperty("android.gradle.plugin.version")
         ?.toString()
-        ?: "9.2.1"
+        ?: "9.1.1"
 
     repositories {
         google()
