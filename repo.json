@@ -4,6 +4,7 @@
     "iconUrl": "https://avatars.githubusercontent.com/u/114850487?v=4",
     "manifestVersion": 1,
     "pluginLists": [
-      "https://raw.githubusercontent.com/sad25kag/BetbetMiro-Extension/maintenance/plugins.json"
+      "https://raw.githubusercontent.com/sad25kag/BetbetMiro-Extension/maintenance/plugins.json",
+      "https://raw.githubusercontent.com/Subrata96411/CNCVerse-Cloud-Stream-Extension/blob/builds/plugins.json"
     ]
 }
