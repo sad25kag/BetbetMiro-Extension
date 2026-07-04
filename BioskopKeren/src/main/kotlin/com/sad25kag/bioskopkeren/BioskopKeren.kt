@@ -94,7 +94,10 @@ class BioskopKeren : MainAPI() {
             }.getOrNull() ?: return@forEach
 
             parseCards(document).forEach { item ->
-                if (item.name.contains(cleanQuery, ignoreCase = true) || item.url.contains(cleanQuery.slugQuery(), ignoreCase = true)) {
+                if (
+                    item.name.contains(cleanQuery, ignoreCase = true) ||
+                    item.url.contains(cleanQuery.slugQuery(), ignoreCase = true)
+                ) {
                     results[item.url] = item
                 }
             }
@@ -113,13 +116,18 @@ class BioskopKeren : MainAPI() {
         val fixedUrl = normalizeProviderUrl(fixUrl(url))
         val document = app.get(fixedUrl, headers = siteHeaders, referer = "$mainUrl/").document
 
-        val titleElem = document.selectFirst("h1.entry-title, .gmr-movie-data h1.entry-title, meta[property=og:title], meta[name=title]")
-        val titleRaw = titleElem?.let { if (it.hasAttr("content")) it.attr("content") else it.text() } ?: ""
-        val title = if (titleRaw.isNotBlank() && !titleRaw.isUiText()) titleRaw.cleanDetailTitle() else fixedUrl.slugTitle().cleanDetailTitle()
+        val title = document.selectFirst(
+            "h1.entry-title, .gmr-movie-data h1.entry-title, meta[property=og:title], meta[name=title]"
+        )?.let { if (it.hasAttr("content")) it.attr("content") else it.text() }
+            ?.cleanDetailTitle()
+            ?.takeIf { it.isNotBlank() && !it.isUiText() }
+            ?: fixedUrl.slugTitle().cleanDetailTitle()
 
-        val posterElem = document.selectFirst("meta[property=og:image], meta[name=twitter:image], .gmr-movie-data img, .entry-content img, img.wp-post-image")
-        val posterRaw = posterElem?.let { if (it.hasAttr("content")) it.attr("content") else it.getImageAttr() }
-        val poster = posterRaw?.let { resolveUrl(it, fixedUrl) ?: fixUrlNull(it) }?.takeIf { !isBadImage(it) }
+        val poster = document.selectFirst(
+            "meta[property=og:image], meta[name=twitter:image], .gmr-movie-data img, .entry-content img, img.wp-post-image"
+        )?.let { if (it.hasAttr("content")) it.attr("content") else it.getImageAttr() }
+            ?.let { resolveUrl(it, fixedUrl) ?: fixUrlNull(it) }
+            ?.takeIf { !isBadImage(it) }
 
         val plot = extractPlot(document)
         val tags = document.select(".content-moviedata a[href*='/genre/'], .gmr-moviedata a[href*='/genre/']")
@@ -129,14 +137,22 @@ class BioskopKeren : MainAPI() {
             .take(20)
 
         val year = document.selectFirst(".content-moviedata a[href*='/year/'], .gmr-moviedata a[href*='/year/']")
-            ?.text()?.toIntOrNull() ?: extractYear(title) ?: extractYear(document.text())
+            ?.text()
+            ?.toIntOrNull()
+            ?: extractYear(title)
+            ?: extractYear(document.text())
 
         val recommendations = parseCards(document)
             .filter { it.url != fixedUrl }
             .distinctBy { it.url }
             .take(24)
 
-        return newMovieLoadResponse(title, fixedUrl, TvType.Movie, fixedUrl) {
+        return newMovieLoadResponse(
+            title,
+            fixedUrl,
+            TvType.Movie,
+            fixedUrl
+        ) {
             posterUrl = poster
             this.plot = plot
             this.year = year
@@ -155,20 +171,27 @@ class BioskopKeren : MainAPI() {
         bkLog("watchUrl=$watchUrl")
 
         val document = runCatching {
-            app.get(watchUrl, headers = siteHeaders, referer = "$mainUrl/", timeout = 30L).document
+            app.get(
+                watchUrl,
+                headers = siteHeaders,
+                referer = "$mainUrl/",
+                timeout = 30L
+            ).document
         }.getOrNull() ?: return false
 
         val candidates = linkedSetOf<String>()
         candidates.addAll(collectPlayerUrls(document, watchUrl))
         candidates.addAll(collectServerPageUrls(document, watchUrl))
 
-        val vidhide = candidates.filter { it.contains("vidhide", ignoreCase = true) }
-        candidates.removeAll(vidhide.toSet())
-        candidates.addAll(vidhide) // fixed addAll
+        // VidHide is the most reliable server on this site, so try it first.
+        val vidhideCandidates = candidates.filter { it.contains("vidhide", ignoreCase = true) }
+        candidates.removeAll(vidhideCandidates.toSet())
+        candidates.addAll(0, vidhideCandidates)
 
         val iframeUrls = linkedSetOf<String>()
         candidates.forEach { url ->
-            if (url != watchUrl) iframeUrls.add(url)
+            if (url == watchUrl) return@forEach
+            iframeUrls.add(url)
         }
 
         val extraCandidates = linkedSetOf<String>()
@@ -188,15 +211,24 @@ class BioskopKeren : MainAPI() {
         allUrls.addAll(extraCandidates)
 
         bkLog("candidateCount=${allUrls.size}")
+        allUrls.forEach { bkLog("candidate=$it") }
 
         var emitted = false
-        allUrls.filterNot { isBadPlaybackUrl(it) }.distinct().forEach { candidate ->
-            val ok = resolveIframeWithExtractor(candidate, watchUrl, subtitleCallback) { link ->
-                emitted = true
-                callback(link)
+
+        allUrls
+            .filterNot { isBadPlaybackUrl(it) }
+            .distinct()
+            .forEach { candidate ->
+                val ok = resolveIframeWithExtractor(
+                    candidate,
+                    watchUrl,
+                    subtitleCallback
+                ) { link ->
+                    emitted = true
+                    callback(link)
+                }
+                bkLog("candidateResult url=$candidate ok=$ok")
             }
-            bkLog("candidateResult url=$candidate ok=$ok")
-        }
 
         bkLog("loadLinksResult_emitted=$emitted")
         return emitted
@@ -210,11 +242,61 @@ class BioskopKeren : MainAPI() {
         callback: (ExtractorLink) -> Unit
     ): Boolean {
         val extractorReferer = getExtractorReferer(iframeUrl, pageUrl)
-        if (tryLoadExtractorWithReferers(iframeUrl, listOf(extractorReferer, pageUrl, iframeUrl, "$mainUrl/"), subtitleCallback, callback)) {
+        bkLog("resolveIframe url=$iframeUrl host=${safeHost(iframeUrl)} referer=$extractorReferer")
+
+        if (
+            tryLoadExtractorWithReferers(
+                iframeUrl,
+                listOf(extractorReferer, pageUrl, iframeUrl, "$mainUrl/"),
+                subtitleCallback,
+                callback
+            )
+        ) {
+            bkLog("resolveIframe directExtractor=true url=$iframeUrl")
             return true
         }
-        // ... (rest simplified)
-        return false
+
+        val iframeResponse = runCatching {
+            app.get(
+                iframeUrl,
+                headers = siteHeaders,
+                referer = extractorReferer,
+                timeout = 30L
+            )
+        }.getOrNull() ?: return false
+
+        val iframeHtml = iframeResponse.text.decodeEscaped()
+        val iframeDocument = Jsoup.parse(iframeHtml, iframeUrl)
+
+        val nestedPlayers = linkedSetOf<String>()
+        nestedPlayers.addAll(collectPlayerUrls(iframeDocument, iframeUrl))
+        nestedPlayers.addAll(collectServerPageUrls(iframeDocument, iframeUrl))
+        nestedPlayers.addAll(extractMediaUrls(iframeHtml, iframeUrl))
+
+        iframeDocument.select("#servers a[data-url], a[data-url*='/embed/'], form[action*='/embed/']")
+            .mapNotNull { element ->
+                listOf("data-url", "action", "href")
+                    .mapNotNull { attr -> element.attr(attr).takeIf { it.isNotBlank() } }
+                    .firstOrNull()
+            }
+            .mapNotNull { resolveUrl(it, iframeUrl) }
+            .filterNot { isBadPlaybackUrl(it) }
+            .forEach { nestedPlayers.add(it) }
+
+        bkLog("nestedPlayers=${nestedPlayers.size} parent=$iframeUrl")
+        nestedPlayers.forEach { bkLog("nestedPlayer=$it") }
+
+        var found = false
+        nestedPlayers.distinct().filter { it != iframeUrl }.forEach { nested ->
+            found = tryLoadExtractorWithReferers(
+                nested,
+                listOf(getExtractorReferer(nested, iframeUrl), iframeUrl, extractorReferer, pageUrl),
+                subtitleCallback,
+                callback
+            ) || found
+        }
+
+        return found
     }
 
     private suspend fun tryLoadExtractorWithReferers(
@@ -225,22 +307,72 @@ class BioskopKeren : MainAPI() {
     ): Boolean {
         val fixed = resolveUrl(url, mainUrl) ?: return false
         if (isBadPlaybackUrl(fixed)) return false
-        return referers.any { referer ->
-            val loaded = runCatching { loadExtractor(fixed, referer, subtitleCallback, callback) }.getOrDefault(false)
-            loaded
-        }
+
+        return referers
+            .mapNotNull { it.takeIf(String::isNotBlank) }
+            .distinct()
+            .any { referer ->
+                var emitted = false
+                val countingCallback: (ExtractorLink) -> Unit = { link ->
+                    emitted = true
+                    callback.invoke(link)
+                }
+
+                val loaded = runCatching {
+                    loadExtractor(fixed, referer, subtitleCallback, countingCallback)
+                }.getOrDefault(false)
+
+                bkLog("extractorResult url=$fixed referer=$referer loaded=$loaded emitted=$emitted")
+                emitted
+            }
     }
 
     private fun extractMediaUrls(text: String, pageUrl: String): List<String> {
         val cleaned = text.decodeEscaped()
         val results = linkedSetOf<String>()
-        // Safe regex without complex escapes
+
+        Regex("""https?://[^"'<>\s]+?\.(?:m3u8|mp4|webm|mkv)(?:\?[^"'<>\s]*)?""", RegexOption.IGNORE_CASE)
+            .findAll(cleaned)
+            .map { it.value }
+            .mapNotNull { resolveUrl(it, pageUrl) }
+            .filterNot { isBadPlaybackUrl(it) }
+            .forEach { results.add(it) }
+
+        Regex("""//[^"'<>\s]+?\.(?:m3u8|mp4|webm|mkv)(?:\?[^"'<>\s]*)?""", RegexOption.IGNORE_CASE)
+            .findAll(cleaned)
+            .map { "https:${it.value}" }
+            .mapNotNull { resolveUrl(it, pageUrl) }
+            .filterNot { isBadPlaybackUrl(it) }
+            .forEach { results.add(it) }
+
+        Regex(
+            """(?:file|src|source|url|video|videoUrl|streamUrl|downloadURL)\s*[:=]\s*["']([^"']+)["']""",
+            RegexOption.IGNORE_CASE
+        )
+            .findAll(cleaned)
+            .mapNotNull { resolveUrl(it.groupValues[1], pageUrl) }
+            .filter {
+                it.contains(".m3u8", true) ||
+                    it.contains(".mp4", true) ||
+                    it.contains(".webm", true) ||
+                    it.contains(".mkv", true)
+            }
+            .filterNot { isBadPlaybackUrl(it) }
+            .forEach { results.add(it) }
+
         return results.toList()
     }
 
     private fun getExtractorReferer(iframeUrl: String, pageUrl: String): String {
-        val host = runCatching { URI(iframeUrl).host.orEmpty().lowercase() }.getOrDefault("")
-        return if (host == "vidhide.org" || host.endsWith(".vidhide.org")) "$mainUrl/" else pageUrl
+        val host = safeHost(iframeUrl)
+        // VidHide (and its mirror domains: vidhidepro/vidhidevip/vidhidehub/etc.) checks the
+        // Referer header against the origin site rather than the embed page itself, so sending
+        // pageUrl as referer causes the extractor to silently fail. Force the site origin instead.
+        return if (host.contains("vidhide")) {
+            "$mainUrl/"
+        } else {
+            pageUrl
+        }
     }
 
     private fun safeHost(url: String): String {
@@ -249,41 +381,402 @@ class BioskopKeren : MainAPI() {
 
     private fun parseCards(document: Document): List<SearchResponse> {
         val results = linkedMapOf<String, SearchResponse>()
-        document.select("article").forEach { element ->
+
+        document.select(
+            "article.item-infinite, article.item, .gmr-box-content:has(h2.entry-title a), .item:has(h2.entry-title a)"
+        ).forEach { element ->
             element.toSearchResult()?.let { results[it.url] = it }
         }
+
+        if (results.isEmpty()) {
+            document.select("h2.entry-title a[href], a[rel=bookmark][href]:has(img)")
+                .forEach { element ->
+                    element.toSearchResult()?.let { results[it.url] = it }
+                }
+        }
+
         return results.values.toList()
     }
 
     private fun Element.toSearchResult(): SearchResponse? {
-        val anchor = selectFirst("a[href]") ?: return null
+        val anchor = if (this.`is`("a[href]")) {
+            this
+        } else {
+            selectFirst("h2.entry-title a[href], .entry-title a[href], a[rel=bookmark][href]:has(img)")
+                ?: return null
+        }
+
         val href = normalizeProviderUrl(resolveUrl(anchor.attr("href"), mainUrl) ?: return null)
-        if (!isProviderUrl(href)) return null
-        val title = anchor.text().cleanTitle()
-        return newMovieSearchResponse(title, href, TvType.Movie) {}
+        if (!isProviderUrl(href) || isBlockedUrl(href)) return null
+
+        val title = listOf(
+            selectFirst("h2.entry-title a")?.text(),
+            selectFirst(".entry-title a")?.text(),
+            anchor.text(),
+            anchor.attr("title"),
+            selectFirst("img[alt]")?.attr("alt")
+        ).mapNotNull {
+            it?.cleanTitle()?.takeIf { clean -> clean.isNotBlank() && !clean.isUiText() }
+        }.firstOrNull() ?: return null
+
+        val poster = extractPosterUrl(this, anchor)
+
+        return newMovieSearchResponse(title, href, TvType.Movie) {
+            posterUrl = poster
+            year = extractYear(title) ?: extractYear(text())
+        }
     }
 
-    private fun collectPlayerUrls(document: Document, pageUrl: String): List<String> = emptyList() // stub for build
-    private fun collectServerPageUrls(document: Document, pageUrl: String): List<String> = emptyList()
+    private fun collectPlayerUrls(document: Document, pageUrl: String): List<String> {
+        val results = linkedSetOf<String>()
 
-    private fun extractPlot(document: Document): String? = null
-    private fun hasNextPage(document: Document, page: Int): Boolean = false
-    private fun buildPageUrl(path: String, page: Int): String = mainUrl
-    private fun resolveUrl(raw: String?, base: String): String? = raw
-    private fun normalizeProviderUrl(url: String): String = url
-    private fun isProviderUrl(url: String): Boolean = true
-    private fun isBlockedUrl(url: String): Boolean = false
-    private fun isBadPlaybackUrl(url: String): Boolean = false
-    private fun extractPosterUrl(element: Element, anchor: Element): String? = null
-    private fun isBadImage(url: String): Boolean = false
-    private fun extractYear(text: String): Int? = null
-    private fun decodeBase64(value: String): String? = null
-    private fun String.slugTitle(): String = this
-    private fun String.slugQuery(): String = this
-    private fun String.decodeEscaped(): String = this
-    private fun String.cleanTitle(): String = this.trim()
-    private fun String.cleanDetailTitle(): String = this.trim()
-    private fun String.cleanPlot(): String? = this.trim().takeIf { it.isNotBlank() }
-    private fun String.isUiText(): Boolean = false
-    private fun Element.getImageAttr(): String? = attr("src")
+        document.select(
+            ".player-wrap iframe[src], .player-wrap iframe[data-src], " +
+                ".gmr-pagi-player iframe[src], .gmr-pagi-player iframe[data-src], " +
+                ".gmr-embed-responsive iframe[src], .gmr-embed-responsive iframe[data-src], " +
+                "iframe[src], iframe[data-src], embed[src], source[src], video[src], object[data]"
+        ).forEach { element ->
+            listOf("src", "data-src", "data", "href")
+                .mapNotNull { attr -> element.attr(attr).takeIf { it.isNotBlank() } }
+                .mapNotNull { resolveUrl(it, pageUrl) }
+                .forEach { results.add(it) }
+        }
+
+        document.select(
+            ".player-wrap option[value], .gmr-pagi-player option[value], .server option[value], " +
+                ".mirror option[value], select option[value], [data-iframe], [data-frame], " +
+                "[data-src], [data-url], [data-link]"
+        ).forEach { element ->
+            listOf("value", "data-iframe", "data-frame", "data-src", "data-url", "data-link")
+                .mapNotNull { attr -> element.attr(attr).takeIf { it.isNotBlank() } }
+                .flatMap { expandServerValue(it, pageUrl) }
+                .forEach { results.add(it) }
+        }
+
+        document.select("a[href]").forEach { a ->
+            val url = resolveUrl(a.attr("href"), pageUrl) ?: return@forEach
+            if (
+                url.contains("/embed/", true) ||
+                url.contains("/player/", true) ||
+                url.contains("/watch/", true) ||
+                url.contains("/video/", true)
+            ) {
+                results.add(url)
+            }
+        }
+
+        return results.toList()
+    }
+
+    private fun collectServerPageUrls(document: Document, pageUrl: String): List<String> {
+        return document.select(
+            ".muvipro-player-tabs a[href], .gmr-player-tabs a[href], .server a[href], " +
+                ".mirror a[href], .player-nav a[href]"
+        ).mapNotNull { resolveUrl(it.attr("href"), pageUrl) }
+            .map { normalizeProviderUrl(it) }
+            .filter { isProviderUrl(it) && !isBlockedUrl(it) }
+            .distinct()
+    }
+
+    private fun expandServerValue(value: String, pageUrl: String): List<String> {
+        val results = linkedSetOf<String>()
+        val clean = value.trim().decodeEscaped()
+        if (clean.isBlank() || clean == "#") return emptyList()
+
+        resolveUrl(clean, pageUrl)?.let { results.add(it) }
+
+        val urlDecoded = runCatching { URLDecoder.decode(clean, "UTF-8") }.getOrDefault(clean)
+        if (urlDecoded != clean) {
+            resolveUrl(urlDecoded, pageUrl)?.let { results.add(it) }
+            extractIframeUrls(urlDecoded, pageUrl).forEach { results.add(it) }
+        }
+
+        if (clean.contains("<iframe", true) || clean.contains("<embed", true) || clean.contains("<source", true)) {
+            extractIframeUrls(clean, pageUrl).forEach { results.add(it) }
+        }
+
+        decodeBase64(clean)?.let { decoded ->
+            resolveUrl(decoded, pageUrl)?.let { results.add(it) }
+            extractIframeUrls(decoded, pageUrl).forEach { results.add(it) }
+        }
+
+        return results.toList()
+    }
+
+    private fun extractIframeUrls(html: String, pageUrl: String): List<String> {
+        val doc = Jsoup.parse(html.decodeEscaped(), pageUrl)
+        return doc.select("iframe[src], iframe[data-src], embed[src], source[src], video[src], a[href], object[data]")
+            .mapNotNull { element ->
+                listOf("src", "data-src", "data", "href")
+                    .mapNotNull { attr -> element.attr(attr).takeIf { it.isNotBlank() } }
+                    .firstOrNull()
+            }
+            .mapNotNull { resolveUrl(it, pageUrl) }
+            .filterNot { isBadPlaybackUrl(it) }
+            .distinct()
+    }
+
+    private fun extractPlot(document: Document): String? {
+        document.selectFirst("meta[property=og:description], meta[name=description]")
+            ?.attr("content")
+            ?.cleanPlot()
+            ?.let { return it }
+
+        val entry = document.selectFirst(".entry-content.entry-content-single, .entry-content")
+            ?: return null
+
+        val clone = entry.clone()
+        clone.select("script, style, .content-moviedata, .gmr-moviedata, h1, h2, h3").remove()
+
+        return clone.selectFirst("p")?.text()?.cleanPlot() ?: clone.text().cleanPlot()
+    }
+
+    private fun hasNextPage(document: Document, page: Int): Boolean {
+        return document.selectFirst(
+            "a[rel=next], .pagination a:contains(Next), .pagination a:contains(Berikutnya), " +
+                ".page-numbers.next, .nav-links a[href*='/page/${page + 1}'], a[href*='/page/${page + 1}/']"
+        ) != null
+    }
+
+    private fun buildPageUrl(path: String, page: Int): String {
+        val cleanPath = path.trim('/')
+        return when {
+            cleanPath.isBlank() && page <= 1 -> mainUrl
+            cleanPath.isBlank() -> "$mainUrl/page/$page/"
+            page <= 1 -> "$mainUrl/$cleanPath/"
+            else -> "$mainUrl/$cleanPath/page/$page/"
+        }
+    }
+
+    private fun resolveUrl(raw: String?, base: String): String? {
+        val clean = raw
+            ?.trim()
+            ?.decodeEscaped()
+            ?.takeIf { it.isNotBlank() && it != "#" && !it.equals("none", true) && !it.equals("null", true) }
+            ?: return null
+
+        if (
+            clean.startsWith("javascript", true) ||
+            clean.startsWith("mailto:", true) ||
+            clean.startsWith("tel:", true)
+        ) return null
+
+        return runCatching {
+            when {
+                clean.startsWith("http://", true) || clean.startsWith("https://", true) -> normalizeProviderUrl(clean)
+                clean.startsWith("//") -> "https:$clean"
+                clean.startsWith("/") -> {
+                    val uri = URI(base)
+                    val root = "${uri.scheme ?: "http"}://${uri.host}"
+                    normalizeProviderUrl("$root$clean")
+                }
+                else -> normalizeProviderUrl(URI(base).resolve(clean).toString())
+            }
+        }.getOrElse {
+            runCatching { fixUrl(clean) }.getOrNull()
+        }
+    }
+
+    private fun normalizeProviderUrl(url: String): String {
+        return url.replace("https://134.209.20.140", mainUrl)
+            .replace("http://www.134.209.20.140", mainUrl)
+            .trim()
+    }
+
+    private fun isProviderUrl(url: String): Boolean {
+        return runCatching {
+            val host = URI(url).host.orEmpty().lowercase().removePrefix("www.")
+            host == "134.209.20.140"
+        }.getOrDefault(url.startsWith(mainUrl))
+    }
+
+    private fun isBlockedUrl(url: String): Boolean {
+        val path = runCatching { URI(url).path.orEmpty().trim('/').lowercase() }
+            .getOrDefault(url.substringAfter(mainUrl, "").trim('/').lowercase())
+
+        if (path.isBlank()) return false
+
+        val blockedPrefixes = listOf(
+            "genre/", "country/", "quality/", "year/", "tag/", "director/", "cast/",
+            "author/", "blog/", "page/", "search", "feed", "wp-json", "wp-content", "wp-admin"
+        )
+
+        val blockedExact = setOf(
+            "genre", "country", "quality", "year", "tag", "director", "cast",
+            "dmca", "pasang-iklan", "cara-download", "privacy", "contact", "terms", "about",
+            "faq", "ads", "cara-install-vpn"
+        )
+
+        val lower = url.lowercase()
+        return path in blockedExact ||
+            blockedPrefixes.any { path.startsWith(it) } ||
+            lower.endsWith(".jpg") ||
+            lower.endsWith(".jpeg") ||
+            lower.endsWith(".png") ||
+            lower.endsWith(".webp") ||
+            lower.endsWith(".gif") ||
+            lower.endsWith(".css") ||
+            lower.endsWith(".js")
+    }
+
+    private fun isBadPlaybackUrl(url: String): Boolean {
+        val lower = url.lowercase()
+        return lower.contains("facebook.com") ||
+            lower.contains("twitter.com") ||
+            lower.contains("x.com/") ||
+            lower.contains("telegram") ||
+            lower.contains("whatsapp") ||
+            lower.contains("mailto:") ||
+            lower.contains("youtube.com/watch") ||
+            lower.contains("shopee.") ||
+            lower.contains("mrktmtrcs") ||
+            lower.contains("dtscout") ||
+            lower.contains("dtscdn") ||
+            lower.contains("histats") ||
+            lower.contains("adsbygoogle") ||
+            lower.contains("googlesyndication") ||
+            lower.contains("doubleclick") ||
+            lower.contains("analytics") ||
+            lower.contains("googletagmanager") ||
+            lower.contains("cloudflareinsights") ||
+            lower.contains("/wp-content/themes/") ||
+            lower.contains("/wp-content/plugins/") ||
+            lower.endsWith(".css") ||
+            lower.endsWith(".jpg") ||
+            lower.endsWith(".jpeg") ||
+            lower.endsWith(".png") ||
+            lower.endsWith(".webp") ||
+            lower.endsWith(".gif") ||
+            lower.endsWith(".svg") ||
+            lower.endsWith(".ico") ||
+            lower.endsWith(".woff") ||
+            lower.endsWith(".woff2") ||
+            lower.endsWith(".ttf")
+    }
+
+    private fun extractPosterUrl(element: Element, anchor: Element): String? {
+        val candidates = listOfNotNull(
+            element,
+            anchor,
+            element.parent(),
+            element.parent()?.parent(),
+            anchor.parent(),
+            anchor.parent()?.parent()
+        ).distinct()
+
+        for (box in candidates) {
+            val image = box.selectFirst(
+                "img[data-src], img[data-lazy-src], img[data-original], img[data-img], " +
+                    "img[data-image], img[data-poster], img[src], source[data-srcset], source[srcset]"
+            ) ?: continue
+
+            val raw = image.getImageAttr() ?: continue
+            val resolved = resolveUrl(raw, mainUrl) ?: fixUrlNull(raw)
+            if (resolved != null && !isBadImage(resolved)) return resolved
+        }
+        return null
+    }
+
+    private fun isBadImage(url: String): Boolean {
+        val lower = url.lowercase()
+        return lower.contains("logo") ||
+            lower.contains("icon") ||
+            lower.contains("avatar") ||
+            lower.contains("favicon") ||
+            lower.contains("placeholder") ||
+            lower.contains("no-image") ||
+            lower.endsWith(".svg")
+    }
+
+    private fun extractYear(text: String): Int? {
+        return Regex("""\b(19\d{2}|20\d{2})\b""")
+            .find(text)
+            ?.groupValues
+            ?.getOrNull(1)
+            ?.toIntOrNull()
+    }
+
+    private fun decodeBase64(value: String): String? {
+        val clean = value.trim()
+        if (clean.length < 16 || !clean.matches(Regex("""^[A-Za-z0-9+/=_-]+$"""))) return null
+
+        return runCatching {
+            val normalized = clean.replace('-', '+').replace('_', '/')
+            val padded = normalized + "=".repeat((4 - normalized.length % 4) % 4)
+            String(android.util.Base64.decode(padded, android.util.Base64.DEFAULT), Charsets.UTF_8)
+        }.getOrNull()
+    }
+
+    private fun String.slugTitle(): String {
+        return substringBefore("?")
+            .trimEnd('/')
+            .substringAfterLast("/")
+            .replace("-", " ")
+            .cleanTitle()
+            .ifBlank { "BioskopKeren" }
+    }
+
+    private fun String.slugQuery(): String {
+        return lowercase()
+            .replace(Regex("""[^a-z0-9]+"""), "-")
+            .trim('-')
+    }
+
+    private fun String.decodeEscaped(): String {
+        val cleaned = this
+            .replace("\\u002F", "/")
+            .replace("\\/", "/")
+            .replace("\\u003A", ":")
+            .replace("\\u0026", "&")
+            .replace("\\u003D", "=")
+            .replace("&amp;", "&")
+            .replace("&#038;", "&")
+            .replace("&quot;", "\"")
+            .replace("&#8217;", "'")
+            .replace("&#8211;", "–")
+            .replace("&#8212;", "—")
+
+        return if (cleaned.contains("%3A%2F%2F", true) || cleaned.contains("%3C", true)) {
+            runCatching { java.net.URLDecoder.decode(cleaned, "UTF-8") }.getOrDefault(cleaned)
+        } else cleaned
+    }
+
+    private fun String.cleanTitle(): String {
+        return this
+            .replace(Regex("""\s+"""), " ")
+            .trim()
+    }
+
+    private fun String.cleanDetailTitle(): String {
+        return cleanTitle()
+            .replace(Regex("""\s*(19|20)\d{2}\s*$"""), "")
+            .trim()
+    }
+
+    private fun String.cleanPlot(): String? {
+        return this
+            .replace(Regex("""\s+"""), " ")
+            .trim()
+            .takeIf { it.isNotBlank() && it.length > 20 }
+    }
+
+    private fun String.isUiText(): Boolean {
+        val l = trim().lowercase()
+        if (l.isBlank()) return true
+        if (l.length <= 1) return true
+        if (l.all { it.isDigit() }) return true
+
+        return l in setOf(
+            "home", "next", "previous", "prev", "movies", "tv", "series", "search",
+            "genre", "country", "year", "watch", "play", "download", "more"
+        )
+    }
+
+    private fun Element.getImageAttr(): String? {
+        return attr("data-src").takeIf { it.isNotBlank() }
+            ?: attr("data-lazy-src").takeIf { it.isNotBlank() }
+            ?: attr("data-original").takeIf { it.isNotBlank() }
+            ?: attr("src").takeIf { it.isNotBlank() }
+            ?: attr("data-srcset").takeIf { it.isNotBlank() }?.substringBefore(",")
+    }
 }
