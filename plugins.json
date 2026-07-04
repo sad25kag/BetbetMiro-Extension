@@ -30,19 +30,19 @@
         "name": "MidasXXi"
     },
     {
-        "iconUrl": "https://eskipii.com/wp-content/uploads/2023/10/favicon.png",
+        "iconUrl": "https://raw.githubusercontent.com/phisher98/TVVVV/refs/heads/main/Icons/Ultima.jpg",
         "apiVersion": 1,
         "repositoryUrl": "https://github.com/sad25kag/BetbetMiro-Extension/tree/master",
-        "fileSize": 21830,
+        "fileSize": 298613,
         "status": 1,
         "language": "id",
         "authors": ["sad25kag"],
-        "tvTypes": ["AsianDrama", "TvSeries", "Movie"],
+        "tvTypes": ["All"],
         "version": 1,
-        "internalName": "Pusatmovie",
-        "description": "Streaming Movie and TV Series",
-        "url": "https://raw.githubusercontent.com/sad25kag/BetbetMiro-Extension/master/Provider/Pusatmovie.cs3",
-        "name": "Pusatmovie"
+        "internalName": "Ultima",
+        "description": "Tools",
+        "url": "https://raw.githubusercontent.com/sad25kag/BetbetMiro-Extension/master/Provider/Ultima.cs3",
+        "name": "Ultima"
     },
     {
         "iconUrl": "https://go1.wgfilm21.com/wp-content/uploads/2025/08/wgfilm21-fav-2-60x60.webp",
