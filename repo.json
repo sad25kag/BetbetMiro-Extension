@@ -1,9 +1,10 @@
 {
-    "name": "BetbetMiro-Extension",
+    "name": "BetbetMiro-Extension Regular",
     "description": "Repository extension CloudStream custom berisi berbagai provider anime, donghua, movie, dan source streaming lainnya.",
     "iconUrl": "https://avatars.githubusercontent.com/u/114850487?v=4",
     "manifestVersion": 1,
     "pluginLists": [
-      "https://raw.githubusercontent.com/sad25kag/BetbetMiro-Extension/builds/plugins.json"
+      "https://raw.githubusercontent.com/sad25kag/BetbetMiro-Extension/builds/plugins.json",
+      "https://raw.githubusercontent.com/sad25kag/BetbetMiro-Extension/master/plugins.json"
     ]
 }
