@@ -17,7 +17,7 @@ buildscript {
     val androidGradlePluginVersion = project
         .findProperty("android.gradle.plugin.version")
         ?.toString()
-        ?: "9.1.1"
+        ?: "9.2.1"
 
     repositories {
         google()
@@ -33,8 +33,8 @@ buildscript {
 }
 
 val cloudstreamApiVersion = providers.gradleProperty("cloudstream.api.version").orElse("pre-release").get()
-val kotlinxCoroutinesVersion = providers.gradleProperty("kotlinx.coroutines.version").orElse("1.10.1").get()
-val kotlinxSerializationVersion = providers.gradleProperty("kotlinx.serialization.version").orElse("1.7.3").get()
+val kotlinxCoroutinesVersion = providers.gradleProperty("kotlinx.coroutines.version").orElse("1.11.0").get()
+val kotlinxSerializationVersion = providers.gradleProperty("kotlinx.serialization.version").orElse("1.11.0").get()
 val androidCompileSdkVersion = providers.gradleProperty("android.compileSdk.version").orElse("35").get().toInt()
 
 allprojects {
@@ -81,7 +81,7 @@ subprojects {
                     "-Xno-call-assertions",
                     "-Xno-param-assertions",
                     "-Xno-receiver-assertions",
-                    
+
                 )
             }
         }
@@ -94,15 +94,15 @@ subprojects {
         add("implementation", "org.jetbrains.kotlinx:kotlinx-coroutines-core:$kotlinxCoroutinesVersion")
         add("implementation", "org.jetbrains.kotlinx:kotlinx-serialization-json:$kotlinxSerializationVersion")
         add("implementation", "com.github.Blatzar:NiceHttp:0.4.18")
-        add("implementation", "com.squareup.okhttp3:okhttp:4.12.0")
-        add("implementation", "org.jsoup:jsoup:1.22.1")
-        add("implementation", "com.fasterxml.jackson.module:jackson-module-kotlin:2.13.1")
-        add("implementation", "com.fasterxml.jackson.core:jackson-databind:2.13.1")
-        add("implementation", "com.google.code.gson:gson:2.11.0")
+        add("implementation", "com.squareup.okhttp3:okhttp:5.4.0")
+        add("implementation", "org.jsoup:jsoup:1.22.2")
+        add("implementation", "com.fasterxml.jackson.module:jackson-module-kotlin:2.22.0")
+        add("implementation", "com.fasterxml.jackson.core:jackson-databind:2.22.0")
+        add("implementation", "com.google.code.gson:gson:2.14.0")
         add("implementation", "com.faendir.rhino:rhino-android:1.6.0")
         add("implementation", "app.cash.quickjs:quickjs-android:0.9.2")
         add("implementation", "me.xdrop:fuzzywuzzy:1.4.0")
-        add("implementation", "androidx.core:core-ktx:1.18.0")
+        add("implementation", "androidx.core:core-ktx:1.19.0")
     }
 }
 
