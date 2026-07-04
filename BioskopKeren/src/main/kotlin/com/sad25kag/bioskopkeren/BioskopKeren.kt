@@ -183,13 +183,12 @@ class BioskopKeren : MainAPI() {
         candidates.addAll(collectPlayerUrls(document, watchUrl))
         candidates.addAll(collectServerPageUrls(document, watchUrl))
 
-        // Prioritize VidHide and direct media
-        val vidhideCandidates = candidates.filter { it.contains("vidhide", ignoreCase = true) }
-        candidates.removeAll(vidhideCandidates)
-        candidates.addAll(0, vidhideCandidates) // prioritize
+        // Prioritize VidHide
+        val vidhide = candidates.filter { it.contains("vidhide", ignoreCase = true) }
+        candidates.removeAll(vidhide.toSet())
+        candidates.addAll(0, vidhide)
 
         val iframeUrls = linkedSetOf<String>()
-
         candidates.forEach { url ->
             if (url == watchUrl) return@forEach
             iframeUrls.add(url)
@@ -327,15 +326,6 @@ class BioskopKeren : MainAPI() {
                 bkLog("extractorResult url=$fixed referer=$referer loaded=$loaded emitted=$emitted")
                 emitted
             }
-    }
-
-    private fun extractWindowUrl(html: String, key: String): String? {
-        return Regex("""(?:window\.)?keys\s*=\s*["']([^"']+)["']""" )
-            .find(html)
-            ?.groupValues
-            ?.getOrNull(1)
-            ?.decodeEscaped()
-            ?.takeIf { it.isNotBlank() }
     }
 
     private fun extractMediaUrls(text: String, pageUrl: String): List<String> {
@@ -684,11 +674,7 @@ class BioskopKeren : MainAPI() {
     }
 
     private fun extractYear(text: String): Int? {
-        return Regex("""\b(19\d{2}|20\d{2})\b""")
-            .find(text)
-            ?.groupValues
-            ?.getOrNull(1)
-            ?.toIntOrNull()
+        return Regex("""\b(19\d{2}|20\d{2})\b""").find(text)?.groupValues?.getOrNull(1)?.toIntOrNull()
     }
 
     private fun decodeBase64(value: String): String? {
@@ -737,34 +723,32 @@ class BioskopKeren : MainAPI() {
     }
 
     private fun String.cleanTitle(): String {
-        return this
-            .replace(Regex("\s+"), " ")
-            .trim()
+        return this.replace(Regex("\s+"), " ").trim()
     }
 
     private fun String.cleanDetailTitle(): String {
-        return cleanTitle()
-            .replace(Regex("\s*(19|20)\d{2}\s*$"), "")
-            .trim()
+        return cleanTitle().replace(Regex("\s*(19|20)\d{2}\s*$"), "").trim()
     }
 
     private fun String.cleanPlot(): String? {
-        return this
-            .replace(Regex("\s+"), " ")
-            .trim()
-            .takeIf { it.isNotBlank() && it.length > 20 }
+        return this.replace(Regex("\s+"), " ").trim().takeIf { it.isNotBlank() && it.length > 20 }
     }
 
     private fun String.isUiText(): Boolean {
         val l = trim().lowercase()
-        if (l.isBlank()) return true
-        if (l.length <= 1) return true
-        if (l.all { it.isDigit() }) return true
-
+        if (l.isBlank() || l.length <= 1 || l.all { it.isDigit() }) return true
         return l in setOf(
             "home","next","previous","prev","movies","tv","series","search",
             "genre","country","year","watch","play","download","more"
         )
+    }
+
+    private fun Element.getImageAttr(): String? {
+        return attr("data-src").ifBlank { null }
+            ?: attr("data-lazy-src").ifBlank { null }
+            ?: attr("data-original").ifBlank { null }
+            ?: attr("src").ifBlank { null }
+            ?: attr("data-srcset").ifBlank { null }?.substringBefore(",")
     }
 
     private fun Element.getImageAttr(): String? {
