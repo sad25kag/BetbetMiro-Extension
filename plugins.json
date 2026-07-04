@@ -1,50 +1,5 @@
 [
-  {
-    "iconUrl": "https://midasxxi.com/wp-content/uploads/2024/01/cropped-favicon.png",
-    "apiVersion": 1,
-    "repositoryUrl": "https://github.com/sad25kag/BetbetMiro-Extension/tree/master",
-    "fileSize": 21789,
-    "status": 1,
-    "language": "id",
-    "authors": ["sad25kag"],
-    "tvTypes": ["AsianDrama", "TvSeries", "Movie"],
-    "version": 1,
-    "internalName": "MidasXXi",
-    "description": "Streaming Movie and TV Series",
-    "url": "https://raw.githubusercontent.com/sad25kag/BetbetMiro-Extension/blob/master/Provider/MidasXXi.cs3",
-    "name": "MidasXXi"
-  },
-  {
-    "iconUrl": "https://eskipii.com/wp-content/uploads/2023/10/favicon.png",
-    "apiVersion": 1,
-    "repositoryUrl": "https://github.com/sad25kag/BetbetMiro-Extension/tree/master",
-    "fileSize": 21830,
-    "status": 1,
-    "language": "id",
-    "authors": ["sad25kag"],
-    "tvTypes": ["AsianDrama", "TvSeries", "Movie"],
-    "version": 1,
-    "internalName": "Pusatmovie",
-    "description": "Streaming Movie and TV Series",
-    "url": "https://raw.githubusercontent.com/sad25kag/BetbetMiro-Extension/blob/master/Provider/Pusatmovie.cs3",
-    "name": "Pusatmovie"
-  },
-  {
-    "iconUrl": "https://go1.wgfilm21.com/wp-content/uploads/2025/08/wgfilm21-fav-2-60x60.webp",
-    "apiVersion": 1,
-    "repositoryUrl": "https://github.com/sad25kag/BetbetMiro-Extension/tree/master",
-    "fileSize": 22081,
-    "status": 1,
-    "language": "id",
-    "authors": ["sad25kag"],
-    "tvTypes": ["Movie", "TvSeries"],
-    "version": 1,
-    "internalName": "WGFilm21",
-    "description": "Streaming Movie and TV Series",
-    "url": "https://raw.githubusercontent.com/sad25kag/BetbetMiro-Extension/blob/master/Provider/WGFilm21.cs3",
-    "name": "WGFilm21"
-  },
-  {
+    {
     "iconUrl": "https://i.ibb.co.com/YFbP1FSr/icon.png",
     "apiVersion": 1,
     "repositoryUrl": "https://github.com/sad25kag/BetbetMiro-Extension/tree/master",
@@ -58,5 +13,50 @@
     "description": "Streaming Movie and TV Series",
     "url": "https://raw.githubusercontent.com/sad25kag/BetbetMiro-Extension/blob/master/Provider/Moviebox.cs3",
     "name": "Moviebox"
-  }
+    },
+    {
+    "iconUrl": "https://midasxxi.com/wp-content/uploads/2024/01/cropped-favicon.png",
+    "apiVersion": 1,
+    "repositoryUrl": "https://github.com/sad25kag/BetbetMiro-Extension/tree/master",
+    "fileSize": 21789,
+    "status": 1,
+    "language": "id",
+    "authors": ["sad25kag"],
+    "tvTypes": ["AsianDrama", "TvSeries", "Movie"],
+    "version": 1,
+    "internalName": "MidasXXi",
+    "description": "Streaming Movie and TV Series",
+    "url": "https://raw.githubusercontent.com/sad25kag/BetbetMiro-Extension/blob/master/Provider/MidasXXi.cs3",
+    "name": "MidasXXi"
+    },
+    {
+    "iconUrl": "https://eskipii.com/wp-content/uploads/2023/10/favicon.png",
+    "apiVersion": 1,
+    "repositoryUrl": "https://github.com/sad25kag/BetbetMiro-Extension/tree/master",
+    "fileSize": 21830,
+    "status": 1,
+    "language": "id",
+    "authors": ["sad25kag"],
+    "tvTypes": ["AsianDrama", "TvSeries", "Movie"],
+    "version": 1,
+    "internalName": "Pusatmovie",
+    "description": "Streaming Movie and TV Series",
+    "url": "https://raw.githubusercontent.com/sad25kag/BetbetMiro-Extension/blob/master/Provider/Pusatmovie.cs3",
+    "name": "Pusatmovie"
+    },
+    {
+    "iconUrl": "https://go1.wgfilm21.com/wp-content/uploads/2025/08/wgfilm21-fav-2-60x60.webp",
+    "apiVersion": 1,
+    "repositoryUrl": "https://github.com/sad25kag/BetbetMiro-Extension/tree/master",
+    "fileSize": 22081,
+    "status": 1,
+    "language": "id",
+    "authors": ["sad25kag"],
+    "tvTypes": ["Movie", "TvSeries"],
+    "version": 1,
+    "internalName": "WGFilm21",
+    "description": "Streaming Movie and TV Series",
+    "url": "https://raw.githubusercontent.com/sad25kag/BetbetMiro-Extension/blob/master/Provider/WGFilm21.cs3",
+    "name": "WGFilm21"
+    }
 ]
