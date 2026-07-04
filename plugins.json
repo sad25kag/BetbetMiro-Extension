@@ -1,20 +1,5 @@
 [
   {
-    "iconUrl": "https://i.ibb.co.com/YFbP1FSr/icon.png",
-    "apiVersion": 1,
-    "repositoryUrl": "https://github.com/sad25kag/BetbetMiro-Extension/tree/master",
-    "fileSize": 74677,
-    "status": 1,
-    "language": "id",
-    "authors": ["sad25kag"],
-    "tvTypes": ["TvSeries", "Movie", "Anime", "AsianDrama"],
-    "version": 1,
-    "internalName": "Moviebox",
-    "description": "Streaming Movie and TV Series",
-    "url": "https://raw.githubusercontent.com/sad25kag/BetbetMiro-Extension/blob/master/Provider/Moviebox.cs3",
-    "name": "Moviebox"
-  },
-  {
     "iconUrl": "https://midasxxi.com/wp-content/uploads/2024/01/cropped-favicon.png",
     "apiVersion": 1,
     "repositoryUrl": "https://github.com/sad25kag/BetbetMiro-Extension/tree/master",
@@ -58,5 +43,20 @@
     "description": "Streaming Movie and TV Series",
     "url": "https://raw.githubusercontent.com/sad25kag/BetbetMiro-Extension/blob/master/Provider/WGFilm21.cs3",
     "name": "WGFilm21"
+  },
+  {
+    "iconUrl": "https://i.ibb.co.com/YFbP1FSr/icon.png",
+    "apiVersion": 1,
+    "repositoryUrl": "https://github.com/sad25kag/BetbetMiro-Extension/tree/master",
+    "fileSize": 74677,
+    "status": 1,
+    "language": "id",
+    "authors": ["sad25kag"],
+    "tvTypes": ["TvSeries", "Movie", "Anime", "AsianDrama"],
+    "version": 1,
+    "internalName": "Moviebox",
+    "description": "Streaming Movie and TV Series",
+    "url": "https://raw.githubusercontent.com/sad25kag/BetbetMiro-Extension/blob/master/Provider/Moviebox.cs3",
+    "name": "Moviebox"
   }
 ]
