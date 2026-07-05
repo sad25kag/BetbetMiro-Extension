@@ -1880,7 +1880,7 @@ open class Gofile : ExtractorApi() {
     override val mainUrl = "https://gofile.io"
     override val requiresReferer = false
     private val mainApi = "https://api.gofile.io"
-    private val browserLanguage = "en-GB"
+    private val browserLanguage = "id"
     private val secret = "5d4f7g8sd45fsd"
 
     override suspend fun getUrl(
