@@ -34,7 +34,7 @@ class IPTVOrgProvider : MainAPI() {
     override var lang = "id"
     override val hasMainPage = true
     override val hasQuickSearch = true
-    override val hasDownloadSupport = false
+    override val hasDownloadSupport = true
     override val hasChromecastSupport = true
     override val supportedTypes = setOf(TvType.Live)
 

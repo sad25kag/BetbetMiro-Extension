@@ -42,7 +42,7 @@ class SarangFilm21 : MainAPI() {
     override var name = "SarangFilm21"
     override val hasMainPage = true
     override val hasQuickSearch = true
-    override val hasDownloadSupport = false
+    override val hasDownloadSupport = true
     override var lang = "id"
 
     override val supportedTypes = setOf(

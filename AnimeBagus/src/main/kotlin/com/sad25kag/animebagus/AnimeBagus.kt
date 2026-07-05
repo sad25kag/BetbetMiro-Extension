@@ -17,7 +17,7 @@ class AnimeBagus : MainAPI() {
     override var name = "AnimeBagus"
     override val hasMainPage = true
     override var lang = "id"
-    override val hasDownloadSupport = false
+    override val hasDownloadSupport = true
     override val supportedTypes = setOf(TvType.Anime, TvType.AnimeMovie, TvType.OVA, TvType.Movie)
 
     private val movieMarker = "animebagus-movie"
