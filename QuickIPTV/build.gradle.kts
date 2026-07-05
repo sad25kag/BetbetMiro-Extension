@@ -20,7 +20,7 @@ cloudstream {
     // All of these properties are optional, you can safely remove them
     language = "id"
     description = "Includes PirateIPTV,Sports IPTV,Japanese IPTV,Sony IPTV"
-    authors = listOf("sad25kag98")
+    authors = listOf("sad25kag")
 
     /**
      * Status int as the following:

@@ -7,7 +7,7 @@ cloudstream {
 
     description = "Ringz App"
     language    = "hi"
-    authors = listOf("sad25kag98")
+    authors = listOf("sad25kag")
 
     /**
     * Status int as the following:
@@ -22,7 +22,7 @@ cloudstream {
     // You can find a list of available types here:
     // https://recloudstream.github.io/cloudstream/html/app/com.lagradost.cloudstream3/-tv-type/index.html
     tvTypes = listOf("AnimeMovie","Anime","Cartoon")
-    iconUrl="https://raw.githubusercontent.com/sad25kag98/TVVVV/refs/heads/main/Icons/Ringz.png"
+    iconUrl="https://raw.githubusercontent.com/sad25kag/TVVVV/refs/heads/main/Icons/Ringz.png"
 
     isCrossPlatform = false
 }

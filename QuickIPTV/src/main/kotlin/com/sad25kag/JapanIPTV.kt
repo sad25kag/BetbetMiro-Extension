@@ -1,4 +1,4 @@
-package com.sad25kag98
+package com.sad25kag
 
 import com.lagradost.cloudstream3.*
 import com.lagradost.cloudstream3.utils.AppUtils.parseJson
@@ -10,10 +10,10 @@ import com.lagradost.cloudstream3.utils.newDrmExtractorLink
 import com.lagradost.cloudstream3.utils.newExtractorLink
 import java.util.UUID
 
-class PirateIPTV : SportsIPTV() {
+class JapanIPTV : SportsIPTV() {
     override var lang = "id"
-    override var mainUrl: String = BuildConfig.PirateIPTV
-    override var name = "Pirate IPTV"
+    override var mainUrl: String = BuildConfig.JapanIPTV
+    override var name = "Japan IPTV"
     override val hasMainPage = true
     override val hasChromecastSupport = true
     override val supportedTypes = setOf(

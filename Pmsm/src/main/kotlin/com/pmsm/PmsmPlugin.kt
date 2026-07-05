@@ -23,7 +23,7 @@ class PmsmPlugin : Plugin() {
 
     companion object {
         private const val DOMAINS_URL =
-            "https://raw.githubusercontent.com/sad25kag98/TVVVV/refs/heads/main/domains.json"
+            "https://raw.githubusercontent.com/sad25kag/TVVVV/refs/heads/main/domains.json"
         var cachedDomains: Domains? = null
 
         suspend fun getDomains(forceRefresh: Boolean = false): Domains? {
