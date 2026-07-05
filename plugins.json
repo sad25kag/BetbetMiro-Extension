@@ -1,17 +1,4 @@
 [
     {
-        "iconUrl": "http://134.209.20.140/wp-content/uploads/2026/04/BIOSKOPKEREN.png",
-        "apiVersion": 1,
-        "repositoryUrl": "https://github.com/sad25kag/BetbetMiro-Extension/tree/main",
-        "fileSize": 298613,
-        "status": 1,
-        "language": "id",
-        "authors": ["sad25kag"],
-        "tvTypes": ["All"],
-        "version": 1,
-        "internalName": "Ultima",
-        "description": "Tools",
-        "url": "https://raw.githubusercontent.com/sad25kag/BetbetMiro-Extension/main/Provider/Ultima.cs3",
-        "name": "Ultima"
     }
 ]
