@@ -1,7 +1,7 @@
 version = 2
 
 cloudstream {
-    authors     = listOf("BetbetMiro")
+    authors     = listOf(sad25kag)
     language    = "id"
     description = "Provider CloudStream untuk SarangFilm21."
     status      = 1

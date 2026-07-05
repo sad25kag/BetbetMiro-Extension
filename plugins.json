@@ -30,21 +30,6 @@
         "name": "MidasXXi"
     },
     {
-        "iconUrl": "https://i.ibb.co.com/YFbP1FSr/icon.png",
-        "apiVersion": 1,
-        "repositoryUrl": "https://github.com/sad25kag/BetbetMiro-Extension/tree/master",
-        "fileSize": 298613,
-        "status": 1,
-        "language": "id",
-        "authors": ["sad25kag"],
-        "tvTypes": ["All"],
-        "version": 1,
-        "internalName": "Ultima",
-        "description": "Tools",
-        "url": "https://raw.githubusercontent.com/sad25kag/BetbetMiro-Extension/master/Provider/Ultima.cs3",
-        "name": "Ultima"
-    },
-    {
         "iconUrl": "https://go1.wgfilm21.com/wp-content/uploads/2025/08/wgfilm21-fav-2-60x60.webp",
         "apiVersion": 1,
         "repositoryUrl": "https://github.com/sad25kag/BetbetMiro-Extension/tree/master",

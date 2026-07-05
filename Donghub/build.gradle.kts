@@ -3,7 +3,7 @@ version = 14
 cloudstream {
     description = "Donghub untuk donghua dan anime subtitle Indonesia."
     language = "id"
-    authors = listOf("BetbetMiro")
+    authors = listOf(sad25kag)
 
     /**
      * Status int:

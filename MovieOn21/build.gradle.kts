@@ -1,7 +1,7 @@
 version = 6
 
 cloudstream {
-    authors = listOf("BetbetMiro")
+    authors = listOf(sad25kag)
     language = "id"
     description = "MovieOn21 provider v6 dengan kategori homepage dirapikan, metadata non-dewasa, dan resolver t21.press Utama/Hydra berbasis HAR."
     status = 1
