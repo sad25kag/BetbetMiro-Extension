@@ -35,19 +35,19 @@ class FourKHDHub : MainAPI() {
 
     override val mainPage = mainPageOf(
         "" to "Home",
-        "category/movies" to "Latest Movies",
-        "category/series" to "Latest Episodes",
-        "category/korean-series" to "Korean Series",
+        "category/movies" to "Film Terbaru",
+        "category/korean-series" to "Nonton Drakor",
         "category/netflix" to "Netflix",
         "category/amazon_prime_video" to "Amazon Prime Video",
         "category/jiohotstar" to "JioHotstar",
         "category/disney" to "Disney+",
         "category/Apple_TV" to "Apple TV+",
+        "category/hbo_max" to "HBO Max",
+        "category/hulu" to "Hulu",
+        "category/crave" to "Crave",
         "category/anime" to "Anime",
         "category/2160p-HDR" to "4K HDR",
         "category/imdb" to "Top IMDb",
-        "category/hindi-movies" to "Hindi Movies",
-        "category/english-movies" to "English Movies",
     )
 
 
@@ -63,26 +63,40 @@ class FourKHDHub : MainAPI() {
         return newHomePageResponse(request.name, results, true)
     }
 
-    private fun Element.toSearchResult(): SearchResponse? {
-        val title = this.selectFirst("h3")?.text() ?: return null
-        val href = this.attr("href")
-        val posterUrl = this.select("img").attr("src")
-        val tags = select("span.movie-card-format").map { it.text() }
-        val quality = getSearchQuality(tags)
-        return newMovieSearchResponse(title, href, TvType.Movie) {
-            this.posterUrl = posterUrl
-            this.quality = quality
-        }
-
-    }
-
     override suspend fun search(query: String): List<SearchResponse> {
-        val document = app.get("$mainUrl/?s=$query").document
-        val results = document.select("div.card-grid a").mapNotNull {
-            it.toSearchResult()
+    val results = mutableListOf<SearchResponse>()
+
+    val encodedQuery = java.net.URLEncoder.encode(query, "UTF-8")
+
+    var page = 1
+    val maxPages = 10
+
+    while (page <= maxPages) {
+
+        val url = if (page == 1) {
+            "$mainUrl/?s=$encodedQuery"
+        } else {
+            "$mainUrl/?s=$encodedQuery/page/$page"
         }
-        return results
+
+        val document = try {
+            app.get(url).document
+        } catch (e: Exception) {
+            Log.e("Search", "error page=$page url=$url")
+            break
+        }
+
+        val items = document.select("div.card-grid a")
+            .mapNotNull { it.toSearchResult() }
+
+        if (items.isEmpty()) break
+
+        results.addAll(items)
+        page++
     }
+
+    return results.distinctBy { it.url }
+}
 
     @RequiresApi(Build.VERSION_CODES.N)
     override suspend fun load(url: String): LoadResponse {
