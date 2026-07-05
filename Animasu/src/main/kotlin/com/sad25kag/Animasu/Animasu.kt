@@ -99,7 +99,7 @@ class Animasu : MainAPI() {
         val document = getAnimasuDocument("$mainUrl/pencarian/?${request.data}&halaman=$page")
 
         val home = document.select("div.listupd div.bs")
-            .mapNotNull { it.toSearchResultOrNull() }
+            .mapNotNull { it.OrNull() }
 
         return newHomePageResponse(request.name, home)
     }
@@ -109,7 +109,7 @@ class Animasu : MainAPI() {
 
         return getAnimasuDocument("$mainUrl/?s=$encodedQuery")
             .select("div.listupd div.bs")
-            .mapNotNull { it.toSearchResultOrNull() }
+            .mapNotNull { it.OrNull() }
     }
 
     override suspend fun load(url: String): LoadResponse {
@@ -839,7 +839,7 @@ class Animasu : MainAPI() {
         }
     }
 
-    private fun Element.toSearchResultOrNull(): AnimeSearchResponse? {
+    private fun Element.OrNull(): AnimeSearchResponse? {
         val rawHref = fixUrlNull(this.selectFirst("a")?.attr("href")) ?: return null
         val href = getProperAnimeLink(rawHref)
         val title = this.select("div.tt").text().trim()
