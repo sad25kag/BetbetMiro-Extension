@@ -5,7 +5,6 @@ import androidx.annotation.RequiresApi
 import com.lagradost.api.Log
 import com.lagradost.cloudstream3.*
 import com.lagradost.cloudstream3.utils.*
-import com.lagradost.cloudstream3.utils.Extensions.toSearchResult
 import com.lagradost.cloudstream3.Episode
 import com.lagradost.cloudstream3.LoadResponse.Companion.addSimklId
 import com.lagradost.cloudstream3.LoadResponse.Companion.addTrailer
@@ -50,6 +49,26 @@ class FourKHDHub : MainAPI() {
         "category/2160p-HDR" to "4K HDR",
         "category/imdb" to "Top IMDb",
     )
+
+    // Fungsi ekstensi ini ditambahkan agar Jsoup Element bisa di-convert menjadi SearchResponse
+    private fun Element.toSearchResult(): SearchResponse? {
+        val href = this.attr("href")
+        if (href.isBlank()) return null
+
+        val title = this.attr("title").takeIf { it.isNotBlank() }
+            ?: this.selectFirst(".title, h2, h3")?.text()
+            ?: this.text()
+
+        if (title.isBlank()) return null
+
+        val posterUrl = this.selectFirst("img")?.let {
+            it.attr("data-src").takeIf { src -> src.isNotBlank() } ?: it.attr("src")
+        }
+
+        return newMovieSearchResponse(title, href, TvType.Movie) {
+            this.posterUrl = posterUrl
+        }
+    }
 
 
     override suspend fun getMainPage(
