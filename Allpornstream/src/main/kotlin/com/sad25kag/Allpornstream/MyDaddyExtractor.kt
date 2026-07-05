@@ -1,6 +1,7 @@
 package com.sad25kag.Allpornstream
 
 import com.lagradost.cloudstream3.SubtitleFile
+import com.lagradost.cloudstream3.newSubtitleFile
 import com.lagradost.cloudstream3.app
 import com.lagradost.cloudstream3.utils.*
 import android.util.Log
