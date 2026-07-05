@@ -43,7 +43,7 @@ class AnizoneProvider(private val sharedPref: SharedPreferences? = null) : MainA
         TvType.AnimeMovie,
     )
 
-    override var lang = "en"
+    override var lang = "id"
 
     override val hasMainPage = true
     override val hasQuickSearch = true
@@ -97,7 +97,7 @@ class AnizoneProvider(private val sharedPref: SharedPreferences? = null) : MainA
 
     private fun liveWireBuilder (updates : Map<String,String>, calls: List<Map<String, Any>>,
                                  biscuit : MutableMap<String, String>,
-                                 wireCreds : MutableMap<String,String>, 
+                                 wireCreds : MutableMap<String,String>,
                                  remember : Boolean): JSONObject {
 
         val payload = mapOf(
@@ -107,7 +107,7 @@ class AnizoneProvider(private val sharedPref: SharedPreferences? = null) : MainA
                 )
             )
         )
-        
+
         val req = Jsoup.connect("$mainUrl/livewire/update")
             .method(Connection.Method.POST)
             .header("Content-Type", "application/json")
@@ -123,8 +123,8 @@ class AnizoneProvider(private val sharedPref: SharedPreferences? = null) : MainA
 
         return JSONObject(req.body())
     }
-    
-    
+
+
     override suspend fun getMainPage(page: Int, request: MainPageRequest
     ): HomePageResponse {
 
@@ -162,7 +162,7 @@ class AnizoneProvider(private val sharedPref: SharedPreferences? = null) : MainA
                 }
             } catch (_: Exception) {}
         }
-        
+
         // Try to get title from window.getTitle fallback
         if (title.isBlank()) {
             val titleMatch = Regex("""window\.getTitle\(.*?, *['"](.+?)['"]\)""").find(xdata)
@@ -170,7 +170,7 @@ class AnizoneProvider(private val sharedPref: SharedPreferences? = null) : MainA
                 title = titleMatch.groupValues[1].replace("&quot;", "\"").replace("\\'", "'")
             }
         }
-        
+
         // Fallback: parse the JSON string directly
         if (title.isBlank()) {
             if (jsonMatch != null) {
@@ -188,7 +188,7 @@ class AnizoneProvider(private val sharedPref: SharedPreferences? = null) : MainA
         val xdata = post.attr("x-data")
         val title = extractTitleFromXData(xdata)
         val url = post.selectFirst("a")?.attr("href") ?: ""
-        
+
         val epsCount = post.select("div.inline.text-xs span")
             .map { it.text().trim() }
             .firstOrNull { it.endsWith("Eps", ignoreCase = true) }
@@ -217,7 +217,7 @@ class AnizoneProvider(private val sharedPref: SharedPreferences? = null) : MainA
             "wireSnapshot" to getSnapshot(doc=r.parse()),
             "token" to doc.select("script[data-csrf]").attr("data-csrf")
         )
-        
+
         var title = doc.selectFirst("h1")?.text()?.trim() ?: ""
         if (title.isBlank()) {
             val xdata = doc.selectFirst("[x-data*=\"displayAnimeTitle\"]")?.attr("x-data") ?: ""

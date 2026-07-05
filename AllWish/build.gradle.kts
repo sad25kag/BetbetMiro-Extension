@@ -19,7 +19,7 @@ cloudstream {
 
     tvTypes = listOf("All")
 
-    language = "en"
+    language = "id"
 
     // random cc logo i found
     iconUrl = "https://all-wish.me/assets/logo.png"

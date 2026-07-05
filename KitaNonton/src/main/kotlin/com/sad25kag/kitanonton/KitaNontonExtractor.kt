@@ -197,7 +197,7 @@ object KitaNontonExtractor {
             .forEach { subtitleUrl ->
                 val lang = when {
                     subtitleUrl.contains("id", true) || subtitleUrl.contains("ind", true) -> "Indonesian"
-                    subtitleUrl.contains("en", true) -> "English"
+                    subtitleUrl.contains("id", true) -> "English"
                     else -> "Subtitle"
                 }
                 runCatching { subtitleCallback(newSubtitleFile(lang, subtitleUrl)) }

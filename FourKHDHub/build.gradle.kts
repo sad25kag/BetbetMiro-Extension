@@ -6,7 +6,7 @@ cloudstream {
     // All of these properties are optional, you can safely remove them
 
     description = "4K Movies Extension by HDHUB4U"
-    language    = "en"
+    language    = "id"
     authors = listOf("sad25kag")
 
     /**

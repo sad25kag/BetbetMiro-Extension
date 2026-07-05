@@ -11,7 +11,7 @@ open class OnepaceProvider : MainAPI() {
     override var mainUrl = "https://onepace.me"
     override var name = "OnePace"
     override val hasMainPage = true
-    override var lang = "en"
+    override var lang = "id"
 
     override val supportedTypes =
         setOf(

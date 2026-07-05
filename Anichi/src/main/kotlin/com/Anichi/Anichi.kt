@@ -254,7 +254,7 @@ open class Anichi : MainAPI() {
         val fanart = animeMetadata?.images
             ?.firstOrNull { it.coverType.equals("Fanart", ignoreCase = true) }
             ?.url
-        val engtitle = animeMetadata?.titles?.get("en") ?: showData.englishName
+        val engtitle = animeMetadata?.titles?.get("id") ?: showData.englishName
         val backgroundposter = fanart ?: data?.bannerImage ?: trackers?.coverImage?.large
 
         val logotvType = if (showData.type?.contains("movie", ignoreCase = true) == true) TvType.AnimeMovie else TvType.Anime
@@ -266,7 +266,7 @@ open class Anichi : MainAPI() {
             apiKey = "98ae14df2b8d8f8f8136499daf79f0e0",
             type = logotvType,
             tmdbId = tmdbid,
-            appLangCode = "en"
+            appLangCode = "id"
         )
 
         val poster = showData.thumbnail
@@ -277,7 +277,7 @@ open class Anichi : MainAPI() {
                 AnichiLoadData(id, dubStatus, eps, trackers?.idMal).toJson()
             ) {
                 this.episode = epNum
-                this.name = meta?.title?.get("en") ?: "Episode $eps"
+                this.name = meta?.title?.get("id") ?: "Episode $eps"
                 this.score = Score.from10(meta?.rating)
                 this.posterUrl = meta?.image ?: showData.thumbnail
                 this.description = meta?.overview ?: "No summary available"

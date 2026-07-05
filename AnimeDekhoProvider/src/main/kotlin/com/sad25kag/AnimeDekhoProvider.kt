@@ -186,7 +186,7 @@ open class AnimeDekhoProvider : MainAPI() {
 
                     newEpisode(Media(href, mediaType = 2).toJson())
                     {
-                        this.name = tmdbEp?.name?.takeIf { it.isNotBlank() } ?: meta?.title?.get("en") ?: meta?.title?.get("x-jat") ?: name
+                        this.name = tmdbEp?.name?.takeIf { it.isNotBlank() } ?: meta?.title?.get("id") ?: meta?.title?.get("x-jat") ?: name
 
                         val tmdbImage = tmdbEp?.still_path?.takeIf { it.isNotBlank() && it != "null" }?.let { "https://image.tmdb.org/t/p/w500$it" }
                         this.posterUrl = tmdbImage ?: meta?.image ?: poster

@@ -54,20 +54,20 @@ class WinbuProvider : MainAPI() {
         }
 
         val document = app.get("$mainUrl/$path").documentLarge
-        
+
         val cssSelector = if (request.name in listOf("Ongoing Anime", "Complete Anime", "Most Popular", "Movie")) {
             "#anime .ml-item, .movies-list .ml-item"
         } else {
             "#movies .ml-item, .movies-list .ml-item"
         }
-        
+
         val homeList = document.select(cssSelector)
             .mapNotNull { it.toSearchResult(request.name) }
             .distinctBy { it.url }
 
-        val hasNext = document.selectFirst(".pagination a.next, a.next.page-numbers") != null || 
+        val hasNext = document.selectFirst(".pagination a.next, a.next.page-numbers") != null ||
                 document.select(".pagination a[href], #pagination a[href]").any {
-                    it.selectFirst("i.fa-caret-right, i.fa-angle-right, i.fa-chevron-right") != null || 
+                    it.selectFirst("i.fa-caret-right, i.fa-angle-right, i.fa-chevron-right") != null ||
                     it.text().contains("Next", ignoreCase = true)
                 }
 
@@ -78,8 +78,8 @@ class WinbuProvider : MainAPI() {
     }
 
     private fun parseEpisode(text: String?): Int? {
-        return text?.let { 
-            Regex("(\\d+[.,]?\\d*)").find(it)?.value?.replace(',', '.')?.toFloatOrNull()?.toInt() 
+        return text?.let {
+            Regex("(\\d+[.,]?\\d*)").find(it)?.value?.replace(',', '.')?.toFloatOrNull()?.toInt()
         }
     }
 
@@ -90,7 +90,7 @@ class WinbuProvider : MainAPI() {
         val title = anchor.attr("title").takeIf { it.isNotBlank() }
             ?: selectFirst(".judul")?.text()?.takeIf { it.isNotBlank() }
             ?: selectFirst("img.mli-thumb, img")?.attr("alt").orEmpty()
-            
+
         if (title.isBlank()) return null
 
         val poster = selectFirst("img.mli-thumb, img")?.getImageAttr()?.let { fixUrlNull(it) }
@@ -175,7 +175,7 @@ class WinbuProvider : MainAPI() {
             apiKey = "98ae14df2b8d8f8f8136499daf79f0e0",
             type = tvType,
             tmdbId = tmdbid,
-            appLangCode = "en"
+            appLangCode = "id"
         )
 
         val backgroundposter = animeMetaData?.images?.find { it.coverType == "Fanart" }?.url ?: tracker?.cover
@@ -193,10 +193,10 @@ class WinbuProvider : MainAPI() {
         val finalEpisodes = if (extractedEpisodes.isEmpty() || isMovie) {
             val epOverview = animeMetaData?.episodes?.get("1")?.overview
             val finalOverview = if (!epOverview.isNullOrBlank()) epOverview else "Synopsis not yet available."
-            
+
             listOf(
                 newEpisode(url) {
-                    this.name = animeMetaData?.titles?.get("en") ?: animeMetaData?.titles?.get("ja") ?: title
+                    this.name = animeMetaData?.titles?.get("id") ?: animeMetaData?.titles?.get("ja") ?: title
                     this.episode = 1
                     this.score = Score.from10(animeMetaData?.episodes?.get("1")?.rating)
                     this.posterUrl = animeMetaData?.episodes?.get("1")?.image ?: animeMetaData?.images?.firstOrNull()?.url ?: ""
@@ -213,7 +213,7 @@ class WinbuProvider : MainAPI() {
                 val finalOverview = if (!epOverview.isNullOrBlank()) epOverview else "Synopsis not yet available."
 
                 newEpisode(link) {
-                    this.name = metaEp?.title?.get("en") ?: metaEp?.title?.get("ja") ?: "Episode $num"
+                    this.name = metaEp?.title?.get("id") ?: metaEp?.title?.get("ja") ?: "Episode $num"
                     this.episode = num
                     this.score = Score.from10(metaEp?.rating)
                     this.posterUrl = metaEp?.image ?: animeMetaData?.images?.firstOrNull()?.url ?: ""
@@ -226,7 +226,7 @@ class WinbuProvider : MainAPI() {
 
         val apiDescription = animeMetaData?.description?.replace(Regex("<.*?>"), "")
         val rawPlot = apiDescription ?: animeMetaData?.episodes?.get("1")?.overview
-        
+
         val finalPlot = if (!rawPlot.isNullOrBlank()) {
             rawPlot
         } else {
@@ -234,7 +234,7 @@ class WinbuProvider : MainAPI() {
         }
 
         return newAnimeLoadResponse(title, url, TvType.Anime) {
-            this.engName = animeMetaData?.titles?.get("en") ?: title
+            this.engName = animeMetaData?.titles?.get("id") ?: title
             this.japName = animeMetaData?.titles?.get("ja") ?: animeMetaData?.titles?.get("x-jat")
             this.posterUrl = tracker?.image ?: poster
             this.backgroundPosterUrl = backgroundposter
@@ -243,7 +243,7 @@ class WinbuProvider : MainAPI() {
             this.plot = finalPlot
             this.tags = tags
             this.recommendations = recommendations
-            
+
             val finalScore = scoreValue?.let { Score.from10(it) } ?: Score.from10(animeMetaData?.episodes?.get("1")?.rating)
             this.score = finalScore
 
@@ -262,7 +262,7 @@ class WinbuProvider : MainAPI() {
         val document = app.get(data).documentLarge
         var found = false
         val seen = Collections.synchronizedSet(hashSetOf<String>())
-        
+
         val subtitleCb: (SubtitleFile) -> Unit = { subtitleCallback.invoke(it) }
         val linkCb: (ExtractorLink) -> Unit = {
             found = true
@@ -279,11 +279,11 @@ class WinbuProvider : MainAPI() {
                 val page = runCatching { app.get(fixed, referer = data).document }.getOrNull() ?: return
                 val json = page.selectFirst("#app")?.attr("data-page") ?: return
                 val parsed = tryParseJson<FiledonPage>(json) ?: return
-                
+
                 val directUrl = parsed.props?.url
                 if (!directUrl.isNullOrBlank() && seen.add(directUrl)) {
                     linkCb(newExtractorLink(
-                        "$name Filedon", "$name Filedon", directUrl, INFER_TYPE 
+                        "$name Filedon", "$name Filedon", directUrl, INFER_TYPE
                     ) {
                         this.quality = parsed.props.files?.name?.let { getQualityFromName(it) } ?: Qualities.Unknown.value
                         this.headers = mapOf("Referer" to data)
@@ -305,7 +305,7 @@ class WinbuProvider : MainAPI() {
                     val post = option.attr("data-post").trim()
                     val nume = option.attr("data-nume").trim()
                     val type = option.attr("data-type").trim()
-                    
+
                     if (post.isNotBlank() && nume.isNotBlank() && type.isNotBlank()) {
                         val body = runCatching {
                             app.post(
@@ -318,11 +318,11 @@ class WinbuProvider : MainAPI() {
                         body?.let {
                             val ajaxDoc = Jsoup.parse(it)
                             ajaxDoc.select("iframe").forEach { frame -> loadUrl(frame.getIframeAttr()) }
-                            ajaxDoc.select("video source[src]").forEach { source -> 
+                            ajaxDoc.select("video source[src]").forEach { source ->
                                 val src = source.attr("src")
                                 val quality = source.attr("size")
                                 val serverName = "$name " + (option.text().trim().ifBlank { "Server $nume" })
-                                
+
                                 if (src.isNotBlank() && seen.add(src)) {
                                     linkCb(newExtractorLink(
                                         serverName, serverName, src, INFER_TYPE

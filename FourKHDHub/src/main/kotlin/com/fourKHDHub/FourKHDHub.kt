@@ -18,7 +18,7 @@ class FourKHDHub : MainAPI() {
     }
     override var name                 = "4K HDHUB"
     override val hasMainPage          = true
-    override var lang                 = "en"
+    override var lang                 = "id"
     override val hasDownloadSupport   = true
     override val hasQuickSearch       = true
     override val supportedTypes       = setOf(TvType.Movie,TvType.Anime,TvType.TvSeries)

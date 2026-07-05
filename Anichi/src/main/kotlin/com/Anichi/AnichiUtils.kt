@@ -229,7 +229,7 @@ suspend fun fetchTmdbLogoUrl(
 
     for (i in 0 until logos.length()) {
         val logo = logos.optJSONObject(i) ?: continue
-        if (logo.optString("iso_639_1") == "en") {
+        if (logo.optString("iso_639_1") == "id") {
             return logoUrlAt(i)
         }
     }

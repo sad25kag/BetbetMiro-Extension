@@ -10,7 +10,7 @@ class Animenosub : MainAPI() {
     override var mainUrl              = "https://animenosub.to"
     override var name                 = "Animenosub"
     override val hasMainPage          = true
-    override var lang                 = "en"
+    override var lang                 = "id"
     override val hasDownloadSupport   = true
     override val supportedTypes       = setOf(TvType.Movie,TvType.Anime)
 

@@ -6,7 +6,7 @@ cloudstream {
     // All of these properties are optional, you can safely remove them
 
     description = "Movies and Series (Mostly 720p)"
-    language    = "en"
+    language    = "id"
     authors = listOf("sad25kag")
 
     /**

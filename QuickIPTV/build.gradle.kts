@@ -18,7 +18,7 @@ android {
 
 cloudstream {
     // All of these properties are optional, you can safely remove them
-    language = "en"
+    language = "id"
     description = "Includes PirateIPTV,Sports IPTV,Japanese IPTV,Sony IPTV"
     authors = listOf("sad25kag98")
 

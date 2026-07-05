@@ -57,7 +57,7 @@ object ShowBoxExtractor : ShowBox() {
         val query = if (type == ResponseTypes.Movies.value) {
             """{"childmode":"0","uid":"","app_version":"11.5","appid":"$appId","module":"Movie_downloadurl_v3","channel":"Website","mid":"$id","lang":"","expired_date":"${getExpiryDate()}","platform":"android","oss":"1","uid":"$superToken","open_udid":"59e139fd173d9045a2b5fc13b40dfd87","group":""}"""
         } else {
-            """{"childmode":"0","app_version":"11.5","module":"TV_downloadurl_v3","channel":"Website","episode":"$episode","expired_date":"${getExpiryDate()}","platform":"android","tid":"$id","oss":"1","uid":"$superToken","open_udid":"59e139fd173d9045a2b5fc13b40dfd87","appid":"$appId","season":"$season","lang":"en","group":""}"""
+            """{"childmode":"0","app_version":"11.5","module":"TV_downloadurl_v3","channel":"Website","episode":"$episode","expired_date":"${getExpiryDate()}","platform":"android","tid":"$id","oss":"1","uid":"$superToken","open_udid":"59e139fd173d9045a2b5fc13b40dfd87","appid":"$appId","season":"$season","lang":"id","group":""}"""
         }
 
         val linkData = queryApiParsed<LinkDataProp>(query)
@@ -70,9 +70,9 @@ object ShowBoxExtractor : ShowBox() {
         val fid = linkData.data?.list?.firstOrNull { it.fid != null }?.fid
 
         val subtitleQuery = if (type == ResponseTypes.Movies.value) {
-            """{"childmode":"0","fid":"$fid","uid":"","app_version":"11.5","appid":"$appId","module":"Movie_srt_list_v2","channel":"Website","mid":"$id","lang":"en","uid":"$superToken","open_udid":"59e139fd173d9045a2b5fc13b40dfd87","expired_date":"${getExpiryDate()}","platform":"android"}"""
+            """{"childmode":"0","fid":"$fid","uid":"","app_version":"11.5","appid":"$appId","module":"Movie_srt_list_v2","channel":"Website","mid":"$id","lang":"id","uid":"$superToken","open_udid":"59e139fd173d9045a2b5fc13b40dfd87","expired_date":"${getExpiryDate()}","platform":"android"}"""
         } else {
-            """{"childmode":"0","fid":"$fid","app_version":"11.5","module":"TV_srt_list_v2","channel":"Website","episode":"$episode","expired_date":"${getExpiryDate()}","platform":"android","tid":"$id","uid":"$superToken","open_udid":"59e139fd173d9045a2b5fc13b40dfd87","appid":"$appId","season":"$season","lang":"en"}"""
+            """{"childmode":"0","fid":"$fid","app_version":"11.5","module":"TV_srt_list_v2","channel":"Website","episode":"$episode","expired_date":"${getExpiryDate()}","platform":"android","tid":"$id","uid":"$superToken","open_udid":"59e139fd173d9045a2b5fc13b40dfd87","appid":"$appId","season":"$season","lang":"id"}"""
         }
 
         val subtitles = queryApiParsed<SubtitleDataProp>(subtitleQuery).data
@@ -118,7 +118,7 @@ object ShowBoxExtractor : ShowBox() {
             ?: app.get("$thirdAPI/mbp/to_share_page?box_type=${type}&mid=$mediaId&json=1")
                 .parsedSafe<ExternalResponse>()?.data?.shareLink
                 ?.substringAfterLast("/") ?: return
-        val headers = mapOf("Accept-Language" to "en")
+        val headers = mapOf("Accept-Language" to "id")
         val shareRes =
             app.get("$thirdAPI/file/file_share_list?share_key=$shareKey", headers = headers)
                 .parsedSafe<ExternalResponse>()?.data ?: return
@@ -224,7 +224,7 @@ object ShowBoxExtractor : ShowBox() {
             ?: app.get("$thirdAPI/mbp/to_share_page?box_type=${type}&mid=$mediaId&json=1")
                 .parsedSafe<ExternalResponse>()?.data?.shareLink
                 ?.substringAfterLast("/") ?: return
-        val headers = mapOf("Accept-Language" to "en")
+        val headers = mapOf("Accept-Language" to "id")
         val shareRes =
             app.get("$thirdAPI/file/file_share_list?share_key=$shareKey", headers = headers)
                 .parsedSafe<ExternalResponse>()?.data ?: return

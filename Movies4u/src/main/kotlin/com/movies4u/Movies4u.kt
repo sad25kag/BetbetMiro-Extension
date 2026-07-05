@@ -173,7 +173,7 @@ class Movies4u : MainAPI() {
             apiKey = "98ae14df2b8d8f8f8136499daf79f0e0",
             type = tvtype,
             tmdbId = tmdbIdResolved.toIntOrNull(),
-            appLangCode = "en"
+            appLangCode = "id"
         )
 
         // ---------- TMDB SEARCH ----------

@@ -11,7 +11,7 @@ import com.lagradost.cloudstream3.utils.newExtractorLink
 import java.util.UUID
 
 class SonyIPTV : SportsIPTV() {
-    override var lang = "en"
+    override var lang = "id"
     override var mainUrl: String = BuildConfig.SonyIPTV
     override var name = "Sony IPTV"
     override val hasMainPage = true

@@ -16,7 +16,7 @@ cloudstream {
     // All of these properties are optional, you can safely remove them
 
     description = "Anizone.to streams latest anime content in multiple language."
-    language = "en"
+    language = "id"
     authors = listOf("ycngmn")
 
     /**

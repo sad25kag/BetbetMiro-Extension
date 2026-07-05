@@ -8,7 +8,7 @@ class KayiFamilyTv: MainAPI() {
     override var mainUrl = "https://kayifamilytv.com/v18"
     override var name = "KayiFamily"
     override val hasMainPage = true
-    override var lang = "en"
+    override var lang = "id"
     override val hasQuickSearch = true
     override val hasDownloadSupport = true
     override val supportedTypes = setOf( TvType.TvSeries, TvType.Movie, TvType.Documentary )

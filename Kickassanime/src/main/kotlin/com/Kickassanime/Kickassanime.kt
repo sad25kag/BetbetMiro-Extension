@@ -20,7 +20,7 @@ class Kickassanime : MainAPI() {
     override var mainUrl = "https://kaa.lt"
     override var name = "KickassAnime"
     override val hasMainPage = true
-    override var lang = "en"
+    override var lang = "id"
     override val hasQuickSearch =  true
     override val hasDownloadSupport = true
 

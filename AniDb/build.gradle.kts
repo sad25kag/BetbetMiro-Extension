@@ -26,7 +26,7 @@ cloudstream {
     * */
     status = 1
     tvTypes = listOf("Anime", "AnimeMovie", "OVA")
-    language = "en"
+    language = "id"
     iconUrl = "https://anidb.app/images/fav-512.png"
     isCrossPlatform = false
     requiresResources = true

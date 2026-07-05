@@ -9,7 +9,7 @@ class Animexin : MainAPI() {
     override var mainUrl              = "https://animexin.dev"
     override var name                 = "Animexin"
     override val hasMainPage          = true
-    override var lang                 = "en"
+    override var lang                 = "id"
     override val hasDownloadSupport   = true
     override val supportedTypes       = setOf(TvType.Movie,TvType.Anime)
 

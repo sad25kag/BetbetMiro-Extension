@@ -114,7 +114,7 @@ class AniDb : MainAPI() {
     override var mainUrl = "https://anidb.app"
     override var name = "AniDB"
     override var supportedTypes = setOf(TvType.Anime, TvType.AnimeMovie, TvType.OVA)
-    override var lang = "en"
+    override var lang = "id"
     override val hasMainPage = true
 
     companion object {
@@ -231,8 +231,8 @@ class AniDb : MainAPI() {
                 it.name?.lowercase() in listOf("jpn", "ja", "japanese")
             }
             hasDub = langs.any {
-                it.code?.lowercase() in listOf("eng", "en", "english") ||
-                it.name?.lowercase() in listOf("eng", "en", "english")
+                it.code?.lowercase() in listOf("eng", "id", "english") ||
+                it.name?.lowercase() in listOf("eng", "id", "english")
             }
         }
 
@@ -258,7 +258,7 @@ class AniDb : MainAPI() {
             val num = index + 1
             val metaEp = animeMetaData?.episodes?.get(num.toString())
 
-            val epName = metaEp?.title?.get("en") ?: metaEp?.title?.get("x-jat") ?: metaEp?.title?.get("ja") ?: "Episode $num"
+            val epName = metaEp?.title?.get("id") ?: metaEp?.title?.get("x-jat") ?: metaEp?.title?.get("ja") ?: "Episode $num"
             val epDesc = metaEp?.overview
             val epPoster = metaEp?.image
             val epRating = metaEp?.rating?.let { Score.from10(it) }
@@ -376,7 +376,7 @@ class AniDb : MainAPI() {
             val preferredCodes = if (audio == "sub")
                 listOf("jpn", "ja", "japanese")
             else
-                listOf("eng", "en", "english")
+                listOf("eng", "id", "english")
             listOfNotNull(
                 langs.find { it.code?.lowercase() in preferredCodes }
                     ?: langs.find { it.name?.lowercase() in preferredCodes }

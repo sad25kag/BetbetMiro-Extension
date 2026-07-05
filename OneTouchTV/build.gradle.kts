@@ -3,7 +3,7 @@ version = 2
 
 
 cloudstream {
-    language = "en"
+    language = "id"
     // All of these properties are optional, you can safely remove them
 
      description = "Asian Dramas"

@@ -322,7 +322,7 @@ class AnimePahe : MainAPI() {
                             ).toJson()
                         ) {
                             addDate(episodeData.createdAt)
-                            this.name = meta?.title?.get("en") ?: getEpisodeTitle(episodeData)
+                            this.name = meta?.title?.get("id") ?: getEpisodeTitle(episodeData)
                             this.posterUrl = meta?.image ?: episodeData.snapshot
                             this.description = meta?.overview
                             this.score = Score.from10(meta?.rating)
@@ -353,7 +353,7 @@ class AnimePahe : MainAPI() {
                                         ).toJson()
                                     ) {
                                         addDate(episodeData.createdAt)
-                                        this.name = meta?.title?.get("en") ?: getEpisodeTitle(episodeData)
+                                        this.name = meta?.title?.get("id") ?: getEpisodeTitle(episodeData)
                                         this.posterUrl = meta?.image ?: episodeData.snapshot
                                         this.description = meta?.overview
                                         this.score = Score.from10(meta?.rating)

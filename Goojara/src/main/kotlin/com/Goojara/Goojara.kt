@@ -23,7 +23,7 @@ class Goojara : MainAPI() {
     override var mainUrl              = "https://ww1.goojara.to"
     override var name                 = "Goojara"
     override val hasMainPage          = true
-    override var lang                 = "en"
+    override var lang                 = "id"
     override val hasDownloadSupport   = true
     override val hasQuickSearch       = false
     override val supportedTypes       = setOf(TvType.Movie,TvType.TvSeries)

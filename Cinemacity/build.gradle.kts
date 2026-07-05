@@ -19,7 +19,7 @@ cloudstream {
         "Movie",
         "TvSeries",
     )
-    language = "en"
+    language = "id"
     iconUrl= "https://www.google.com/s2/favicons?domain=cinemacity.cc&sz=%size%"
 
     isCrossPlatform = false

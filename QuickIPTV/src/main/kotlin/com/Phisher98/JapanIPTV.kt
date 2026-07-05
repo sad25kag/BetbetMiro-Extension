@@ -11,7 +11,7 @@ import com.lagradost.cloudstream3.utils.newExtractorLink
 import java.util.UUID
 
 class JapanIPTV : SportsIPTV() {
-    override var lang = "en"
+    override var lang = "id"
     override var mainUrl: String = BuildConfig.JapanIPTV
     override var name = "Japan IPTV"
     override val hasMainPage = true

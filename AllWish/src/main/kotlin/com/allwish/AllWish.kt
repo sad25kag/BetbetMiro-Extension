@@ -35,9 +35,9 @@ class AllWish : MainAPI() {
     override var mainUrl = AllWish.mainUrl
     override var name = AllWish.name
     override var supportedTypes = setOf(TvType.Anime, TvType.AnimeMovie, TvType.OVA)
-    override var lang = "en"
+    override var lang = "id"
     override val hasMainPage = true
-    
+
     companion object {
         val mainUrl = "https://all-wish.me"
         var name = "AllWish"
@@ -204,7 +204,7 @@ class AllWish : MainAPI() {
     }
 
     private fun resolveTitle(epData: MetaEpisode?, htmlTitle: String, episodeNumber: Int): String {
-        val jsonTitle = epData?.title?.get("en")
+        val jsonTitle = epData?.title?.get("id")
             ?: epData?.title?.get("ja")
             ?: epData?.title?.get("x-jat")
             ?: htmlTitle

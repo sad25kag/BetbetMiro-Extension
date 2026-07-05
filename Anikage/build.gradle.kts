@@ -7,7 +7,7 @@ android {
 }
 
 cloudstream {
-    language = "en"
+    language = "id"
     authors = listOf("sad25kag")
     status = 1
     tvTypes = listOf("AnimeMovie", "Anime", "OVA")

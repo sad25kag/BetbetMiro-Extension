@@ -33,7 +33,7 @@ class Anineko : MainAPI() {
     override var mainUrl = "https://anineko.to"
     override var name = "Anineko"
     override val hasMainPage = true
-    override var lang = "en"
+    override var lang = "id"
     override val hasDownloadSupport = true
     override val supportedTypes = setOf(
         TvType.Anime,
@@ -53,14 +53,14 @@ class Anineko : MainAPI() {
     ): HomePageResponse {
         val url = "$mainUrl${request.data}?page=$page"
         val doc = app.get(url).document
-        
+
         val list = doc.select(".nv-anime-card").mapNotNull { element ->
             val href = element.selectFirst("a.nv-anime-thumb")?.attr("href") ?: return@mapNotNull null
-            val title = element.selectFirst("h3.nv-anime-title a")?.text() 
-                ?: element.selectFirst("img")?.attr("alt") 
+            val title = element.selectFirst("h3.nv-anime-title a")?.text()
+                ?: element.selectFirst("img")?.attr("alt")
                 ?: return@mapNotNull null
             val posterUrl = element.selectFirst("img")?.attr("src")
-            
+
             val subCount = element.selectFirst(".nv-stat-cc")?.text()?.replace(Regex("[^0-9]"), "")?.toIntOrNull()
             val dubCount = element.selectFirst(".nv-stat-dub span")?.text()?.replace(Regex("[^0-9]"), "")?.toIntOrNull()
 
@@ -74,21 +74,21 @@ class Anineko : MainAPI() {
                 )
             }
         }
-        
+
         return newHomePageResponse(request.name, list)
     }
 
     override suspend fun search(query: String): List<SearchResponse> {
         val url = "$mainUrl/browser?keyword=${query}"
         val doc = app.get(url).document
-        
+
         return doc.select(".nv-anime-card").mapNotNull { element ->
             val href = element.selectFirst("a.nv-anime-thumb")?.attr("href") ?: return@mapNotNull null
-            val title = element.selectFirst("h3.nv-anime-title a")?.text() 
-                ?: element.selectFirst("img")?.attr("alt") 
+            val title = element.selectFirst("h3.nv-anime-title a")?.text()
+                ?: element.selectFirst("img")?.attr("alt")
                 ?: return@mapNotNull null
             val posterUrl = element.selectFirst("img")?.attr("src")
-            
+
             val subCount = element.selectFirst(".nv-stat-cc")?.text()?.replace(Regex("[^0-9]"), "")?.toIntOrNull()
             val dubCount = element.selectFirst(".nv-stat-dub span")?.text()?.replace(Regex("[^0-9]"), "")?.toIntOrNull()
 
@@ -110,10 +110,10 @@ class Anineko : MainAPI() {
         val title = doc.selectFirst("h1")?.text() ?: return null
         val altTitle = doc.selectFirst(".nv-info-alt-title")?.text()
         val poster = doc.selectFirst("aside.nv-info-poster img")?.attr("src")
-        
+
         val bgStyle = doc.selectFirst(".nv-info-bg")?.attr("style")
         val background = bgStyle?.let { Regex("""url\(['"]?(.*?)['"]?\)""").find(it)?.groupValues?.get(1) }
-        
+
         val plot = doc.selectFirst("p.nv-info-desc")?.text()
 
         val tags = doc.select(".nv-info-tags span").map { it.text() }
@@ -151,10 +151,10 @@ class Anineko : MainAPI() {
             val epNum = epName?.replace(Regex("[^0-9]"), "")?.toIntOrNull()
 
             val metaEp = animeMetaData?.episodes?.get(epNum?.toString())
-            val finalName = metaEp?.title?.get("en") 
-                ?: metaEp?.title?.get("x-jat") 
-                ?: metaEp?.title?.get("ja") 
-                ?: animeMetaData?.titles?.get("en")
+            val finalName = metaEp?.title?.get("id")
+                ?: metaEp?.title?.get("x-jat")
+                ?: metaEp?.title?.get("ja")
+                ?: animeMetaData?.titles?.get("id")
                 ?: animeMetaData?.titles?.get("x-jat")
                 ?: epName
             val description = metaEp?.overview ?: "No summary available"

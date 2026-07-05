@@ -9,7 +9,7 @@ android {
 }
 
 cloudstream {
-    language = "en"
+    language = "id"
     requiresResources = false
     description = "CloudPlay Live TV Extension"
     authors = listOf("sad25kag")

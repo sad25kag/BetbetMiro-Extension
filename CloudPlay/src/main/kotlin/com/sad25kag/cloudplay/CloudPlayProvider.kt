@@ -32,7 +32,7 @@ import javax.crypto.spec.GCMParameterSpec
 import javax.crypto.spec.SecretKeySpec
 
 class CloudPlay : MainAPI() {
-    override var lang = "en"
+    override var lang = "id"
     override var mainUrl: String = base64Decode("aHR0cHM6Ly9ob3N0LmNsb3VkcGxheS5tZQ==")
     override var name = "CloudPlay"
     override val hasMainPage = true

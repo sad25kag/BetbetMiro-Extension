@@ -251,7 +251,7 @@ class Vidio : MainAPI() {
     private fun Document.extractSubtitleLinks(pageUrl: String): List<SubtitleFile> {
         return html().decodeVidioEscapes().extractSubtitleUrls().map { subtitleUrl ->
             SubtitleFile(
-                lang = if (subtitleUrl.contains("en", true)) "English" else "Indonesia",
+                lang = if (subtitleUrl.contains("id", true)) "English" else "Indonesia",
                 url = subtitleUrl.fixProtocol(pageUrl)
             )
         }.distinctBy { it.url }

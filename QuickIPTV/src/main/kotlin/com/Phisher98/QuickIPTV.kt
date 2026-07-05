@@ -13,7 +13,7 @@ import java.io.InputStream
 import java.util.UUID
 
 open class SportsIPTV : MainAPI() {
-    override var lang = "en"
+    override var lang = "id"
     override var mainUrl: String = BuildConfig.Su_sports
     override var name = "Sports IPTV"
     override val hasMainPage = true

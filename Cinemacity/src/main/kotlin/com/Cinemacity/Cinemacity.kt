@@ -47,7 +47,7 @@ import java.nio.charset.StandardCharsets
 class Cinemacity : MainAPI() {
     override var mainUrl = "https://cinemacity.cc"
     override var name = "CinemaCity"
-    override var lang = "en"
+    override var lang = "id"
     override val hasMainPage = true
     override val hasDownloadSupport = true
     override val hasChromecastSupport = true

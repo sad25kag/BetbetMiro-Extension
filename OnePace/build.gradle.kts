@@ -2,7 +2,7 @@ version = 19
 
 
 cloudstream {
-    language = "en"
+    language = "id"
     // All of these properties are optional, you can safely remove them
 
     description = "One Pace"

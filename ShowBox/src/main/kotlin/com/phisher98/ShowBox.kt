@@ -442,7 +442,7 @@ oFuZne+lYcCPMNDXdku6wKdf9gSnOSHOGMu8TvHcud4uIDYmFH5qabJL5GDoQi7Q
     override suspend fun getMainPage(page: Int, request: MainPageRequest): HomePageResponse {
         val hideNsfw = if (settingsForProvider.enableAdult) 0 else 1
         val data = queryApiParsed<DataJSON>(
-            """{"childmode":"$hideNsfw","app_version":"$appVersion","appid":"$appIdSecond","module":"Home_list_type_v2","channel":"Website","page":"$page","lang":"en","type":"all","pagelimit":"20","expired_date":"${getExpiryDate()}","platform":"android"}
+            """{"childmode":"$hideNsfw","app_version":"$appVersion","appid":"$appIdSecond","module":"Home_list_type_v2","channel":"Website","page":"$page","lang":"id","type":"all","pagelimit":"20","expired_date":"${getExpiryDate()}","platform":"android"}
             """.trimIndent()
         )
         // Cut off the first row (featured)
@@ -510,7 +510,7 @@ oFuZne+lYcCPMNDXdku6wKdf9gSnOSHOGMu8TvHcud4uIDYmFH5qabJL5GDoQi7Q
         val hideNsfw = if (settingsForProvider.enableAdult) 0 else 1
         val apiQuery =
             // Originally 8 pagelimit
-            """{"childmode":"$hideNsfw","app_version":"$appVersion","module":"Search3","channel":"Website","page":"1","lang":"en","type":"all","keyword":"$query","pagelimit":"15","expired_date":"${getExpiryDate()}","platform":"android","appid":"$appId"}"""
+            """{"childmode":"$hideNsfw","app_version":"$appVersion","module":"Search3","channel":"Website","page":"1","lang":"id","type":"all","keyword":"$query","pagelimit":"15","expired_date":"${getExpiryDate()}","platform":"android","appid":"$appId"}"""
         val searchResponse = queryApiParsed<MainData>(apiQuery).data.mapNotNull {
             it.toSearchResponse(this)
         }
@@ -674,12 +674,12 @@ oFuZne+lYcCPMNDXdku6wKdf9gSnOSHOGMu8TvHcud4uIDYmFH5qabJL5GDoQi7Q
             apiKey = "1865f43a0549ca50d341dd9ab8b29f49",
             type = type,
             tmdbId = tmdbId,
-            appLangCode = "en"
+            appLangCode = "id"
         )
 
         if (isMovie) {
             val data = queryApiParsed<MovieDataProp>(
-                """{"childmode":"$hideNsfw","uid":"","app_version":"$appVersion","appid":"$appIdSecond","module":"Movie_detail","channel":"Website","mid":"${loadData.id}","lang":"en","expired_date":"${getExpiryDate()}","platform":"android","oss":"","group":""}"""
+                """{"childmode":"$hideNsfw","uid":"","app_version":"$appVersion","appid":"$appIdSecond","module":"Movie_detail","channel":"Website","mid":"${loadData.id}","lang":"id","expired_date":"${getExpiryDate()}","platform":"android","oss":"","group":""}"""
             ).data ?: throw RuntimeException("API error")
 
             val meta = fetchCinemeta("movie", data.imdbId)?.meta
@@ -705,7 +705,7 @@ oFuZne+lYcCPMNDXdku6wKdf9gSnOSHOGMu8TvHcud4uIDYmFH5qabJL5GDoQi7Q
             }
         } else {
             val data = queryApiParsed<SeriesDataProp>(
-                """{"childmode":"$hideNsfw","uid":"","app_version":"$appVersion","appid":"$appIdSecond","module":"TV_detail_1","display_all":"1","channel":"Website","lang":"en","expired_date":"${getExpiryDate()}","platform":"android","tid":"${loadData.id}"}"""
+                """{"childmode":"$hideNsfw","uid":"","app_version":"$appVersion","appid":"$appIdSecond","module":"TV_detail_1","display_all":"1","channel":"Website","lang":"id","expired_date":"${getExpiryDate()}","platform":"android","tid":"${loadData.id}"}"""
             ).data ?: throw RuntimeException("API error")
 
             val meta = fetchCinemeta("series", data.imdbId)?.meta
@@ -713,7 +713,7 @@ oFuZne+lYcCPMNDXdku6wKdf9gSnOSHOGMu8TvHcud4uIDYmFH5qabJL5GDoQi7Q
 
             val allEpisodes = data.season.amap { seasonNumber ->
                 val seasonData = queryApiParsed<SeriesSeasonProp>(
-                    """{"childmode":"$hideNsfw","uid":"","app_version":"$appVersion","appid":"$appIdSecond","module":"TV_episode","display_all":"1","season":"$seasonNumber","channel":"Website","lang":"en","expired_date":"${getExpiryDate()}","platform":"android","tid":"${loadData.id}"}"""
+                    """{"childmode":"$hideNsfw","uid":"","app_version":"$appVersion","appid":"$appIdSecond","module":"TV_episode","display_all":"1","season":"$seasonNumber","channel":"Website","lang":"id","expired_date":"${getExpiryDate()}","platform":"android","tid":"${loadData.id}"}"""
                 ).data
 
                 seasonData.map { ep ->
