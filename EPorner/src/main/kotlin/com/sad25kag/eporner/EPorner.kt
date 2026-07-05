@@ -15,7 +15,7 @@ class EPorner : MainAPI() {
     override var name = "EPorner"
     override val hasMainPage = true
     override var lang = "id"
-    override val hasQuickSearch = false
+    override val hasQuickSearch = true
     override val supportedTypes = setOf(TvType.NSFW)
 
     companion object {
@@ -79,10 +79,10 @@ class EPorner : MainAPI() {
         try {
             val titleElement = this.selectFirst("div.mbunder p.mbtit a, p.title a") ?: return null
             val title = titleElement.text().trim()
-            
+
             val hrefElement = this.selectFirst("div.mbcontent a, p.title a") ?: return null
             val href = fixUrl(hrefElement.attr("href"))
-            
+
             val img = this.selectFirst("img") ?: return null
             val posterUrl = img.attr("data-src").ifBlank { img.attr("src") }
 
@@ -102,10 +102,10 @@ class EPorner : MainAPI() {
 
     override suspend fun load(url: String): LoadResponse? {
         val document = app.get(url).document
-        val title = document.selectFirst("h1, meta[property=og:title]")?.text() 
+        val title = document.selectFirst("h1, meta[property=og:title]")?.text()
             ?: document.selectFirst("meta[property=og:title]")?.attr("content") ?: ""
         val poster = document.selectFirst("meta[property=og:image]")?.attr("content") ?: ""
-        
+
         val recommendationsList = document.select("div#relateddiv div.mb, #div-search-results div.mb").mapNotNull {
             it.toSearchResult()
         }
@@ -139,7 +139,7 @@ class EPorner : MainAPI() {
                     .findAll(responseText).forEach { match ->
                         val videoUrl = match.groupValues[2]
                         val rawQuality = match.groupValues[1]
-                        
+
                         if (!videoUrl.contains("/dload/")) {
                             callback.invoke(
                                 newExtractorLink(

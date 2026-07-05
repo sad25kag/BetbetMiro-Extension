@@ -38,7 +38,7 @@ class Hahomoe : MainAPI() {
 
     override var mainUrl = "https://haho.moe"
     override var name = "Haho Moe"
-    override val hasQuickSearch = false
+    override val hasQuickSearch = true
     override val hasMainPage = true
     override var lang = "id"
     override val supportedTypes = setOf(TvType.NSFW)

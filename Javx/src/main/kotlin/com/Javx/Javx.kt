@@ -32,7 +32,7 @@ class Javx : MainAPI() {
     override val supportedTypes = setOf(TvType.NSFW)
     override val hasDownloadSupport = true
     override val hasMainPage = true
-    override val hasQuickSearch = false
+    override val hasQuickSearch = true
 
     override val mainPage = mainPageOf(
         "?filter=latest" to "New Releases",

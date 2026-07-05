@@ -32,7 +32,7 @@ class Sulasok : MainAPI() {
     override var mainUrl = "https://sulasok.uno"
     override var name = "Sulasok"
     override val hasMainPage = true
-    override val hasQuickSearch = false
+    override val hasQuickSearch = true
     override var supportedTypes = setOf(TvType.NSFW)
     override var lang = "id"
 

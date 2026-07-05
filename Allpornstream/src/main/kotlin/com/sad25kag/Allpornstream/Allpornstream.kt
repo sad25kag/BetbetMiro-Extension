@@ -14,7 +14,7 @@ class Allpornstream : MainAPI() {
     override var name = "Allpornstream"
 
     override val hasMainPage = true
-    override val hasQuickSearch = false
+    override val hasQuickSearch = true
 
     override var lang = "id"
 
