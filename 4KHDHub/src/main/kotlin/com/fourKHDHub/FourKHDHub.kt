@@ -50,7 +50,6 @@ class FourKHDHub : MainAPI() {
         "category/imdb" to "Top IMDb",
     )
 
-    // Fungsi ekstensi ini ditambahkan agar Jsoup Element bisa di-convert menjadi SearchResponse
     private fun Element.toSearchResult(): SearchResponse? {
         val href = this.attr("href")
         if (href.isBlank()) return null
@@ -87,13 +86,11 @@ class FourKHDHub : MainAPI() {
         val results = mutableListOf<SearchResponse>()
         val encodedQuery = java.net.URLEncoder.encode(query, "UTF-8")
         var page = 1
-        val maxPages = 10
-
-        while (page <= maxPages) {
+        while (true) {
             val url = if (page == 1) {
                 "$mainUrl/?s=$encodedQuery"
             } else {
-                "$mainUrl/?s=$encodedQuery/page/$page"
+                "$mainUrl/page/$page/?s=$encodedQuery"
             }
 
             val document = try {
@@ -108,11 +105,16 @@ class FourKHDHub : MainAPI() {
 
             if (items.isEmpty()) break
 
-            results.addAll(items)
+            val currentUrls = results.map { it.url }.toSet()
+            val newItems = items.filter { it.url !in currentUrls }
+            
+            if (newItems.isEmpty()) break
+
+            results.addAll(newItems)
             page++
         }
 
-        return results.distinctBy { it.url }
+        return results
     }
 
     @RequiresApi(Build.VERSION_CODES.N)
