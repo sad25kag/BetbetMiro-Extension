@@ -40,7 +40,7 @@ class Hindmoviez : MainAPI() {
         HindmoviezPlugin.getDomains()?.hindmoviez ?: "https://hindmoviez.cafe"
     }
     override var name = "Hindmoviez"
-    override var lang = "hi"
+    override var lang = "id"
     override val hasMainPage = true
     override val hasDownloadSupport = true
     override val hasQuickSearch = false

@@ -41,7 +41,7 @@ class Movies4u : MainAPI() {
     }
     override var name = "Movies4u"
     override val hasMainPage = true
-    override var lang = "hi"
+    override var lang = "id"
     override val hasDownloadSupport = true
     override val supportedTypes = setOf(TvType.Movie, TvType.TvSeries, TvType.Anime)
 

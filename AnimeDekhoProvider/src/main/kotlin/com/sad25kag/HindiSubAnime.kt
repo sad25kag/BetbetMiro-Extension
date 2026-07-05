@@ -14,7 +14,7 @@ class HindiSubAnime : AnimeDekhoProvider() {
     override var mainUrl = "https://hindisubanime.co"
     override var name = "HindiSubAnime"
     override val hasMainPage = true
-    override var lang = "hi"
+    override var lang = "id"
 
     override val mainPage =
         mainPageOf(

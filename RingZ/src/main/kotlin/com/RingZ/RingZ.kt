@@ -39,7 +39,7 @@ class RingZ : MainAPI() {
     override var mainUrl = base64Decode("aHR0cHM6Ly9kYXRhYXBpLnlvbW92aWVzYXBrLmNvbS8=")
     override var name = "RingZ"
     override val hasMainPage = true
-    override var lang = "hi"
+    override var lang = "id"
     override val hasDownloadSupport = true
     override val supportedTypes = setOf(TvType.Movie, TvType.Anime, TvType.Cartoon)
 

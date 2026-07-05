@@ -19,7 +19,7 @@ cloudstream {
         "TvSeries",
         "Anime"
     )
-    language = "hi"
+    language = "id"
 //  https://t0.gstatic.com/faviconV2?client=SOCIAL&type=FAVICON&fallback_opts=TYPE,SIZE,URL&url=https://hdhub4u.gratis&size=64
     iconUrl = "https://raw.githubusercontent.com/sad25kag/TVVVV/refs/heads/main/Icons/HDHUB.png"
 

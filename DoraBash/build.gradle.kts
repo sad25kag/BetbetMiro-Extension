@@ -6,7 +6,7 @@ cloudstream {
     // All of these properties are optional, you can safely remove them
 
     description = "Doremon Show in Hindi"
-    language    = "hi"
+    language    = "id"
     authors = listOf("sad25kag")
 
     /**

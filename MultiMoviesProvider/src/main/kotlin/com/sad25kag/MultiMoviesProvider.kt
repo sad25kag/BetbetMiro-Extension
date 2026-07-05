@@ -40,7 +40,7 @@ class MultiMoviesProvider : MainAPI() { // all providers must be an instance of 
     }
     override var name = "MultiMovies"
     override val hasMainPage = true
-    override var lang = "hi"
+    override var lang = "id"
     override val hasDownloadSupport = true
     override val supportedTypes = setOf(
         TvType.Movie,

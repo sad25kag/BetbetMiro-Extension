@@ -12,7 +12,7 @@ class Animedubhindi : MainAPI() {
     override var mainUrl = "https://www.animedubhindi.cc"
     override var name = "AnimeDubHindi"
     override val hasMainPage = true
-    override var lang = "hi"
+    override var lang = "id"
     override val hasDownloadSupport = true
     override val supportedTypes = setOf(TvType.Movie, TvType.Anime, TvType.Cartoon)
 

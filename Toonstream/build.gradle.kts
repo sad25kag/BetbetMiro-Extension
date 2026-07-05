@@ -5,7 +5,7 @@ cloudstream {
     // All of these properties are optional, you can safely remove them
 
     description = "ToonStream Multi Language"
-    language    = "hi"
+    language    = "id"
     authors = listOf("sad25kag")
 
     /**

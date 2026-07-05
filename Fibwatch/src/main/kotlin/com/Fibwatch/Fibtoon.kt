@@ -10,7 +10,7 @@ class Fibtoon : Fibwatch() {
     }
     override var name = "FibToon"
     override val hasMainPage = true
-    override var lang = "hi"
+    override var lang = "id"
     override val hasDownloadSupport = true
 
     override val supportedTypes = setOf(

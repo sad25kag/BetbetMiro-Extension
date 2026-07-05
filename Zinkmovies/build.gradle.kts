@@ -19,7 +19,7 @@ cloudstream {
         "TvSeries",
         "Anime"
     )
-    language = "hi"
+    language = "id"
     iconUrl = "https://raw.githubusercontent.com/sad25kag/TVVVV/refs/heads/main/Icons/zing.jpg"
 
     isCrossPlatform = true

@@ -15,7 +15,7 @@ class Toonhub4u : MainAPI() {
     override var mainUrl              = "https://toonhub4u.co"
     override var name                 = "ToonHub4u"
     override val hasMainPage          = true
-    override var lang                 = "hi"
+    override var lang                 = "id"
     override val hasDownloadSupport   = true
     override val supportedTypes       = setOf(TvType.Movie,TvType.Anime,TvType.Cartoon)
 

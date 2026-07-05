@@ -3,7 +3,7 @@ version = 13
 
 
 cloudstream {
-    language = "hi"
+    language = "id"
     // All of these properties are optional, you can safely remove them
     description = "Contains BollyZone"
     authors = listOf("sad25kag")

@@ -1,7 +1,7 @@
 version = 67
 
 cloudstream {
-    language = "hi"
+    language = "id"
     authors = listOf("sad25kag")
     description = "Includes AnimeDekho,OnePace(DUB,SUB) and HindiSubAnime"
     /**

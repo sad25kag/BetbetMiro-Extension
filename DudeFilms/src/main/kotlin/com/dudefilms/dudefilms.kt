@@ -37,7 +37,7 @@ class Dudefilms : MainAPI() {
         DudefilmsPlugin.getDomains()?.dudefilms ?: "https://dudefilms.sarl"
     }
     override var name = "Dudefilms"
-    override var lang = "hi"
+    override var lang = "id"
     override val hasMainPage = true
     override val hasDownloadSupport = true
     override val hasQuickSearch = false

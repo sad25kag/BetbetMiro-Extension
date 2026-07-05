@@ -43,7 +43,7 @@ class Zinkmovies : MainAPI() {
         ZinkmoviesPlugin.getDomains()?.zinkmovies ?: "https://new7.zinkmovies.biz"
     }
     override var name = "Zinkmovies"
-    override var lang = "hi"
+    override var lang = "id"
     override val hasMainPage = true
     override val hasDownloadSupport = true
     override val hasQuickSearch = false

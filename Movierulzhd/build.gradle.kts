@@ -3,7 +3,7 @@ version = 155
 
 
 cloudstream {
-    language = "hi"
+    language = "id"
     // All of these properties are optional, you can safely remove them
 
      description = "Includes: Hdmovie2,hdmovie6"

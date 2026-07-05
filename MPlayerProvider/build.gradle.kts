@@ -3,7 +3,7 @@ version = 7
 
 
 cloudstream {
-    language = "hi"
+    language = "id"
     // All of these properties are optional, you can safely remove them
     description = "Indian Movies/Series/Kdrama(Hindi Dubbed)"
     authors = listOf("sad25kag")

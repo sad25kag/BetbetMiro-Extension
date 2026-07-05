@@ -13,7 +13,7 @@ class DoraBash : MainAPI() {
     override var mainUrl = "https://dorabash.in"
     override var name = "DoraBash"
     override val hasMainPage = true
-    override var lang = "hi"
+    override var lang = "id"
     override val hasDownloadSupport = true
     override val supportedTypes = setOf(TvType.Movie, TvType.Anime, TvType.Cartoon)
 

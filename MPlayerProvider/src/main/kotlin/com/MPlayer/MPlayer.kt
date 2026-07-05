@@ -34,7 +34,7 @@ class MPlayer : MainAPI() {
         TvType.TvSeries,
         TvType.AsianDrama,
     )
-    override var lang = "hi"
+    override var lang = "id"
     override var mainUrl = "https://www.mxplayer.in"
     override var name = "M Player"
     override val hasMainPage = true

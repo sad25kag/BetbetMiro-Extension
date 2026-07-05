@@ -4,7 +4,7 @@ version = 7
 cloudstream {
     // All of these properties are optional, you can safely remove any of them.
 
-    language = "hi"
+    language = "id"
     authors = listOf("sad25kag")
 
     /**

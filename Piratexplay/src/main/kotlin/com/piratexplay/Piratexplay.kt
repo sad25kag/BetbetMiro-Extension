@@ -27,7 +27,7 @@ class Piratexplay : MainAPI() {
     override var mainUrl = "https://piratexplay.cc"
     override var name = "Piratexplay"
     override val hasMainPage = true
-    override var lang = "hi"
+    override var lang = "id"
     override val hasDownloadSupport = true
     override val supportedTypes = setOf(TvType.AnimeMovie, TvType.Anime, TvType.Cartoon)
 

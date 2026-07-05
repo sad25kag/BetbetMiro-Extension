@@ -31,7 +31,7 @@ class Animesalt : MainAPI() {
     override var mainUrl = "https://animesalt.ac"
     override var name = "Animesalt"
     override val hasMainPage = true
-    override var lang = "hi"
+    override var lang = "id"
     override val hasDownloadSupport = true
     override val supportedTypes = setOf(TvType.Movie, TvType.Anime, TvType.Cartoon)
 

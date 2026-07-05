@@ -37,7 +37,7 @@ private val languageMap = mapOf(
     "Greek" to Pair("el", "ell"),
     "Gujarati" to Pair("gu", "guj"),
     "Hebrew" to Pair("he", "heb"),
-    "Hindi" to Pair("hi", "hin"),
+    "Hindi" to Pair("id", "hin"),
     "Hungarian" to Pair("hu", "hun"),
     "Icelandic" to Pair("is", "isl"),
     "Indonesian" to Pair("id", "ind"),

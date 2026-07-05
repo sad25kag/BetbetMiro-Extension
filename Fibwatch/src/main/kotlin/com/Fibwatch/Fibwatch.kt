@@ -26,7 +26,7 @@ open class Fibwatch : MainAPI() {
     }
     override var name = "FibWatch"
     override val hasMainPage = true
-    override var lang = "hi"
+    override var lang = "id"
     override val hasDownloadSupport = true
 
     override val supportedTypes = setOf(

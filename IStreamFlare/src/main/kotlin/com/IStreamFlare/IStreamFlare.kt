@@ -38,7 +38,7 @@ class IStreamFlare : MainAPI() {
     override var mainUrl = BuildConfig.iStreamFlare
     override var name = "IStreamFlare"
     override val hasMainPage = true
-    override var lang = "hi"
+    override var lang = "id"
     override val hasDownloadSupport = true
     override val hasQuickSearch = true
 

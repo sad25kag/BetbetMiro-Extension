@@ -52,7 +52,7 @@ open class Movierulzhd : MainAPI() {
     var directUrl = ""
     override var name = "Movierulzhd"
     override val hasMainPage = true
-    override var lang = "hi"
+    override var lang = "id"
     override val hasDownloadSupport = true
     override val supportedTypes = setOf(
         TvType.Movie,

@@ -17,7 +17,7 @@ class AllMovieLandProvider : MainAPI() { // all providers must be an instance of
     override var mainUrl = "https://allmovieland.you"
     override var name = "AllMovieLand"
     override val hasMainPage = true
-    override var lang = "hi"
+    override var lang = "id"
     override val hasDownloadSupport = true
     override val supportedTypes = setOf(
         TvType.Movie,
