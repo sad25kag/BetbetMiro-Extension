@@ -30,8 +30,7 @@ class Toonhub4u : MainAPI() {
         "category/ott-network/crunchyroll" to "Crunchyroll",
         "category/ott-network/amazon-prime-video" to "Amazon Prime Video",
         "category/ott-network/netflix" to "Netflix",
-        "category/ott-network/jio-cinema" to "Jio Cinema",
-        "category/language/hindi" to "Hindi Language"
+        "category/ott-network/jio-cinema" to "Jio Cinema"
     )
 
     override suspend fun getMainPage(page: Int, request: MainPageRequest): HomePageResponse {
