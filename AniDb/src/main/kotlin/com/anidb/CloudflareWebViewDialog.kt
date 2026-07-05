@@ -265,6 +265,7 @@ class CloudflareWebViewDialog(
         wv.settings.apply {
             javaScriptEnabled = true
             domStorageEnabled = true
+            @Suppress("DEPRECATION")
             mixedContentMode = android.webkit.WebSettings.MIXED_CONTENT_ALWAYS_ALLOW
             allowContentAccess = true
             allowFileAccess = true
