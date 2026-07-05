@@ -55,7 +55,6 @@ class NoodleMagazineProvider : MainAPI() { // all providers must be an instance 
         return newSearchResponseList(results, hasNext)
     }
 
-  @Suppress("DEPRECATION")
     override suspend fun load(url: String): LoadResponse {
         val document = app.get(url).document
         val title = document.selectFirst("div.l_info h1")?.text()?.trim() ?: "null"
