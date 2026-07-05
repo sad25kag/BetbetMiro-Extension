@@ -17,7 +17,7 @@ import java.util.concurrent.TimeUnit
 class KuramanimeProvider : MainAPI() {
     override var mainUrl = "https://v9.kuramanime.blog"
     override var name = "Kuramanime"
-    override val hasQuickSearch = false
+    override val hasQuickSearch = true
     override val hasMainPage = true
     override var lang = "id"
     override var sequentialMainPage = true

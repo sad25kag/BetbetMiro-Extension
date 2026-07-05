@@ -61,7 +61,7 @@ class AyoNonton : MainAPI() {
     override var name = "AyoNonton"
     override val hasMainPage = true
     override var lang = "id"
-    override val hasQuickSearch = false
+    override val hasQuickSearch = true
     override val hasDownloadSupport = true
 
     override val supportedTypes = setOf(

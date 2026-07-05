@@ -16,7 +16,7 @@ class StreamPlayTrakt(private val sharedPref: SharedPreferences) : TraktProvider
     override var lang = "en"
     override val supportedSyncNames = setOf(SyncIdName.Trakt)
     override val hasMainPage = true
-    override val hasQuickSearch = false
+    override val hasQuickSearch = true
 
     override suspend fun loadLinks(
         data: String,
@@ -30,12 +30,12 @@ class StreamPlayTrakt(private val sharedPref: SharedPreferences) : TraktProvider
             ?: jsonObj?.optString("name")?.takeIf { it.isNotBlank() }
         val year = jsonObj?.optInt("year")?.takeIf { it > 0 }
         val isAnime = jsonObj?.optBoolean("is_anime", false) ?: jsonObj?.optBoolean("isAnime", false) ?: false
-        val imdbIdRaw = jsonObj?.optString("imdb_id")?.takeIf { it.isNotBlank() } 
+        val imdbIdRaw = jsonObj?.optString("imdb_id")?.takeIf { it.isNotBlank() }
             ?: jsonObj?.optString("imdbId")?.takeIf { it.isNotBlank() }
         val season = jsonObj?.optInt("season")?.takeIf { it > 0 }
         val episode = jsonObj?.optInt("episode")?.takeIf { it > 0 }
         val isMovie = season == null || episode == null
-        
+
         var tmdbId: Int? = null
         var isAsian = false
         var isBollywood = false
@@ -49,7 +49,7 @@ class StreamPlayTrakt(private val sharedPref: SharedPreferences) : TraktProvider
                 val json = org.json.JSONObject(findRes)
                 val movieResults = json.optJSONArray("movie_results")
                 val tvResults = json.optJSONArray("tv_results")
-                
+
                 var tmdbObj: org.json.JSONObject? = null
                 if (movieResults != null && movieResults.length() > 0) {
                     tmdbObj = movieResults.getJSONObject(0)

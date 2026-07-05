@@ -42,7 +42,7 @@ class KissKH : MainAPI() {
     override var name = "KissKH"
     override val hasMainPage = true
     override var lang = "id"
-    override val hasQuickSearch = false
+    override val hasQuickSearch = true
     override val supportedTypes = setOf(TvType.TvSeries, TvType.Movie, TvType.AsianDrama)
 
     override val mainPage = mainPageOf(

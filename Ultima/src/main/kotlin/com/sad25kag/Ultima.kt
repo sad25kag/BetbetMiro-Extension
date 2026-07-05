@@ -26,7 +26,7 @@ class Ultima(val plugin: UltimaPlugin) : MainAPI() {
     override var supportedTypes = setOf(TvType.Movie, TvType.TvSeries, TvType.Anime)
     override var lang = "id"
     override val hasMainPage = true
-    override val hasQuickSearch = false
+    override val hasQuickSearch = true
     private val sm = UltimaStorageManager
 
     private val mapper = jacksonObjectMapper()

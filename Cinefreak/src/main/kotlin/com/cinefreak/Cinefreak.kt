@@ -45,7 +45,7 @@ open class Cinefreak : MainAPI() {
     override var lang = "id"
     override val hasMainPage = true
     override val hasDownloadSupport = true
-    override val hasQuickSearch = false
+    override val hasQuickSearch = true
     override val supportedTypes = setOf(
         TvType.Movie, TvType.TvSeries ,TvType.Anime
     )

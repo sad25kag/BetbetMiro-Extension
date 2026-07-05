@@ -64,7 +64,7 @@ class StreamPlayAnime : MainAPI() {
     override var lang = "en"
     override val supportedSyncNames = setOf(SyncIdName.Anilist,SyncIdName.MyAnimeList)
     override val hasMainPage = true
-    override val hasQuickSearch = false
+    override val hasQuickSearch = true
     private val repo = SyncRepo(AccountManager.aniListApi)
     private val apiUrl = "https://graphql.anilist.co"
     private val mediaLimit = 20

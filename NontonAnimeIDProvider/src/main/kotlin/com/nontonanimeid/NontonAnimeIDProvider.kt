@@ -20,7 +20,7 @@ import java.net.URI
 class NontonAnimeIDProvider : MainAPI() {
     override var mainUrl = "https://s12.nontonanimeid.boats"
     override var name = "NontonAnimeID"
-    override val hasQuickSearch = false
+    override val hasQuickSearch = true
     override val hasMainPage = true
     override var lang = "id"
     override val hasDownloadSupport = true
@@ -65,26 +65,26 @@ class NontonAnimeIDProvider : MainAPI() {
         }
 
         val document = app.get(pageUrl).document
-        
+
         val home = document.select("article.animeseries, .animeseries, a.as-anime-card").mapNotNull {
             it.toSearchResult()
         }
-        
+
         val hasNext = home.isNotEmpty()
-        
+
         return newHomePageResponse(request.name, home, hasNext = hasNext)
     }
 
     private fun Element.toSearchResult(): AnimeSearchResponse? {
         val a = if (this.tagName() == "a") this else this.selectFirst("a") ?: return null
         val href = fixUrlNull(a.attr("href")) ?: return null
-        
+
         val title = this.selectFirst("h3.title span, .title span, .as-anime-title, h2")?.text()?.trim()
             ?: this.selectFirst("img")?.attr("alt")?.trim()
             ?: a.attr("title").trim()
-            
+
         if (title.isBlank()) return null
-            
+
         val posterUrl = fixUrlNull(this.selectFirst("img")?.getImageAttr())
 
         return newAnimeSearchResponse(title, href, TvType.Anime) {
@@ -227,7 +227,7 @@ class NontonAnimeIDProvider : MainAPI() {
 
         val episodes = extractedEpisodes.amap { ep ->
             var episodeNum = ep.episode
-            
+
             if (type == TvType.AnimeMovie && episodeNum == null) {
                 episodeNum = 1
             }
@@ -263,7 +263,7 @@ class NontonAnimeIDProvider : MainAPI() {
 
         val apiDescription = animeMetaData?.description?.replace(Regex("<.*?>"), "")
         val rawPlot = apiDescription ?: animeMetaData?.episodes?.get("1")?.overview
-        
+
         val finalPlot = if (!rawPlot.isNullOrBlank()) {
             rawPlot
         } else {
@@ -329,7 +329,7 @@ class NontonAnimeIDProvider : MainAPI() {
             ?.takeIf { it.isNotBlank() }
             ?.let { encoded -> base64Decode(encoded) }
             .orEmpty()
-            
+
         val ajaxUrl = Regex("\"url\"\\s*:\\s*\"([^\"]+)\"")
             .find(ajaxConfigScript)
             ?.groupValues
@@ -337,7 +337,7 @@ class NontonAnimeIDProvider : MainAPI() {
             ?.replace("\\/", "/")
             ?.let { fixUrl(it) }
             ?: "$mainUrl/wp-admin/admin-ajax.php"
-            
+
         val nonce = Regex("\"nonce\"\\s*:\\s*\"([^\"]+)\"")
             .find(ajaxConfigScript)
             ?.groupValues
@@ -372,7 +372,7 @@ class NontonAnimeIDProvider : MainAPI() {
 
         iframeLinks.toList().amap { link ->
             val nestedLink = if (link.contains("/video-frame/") || link.contains("/video-embed/")) {
-                app.get(link, referer = data).document.selectFirst("iframe")?.let { iframe -> 
+                app.get(link, referer = data).document.selectFirst("iframe")?.let { iframe ->
                     normalizeUrl(iframe.attr("data-src").ifEmpty { iframe.attr("src") })
                 }
             } else {
@@ -380,7 +380,7 @@ class NontonAnimeIDProvider : MainAPI() {
             }
             loadExtractor(nestedLink ?: link, "$mainUrl/", subtitleCallback, callback)
         }
-        
+
         document.select(".listlink a").amap { a ->
             val href = normalizeUrl(a.attr("href"))
             if (href != null && !href.contains("javascript", true)) {
