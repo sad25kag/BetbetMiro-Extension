@@ -124,7 +124,8 @@ class BioskopKeren : MainAPI() {
             ?: fixedUrl.slugTitle().cleanDetailTitle()
 
         val poster = document.selectFirst(
-            "meta[property=og:image], meta[name=twitter:image], .gmr-movie-data img, .entry-content img, img.wp-post-image"
+            "meta[property=og:image], meta[name=twitter:image], " +
+                ".gmr-movie-data img, .entry-content img, img.wp-post-image"
         )?.let { if (it.hasAttr("content")) it.attr("content") else it.getImageAttr() }
             ?.let { resolveUrl(it, fixedUrl) ?: fixUrlNull(it) }
             ?.takeIf { !isBadImage(it) }
@@ -170,72 +171,59 @@ class BioskopKeren : MainAPI() {
         val watchUrl = normalizeProviderUrl(fixUrl(data))
         bkLog("watchUrl=$watchUrl")
 
-        val document = runCatching {
-            app.get(
-                watchUrl,
-                headers = siteHeaders,
-                referer = "$mainUrl/",
-                timeout = 30L
-            ).document
-        }.getOrNull() ?: return false
+        val document = app.get(
+            watchUrl,
+            headers = siteHeaders,
+            referer = "$mainUrl/",
+            timeout = 30L
+        ).document
 
-        val candidates = linkedSetOf<String>()
-        candidates.addAll(collectPlayerUrls(document, watchUrl))
-        candidates.addAll(collectServerPageUrls(document, watchUrl))
+        val initialPlayers = collectPlayerUrls(document, watchUrl).distinct()
+        bkLog("initialPlayers=${initialPlayers.size}")
+        initialPlayers.forEach { bkLog("initialPlayer=$it") }
 
-        // VidHide is the most reliable server on this site, so try it first.
-        // `candidates` is a LinkedHashSet (order = insertion order), not a List, so we
-        // reorder it by clearing and re-inserting rather than calling addAll(index, ...).
-        val vidhideCandidates = candidates.filter { it.contains("vidhide", ignoreCase = true) }
-        val otherCandidates = candidates.filterNot { it.contains("vidhide", ignoreCase = true) }
-        candidates.clear()
-        candidates.addAll(vidhideCandidates)
-        candidates.addAll(otherCandidates)
+        val serverPages = collectServerPageUrls(document, watchUrl).distinct()
+        bkLog("serverPages=${serverPages.size}")
+        serverPages.forEach { bkLog("serverPage=$it") }
 
         val iframeUrls = linkedSetOf<String>()
-        candidates.forEach { url ->
-            if (url == watchUrl) return@forEach
-            iframeUrls.add(url)
-        }
+        initialPlayers.forEach { iframeUrls.add(it) }
 
-        val extraCandidates = linkedSetOf<String>()
-        iframeUrls.forEach { pageUrl ->
+        serverPages.forEach { serverPage ->
+            if (serverPage == watchUrl) return@forEach
             val serverDocument = runCatching {
-                app.get(pageUrl, headers = siteHeaders, referer = watchUrl, timeout = 30L).document
-            }.getOrNull() ?: return@forEach
+                app.get(serverPage, headers = siteHeaders, referer = watchUrl, timeout = 30L).document
+            }.getOrNull()
 
-            extraCandidates.addAll(collectPlayerUrls(serverDocument, pageUrl))
-            extraCandidates.addAll(collectServerPageUrls(serverDocument, pageUrl))
-            extraCandidates.addAll(extractMediaUrls(serverDocument.html(), pageUrl))
-            extraCandidates.addAll(extractMediaUrls(serverDocument.text(), pageUrl))
-        }
-
-        val allUrls = linkedSetOf<String>()
-        allUrls.addAll(candidates)
-        allUrls.addAll(extraCandidates)
-
-        bkLog("candidateCount=${allUrls.size}")
-        allUrls.forEach { bkLog("candidate=$it") }
-
-        var emitted = false
-
-        allUrls
-            .filterNot { isBadPlaybackUrl(it) }
-            .distinct()
-            .forEach { candidate ->
-                val ok = resolveIframeWithExtractor(
-                    candidate,
-                    watchUrl,
-                    subtitleCallback
-                ) { link ->
-                    emitted = true
-                    callback(link)
-                }
-                bkLog("candidateResult url=$candidate ok=$ok")
+            if (serverDocument == null) {
+                bkLog("serverPageFetchFailed=$serverPage")
+                return@forEach
             }
 
-        bkLog("loadLinksResult_emitted=$emitted")
-        return emitted
+            val serverPlayers = collectPlayerUrls(serverDocument, serverPage).distinct()
+            bkLog("serverPage=$serverPage serverPlayers=${serverPlayers.size}")
+            serverPlayers.forEach { bkLog("serverPlayer=$it") }
+            serverPlayers.forEach { iframeUrls.add(it) }
+        }
+
+        bkLog("mergedIframeUrls=${iframeUrls.size}")
+        iframeUrls.forEach { bkLog("mergedIframe=$it") }
+
+        var found = false
+        iframeUrls
+            .filterNot { isBadPlaybackUrl(it) }
+            .forEach { iframeUrl ->
+    @Suppress("DEPRECATION")
+                found = resolveIframeWithExtractor(
+                    iframeUrl,
+                    watchUrl,
+                    subtitleCallback,
+                    callback
+                ) || found
+            }
+
+        bkLog("loadLinksResult=$found")
+        return found
     }
 
     @Suppress("DEPRECATION")
@@ -248,8 +236,7 @@ class BioskopKeren : MainAPI() {
         val extractorReferer = getExtractorReferer(iframeUrl, pageUrl)
         bkLog("resolveIframe url=$iframeUrl host=${safeHost(iframeUrl)} referer=$extractorReferer")
 
-        if (
-            tryLoadExtractorWithReferers(
+        if (tryLoadExtractorWithReferers(
                 iframeUrl,
                 listOf(extractorReferer, pageUrl, iframeUrl, "$mainUrl/"),
                 subtitleCallback,
@@ -267,15 +254,19 @@ class BioskopKeren : MainAPI() {
                 referer = extractorReferer,
                 timeout = 30L
             )
-        }.getOrNull() ?: return false
+        }.getOrNull()
+
+        if (iframeResponse == null) {
+            bkLog("iframeFetchFailed url=$iframeUrl")
+            return false
+        }
 
         val iframeHtml = iframeResponse.text.decodeEscaped()
+        bkLog("iframeFetched url=$iframeUrl htmlSize=${iframeHtml.length}")
         val iframeDocument = Jsoup.parse(iframeHtml, iframeUrl)
 
         val nestedPlayers = linkedSetOf<String>()
-        nestedPlayers.addAll(collectPlayerUrls(iframeDocument, iframeUrl))
-        nestedPlayers.addAll(collectServerPageUrls(iframeDocument, iframeUrl))
-        nestedPlayers.addAll(extractMediaUrls(iframeHtml, iframeUrl))
+        collectPlayerUrls(iframeDocument, iframeUrl).forEach { nestedPlayers.add(it) }
 
         iframeDocument.select("#servers a[data-url], a[data-url*='/embed/'], form[action*='/embed/']")
             .mapNotNull { element ->
@@ -286,6 +277,13 @@ class BioskopKeren : MainAPI() {
             .mapNotNull { resolveUrl(it, iframeUrl) }
             .filterNot { isBadPlaybackUrl(it) }
             .forEach { nestedPlayers.add(it) }
+
+        extractWindowUrl(iframeHtml, "downloadURL")
+            ?.let { resolveUrl(it, iframeUrl) }
+            ?.filterNotBad()
+            ?.let { nestedPlayers.add(it) }
+
+        extractMediaUrls(iframeHtml, iframeUrl).forEach { nestedPlayers.add(it) }
 
         bkLog("nestedPlayers=${nestedPlayers.size} parent=$iframeUrl")
         nestedPlayers.forEach { bkLog("nestedPlayer=$it") }
@@ -300,6 +298,7 @@ class BioskopKeren : MainAPI() {
             ) || found
         }
 
+        bkLog("resolveIframe nestedResult=$found url=$iframeUrl")
         return found
     }
 
@@ -310,10 +309,13 @@ class BioskopKeren : MainAPI() {
         callback: (ExtractorLink) -> Unit
     ): Boolean {
         val fixed = resolveUrl(url, mainUrl) ?: return false
-        if (isBadPlaybackUrl(fixed)) return false
+        if (isBadPlaybackUrl(fixed)) {
+            bkLog("skipBadPlayback url=$fixed")
+            return false
+        }
 
         return referers
-            .mapNotNull { it.takeIf(String::isNotBlank) }
+            .mapNotNull { it.takeIf { ref -> ref.isNotBlank() } }
             .distinct()
             .any { referer ->
                 var emitted = false
@@ -321,58 +323,59 @@ class BioskopKeren : MainAPI() {
                     emitted = true
                     callback.invoke(link)
                 }
-
+                bkLog("tryExtractor url=$fixed host=${safeHost(fixed)} referer=$referer")
                 val loaded = runCatching {
                     loadExtractor(fixed, referer, subtitleCallback, countingCallback)
                 }.getOrDefault(false)
-
-                bkLog("extractorResult url=$fixed referer=$referer loaded=$loaded emitted=$emitted")
+                bkLog("extractorResult url=$fixed host=${safeHost(fixed)} referer=$referer loaded=$loaded emitted=$emitted")
                 emitted
             }
+    }
+
+    private fun extractWindowUrl(html: String, key: String): String? {
+        return Regex("""(?:window\.)?$key\s*=\s*["']([^"']+)["']""")
+            .find(html)
+            ?.groupValues
+            ?.getOrNull(1)
+            ?.decodeEscaped()
+            ?.takeIf { it.isNotBlank() }
     }
 
     private fun extractMediaUrls(text: String, pageUrl: String): List<String> {
         val cleaned = text.decodeEscaped()
         val results = linkedSetOf<String>()
 
-        Regex("""https?://[^"'<>\s]+?\.(?:m3u8|mp4|webm|mkv)(?:\?[^"'<>\s]*)?""", RegexOption.IGNORE_CASE)
+        Regex("""https?://[^"'<>\s\\]+?\.(?:m3u8|mp4|webm|mkv)(?:\?[^"'<>\s\\]*)?""", RegexOption.IGNORE_CASE)
             .findAll(cleaned)
             .map { it.value }
             .mapNotNull { resolveUrl(it, pageUrl) }
             .filterNot { isBadPlaybackUrl(it) }
             .forEach { results.add(it) }
 
-        Regex("""//[^"'<>\s]+?\.(?:m3u8|mp4|webm|mkv)(?:\?[^"'<>\s]*)?""", RegexOption.IGNORE_CASE)
+        Regex("""//[^"'<>\s\\]+?\.(?:m3u8|mp4|webm|mkv)(?:\?[^"'<>\s\\]*)?""", RegexOption.IGNORE_CASE)
             .findAll(cleaned)
             .map { "https:${it.value}" }
             .mapNotNull { resolveUrl(it, pageUrl) }
             .filterNot { isBadPlaybackUrl(it) }
             .forEach { results.add(it) }
 
-        Regex(
-            """(?:file|src|source|url|video|videoUrl|streamUrl|downloadURL)\s*[:=]\s*["']([^"']+)["']""",
-            RegexOption.IGNORE_CASE
-        )
+        Regex("""(?:file|src|source|url|video|videoUrl|streamUrl|downloadURL)\s*[:=]\s*["']([^"']+)["']""", RegexOption.IGNORE_CASE)
             .findAll(cleaned)
             .mapNotNull { resolveUrl(it.groupValues[1], pageUrl) }
-            .filter {
-                it.contains(".m3u8", true) ||
-                    it.contains(".mp4", true) ||
-                    it.contains(".webm", true) ||
-                    it.contains(".mkv", true)
-            }
+            .filter { it.contains(".m3u8", true) || it.contains(".mp4", true) || it.contains(".webm", true) || it.contains(".mkv", true) }
             .filterNot { isBadPlaybackUrl(it) }
             .forEach { results.add(it) }
 
         return results.toList()
     }
 
+    private fun String.filterNotBad(): String? {
+        return takeIf { !isBadPlaybackUrl(it) }
+    }
+
     private fun getExtractorReferer(iframeUrl: String, pageUrl: String): String {
-        val host = safeHost(iframeUrl)
-        // VidHide (and its mirror domains: vidhidepro/vidhidevip/vidhidehub/etc.) checks the
-        // Referer header against the origin site rather than the embed page itself, so sending
-        // pageUrl as referer causes the extractor to silently fail. Force the site origin instead.
-        return if (host.contains("vidhide")) {
+        val host = runCatching { URI(iframeUrl).host.orEmpty().lowercase() }.getOrDefault("")
+        return if (host == "vidhide.org" || host.endsWith(".vidhide.org")) {
             "$mainUrl/"
         } else {
             pageUrl
@@ -387,7 +390,8 @@ class BioskopKeren : MainAPI() {
         val results = linkedMapOf<String, SearchResponse>()
 
         document.select(
-            "article.item-infinite, article.item, .gmr-box-content:has(h2.entry-title a), .item:has(h2.entry-title a)"
+            "article.item-infinite, article.item, " +
+                ".gmr-box-content:has(h2.entry-title a), .item:has(h2.entry-title a)"
         ).forEach { element ->
             element.toSearchResult()?.let { results[it.url] = it }
         }
@@ -438,18 +442,18 @@ class BioskopKeren : MainAPI() {
             ".player-wrap iframe[src], .player-wrap iframe[data-src], " +
                 ".gmr-pagi-player iframe[src], .gmr-pagi-player iframe[data-src], " +
                 ".gmr-embed-responsive iframe[src], .gmr-embed-responsive iframe[data-src], " +
-                "iframe[src], iframe[data-src], embed[src], source[src], video[src], object[data]"
+                "iframe[src], iframe[data-src], embed[src], source[src], video[src]"
         ).forEach { element ->
-            listOf("src", "data-src", "data", "href")
+            listOf("src", "data-src", "href")
                 .mapNotNull { attr -> element.attr(attr).takeIf { it.isNotBlank() } }
                 .mapNotNull { resolveUrl(it, pageUrl) }
                 .forEach { results.add(it) }
         }
 
         document.select(
-            ".player-wrap option[value], .gmr-pagi-player option[value], .server option[value], " +
-                ".mirror option[value], select option[value], [data-iframe], [data-frame], " +
-                "[data-src], [data-url], [data-link]"
+            ".player-wrap option[value], .gmr-pagi-player option[value], " +
+                ".server option[value], .mirror option[value], select option[value], " +
+                "[data-iframe], [data-frame], [data-src], [data-url], [data-link]"
         ).forEach { element ->
             listOf("value", "data-iframe", "data-frame", "data-src", "data-url", "data-link")
                 .mapNotNull { attr -> element.attr(attr).takeIf { it.isNotBlank() } }
@@ -457,25 +461,13 @@ class BioskopKeren : MainAPI() {
                 .forEach { results.add(it) }
         }
 
-        document.select("a[href]").forEach { a ->
-            val url = resolveUrl(a.attr("href"), pageUrl) ?: return@forEach
-            if (
-                url.contains("/embed/", true) ||
-                url.contains("/player/", true) ||
-                url.contains("/watch/", true) ||
-                url.contains("/video/", true)
-            ) {
-                results.add(url)
-            }
-        }
-
         return results.toList()
     }
 
     private fun collectServerPageUrls(document: Document, pageUrl: String): List<String> {
         return document.select(
-            ".muvipro-player-tabs a[href], .gmr-player-tabs a[href], .server a[href], " +
-                ".mirror a[href], .player-nav a[href]"
+            ".muvipro-player-tabs a[href], .gmr-player-tabs a[href], " +
+                ".server a[href], .mirror a[href], .player-nav a[href]"
         ).mapNotNull { resolveUrl(it.attr("href"), pageUrl) }
             .map { normalizeProviderUrl(it) }
             .filter { isProviderUrl(it) && !isBlockedUrl(it) }
@@ -509,9 +501,9 @@ class BioskopKeren : MainAPI() {
 
     private fun extractIframeUrls(html: String, pageUrl: String): List<String> {
         val doc = Jsoup.parse(html.decodeEscaped(), pageUrl)
-        return doc.select("iframe[src], iframe[data-src], embed[src], source[src], video[src], a[href], object[data]")
+        return doc.select("iframe[src], iframe[data-src], embed[src], source[src], video[src], a[href]")
             .mapNotNull { element ->
-                listOf("src", "data-src", "data", "href")
+                listOf("src", "data-src", "href")
                     .mapNotNull { attr -> element.attr(attr).takeIf { it.isNotBlank() } }
                     .firstOrNull()
             }
@@ -532,13 +524,14 @@ class BioskopKeren : MainAPI() {
         val clone = entry.clone()
         clone.select("script, style, .content-moviedata, .gmr-moviedata, h1, h2, h3").remove()
 
-        return clone.selectFirst("p")?.text()?.cleanPlot() ?: clone.text().cleanPlot()
+        return clone.selectFirst("p")?.text()?.cleanPlot()
+            ?: clone.text().cleanPlot()
     }
 
     private fun hasNextPage(document: Document, page: Int): Boolean {
         return document.selectFirst(
             "a[rel=next], .pagination a:contains(Next), .pagination a:contains(Berikutnya), " +
-                ".page-numbers.next, .nav-links a[href*='/page/${page + 1}'], a[href*='/page/${page + 1}/']"
+                ".page-numbers.next, .nav-links a[href*='/page/${page + 1}'], a[href*='/page/${page + 1}/']" 
         ) != null
     }
 
@@ -559,11 +552,9 @@ class BioskopKeren : MainAPI() {
             ?.takeIf { it.isNotBlank() && it != "#" && !it.equals("none", true) && !it.equals("null", true) }
             ?: return null
 
-        if (
-            clean.startsWith("javascript", true) ||
-            clean.startsWith("mailto:", true) ||
-            clean.startsWith("tel:", true)
-        ) return null
+        if (clean.startsWith("javascript", true) || clean.startsWith("mailto:", true) || clean.startsWith("tel:", true)) {
+            return null
+        }
 
         return runCatching {
             when {
@@ -589,8 +580,7 @@ class BioskopKeren : MainAPI() {
 
     private fun isProviderUrl(url: String): Boolean {
         return runCatching {
-            val host = URI(url).host.orEmpty().lowercase().removePrefix("www.")
-            host == "134.209.20.140"
+            URI(url).host.orEmpty().lowercase().removePrefix("www.") == "134.209.20.140"
         }.getOrDefault(url.startsWith(mainUrl))
     }
 
@@ -602,7 +592,8 @@ class BioskopKeren : MainAPI() {
 
         val blockedPrefixes = listOf(
             "genre/", "country/", "quality/", "year/", "tag/", "director/", "cast/",
-            "author/", "blog/", "page/", "search", "feed", "wp-json", "wp-content", "wp-admin"
+            "author/",
+            "blog/", "page/", "search", "feed", "wp-json", "wp-content", "wp-admin"
         )
 
         val blockedExact = setOf(
@@ -668,22 +659,49 @@ class BioskopKeren : MainAPI() {
             anchor.parent()?.parent()
         ).distinct()
 
-        for (box in candidates) {
+        candidates.forEach { box ->
             val image = box.selectFirst(
-                "img[data-src], img[data-lazy-src], img[data-original], img[data-img], " +
-                    "img[data-image], img[data-poster], img[src], source[data-srcset], source[srcset]"
-            ) ?: continue
+                "img[data-src], img[data-lazy-src], img[data-original], img[data-img], img[data-image], " +
+                    "img[data-poster], img[src], source[data-srcset], source[srcset]"
+            ) ?: return@forEach
 
-            val raw = image.getImageAttr() ?: continue
-            val resolved = resolveUrl(raw, mainUrl) ?: fixUrlNull(raw)
-            if (resolved != null && !isBadImage(resolved)) return resolved
+            image.getImageAttr()
+                ?.let { raw -> resolveUrl(raw, mainUrl) ?: fixUrlNull(raw) }
+                ?.takeIf { !isBadImage(it) }
+                ?.let { return it }
         }
+
         return null
+    }
+
+    private fun Element.getImageAttr(): String? {
+        return when {
+            hasAttr("data-src") -> attr("data-src")
+            hasAttr("data-lazy-src") -> attr("data-lazy-src")
+            hasAttr("data-original") -> attr("data-original")
+            hasAttr("data-img") -> attr("data-img")
+            hasAttr("data-image") -> attr("data-image")
+            hasAttr("data-poster") -> attr("data-poster")
+            hasAttr("poster") -> attr("poster")
+            hasAttr("data-srcset") -> pickSrcSet(attr("data-srcset"))
+            hasAttr("srcset") -> pickSrcSet(attr("srcset"))
+            hasAttr("src") -> attr("src")
+            else -> null
+        }
+    }
+
+    private fun pickSrcSet(srcset: String): String? {
+        return srcset.split(",")
+            .map { it.trim().substringBefore(" ").trim() }
+            .filter { it.isNotBlank() }
+            .lastOrNull()
     }
 
     private fun isBadImage(url: String): Boolean {
         val lower = url.lowercase()
-        return lower.contains("logo") ||
+        return lower.isBlank() ||
+            lower.startsWith("data:") ||
+            lower.contains("logo") ||
             lower.contains("icon") ||
             lower.contains("avatar") ||
             lower.contains("favicon") ||
@@ -727,8 +745,7 @@ class BioskopKeren : MainAPI() {
     }
 
     private fun String.decodeEscaped(): String {
-        val cleaned = this
-            .replace("\\u002F", "/")
+        val cleaned = replace("\\u002F", "/")
             .replace("\\/", "/")
             .replace("\\u003A", ":")
             .replace("\\u0026", "&")
@@ -737,50 +754,60 @@ class BioskopKeren : MainAPI() {
             .replace("&#038;", "&")
             .replace("&quot;", "\"")
             .replace("&#8217;", "'")
-            .replace("&#8211;", "–")
-            .replace("&#8212;", "—")
+            .replace("&#8211;", "\u2013")
+            .replace("&#8212;", "\u2014")
 
         return if (cleaned.contains("%3A%2F%2F", true) || cleaned.contains("%3C", true)) {
-            runCatching { java.net.URLDecoder.decode(cleaned, "UTF-8") }.getOrDefault(cleaned)
-        } else cleaned
+            runCatching { URLDecoder.decode(cleaned, "UTF-8") }.getOrDefault(cleaned)
+        } else {
+            cleaned
+        }
     }
 
     private fun String.cleanTitle(): String {
-        return this
+        return decodeEscaped()
+            .replace(Regex("""(?i)^\s*permalink\s+ke\s*:\s*"""), "")
+            .replace(Regex("""(?i)^\s*permalink\s+to\s*:\s*"""), "")
+            .replace(Regex("""(?i)^\s*BIOSKOPKEREN\s*[-|:]\s*"""), "")
+            .replace(Regex("""\s+-\s+BIOSKOPKEREN.*$""", RegexOption.IGNORE_CASE), "")
+            .replace(Regex("""\s+\|\s+BIOSKOPKEREN.*$""", RegexOption.IGNORE_CASE), "")
+            .replace(Regex("""^Nonton\s+Film\s+""", RegexOption.IGNORE_CASE), "")
+            .replace(Regex("""\s+Streaming\s+Online.*$""", RegexOption.IGNORE_CASE), "")
+            .replace(Regex("""\s+Download.*$""", RegexOption.IGNORE_CASE), "")
+            .replace(Regex("""\s+Subtitle\s+Indonesia.*$""", RegexOption.IGNORE_CASE), "")
+            .replace(Regex("""\s+Sub\s+Indo.*$""", RegexOption.IGNORE_CASE), "")
+            .replace(Regex("""\s+Full\s+Movie.*$""", RegexOption.IGNORE_CASE), "")
+            .replace(Regex("""\s+\u2026$"""), "")
             .replace(Regex("""\s+"""), " ")
             .trim()
     }
 
     private fun String.cleanDetailTitle(): String {
         return cleanTitle()
-            .replace(Regex("""\s*(19|20)\d{2}\s*$"""), "")
+            .replace(Regex("""\s*\((?:19|20)\d{2}\)\s*$"""), "")
+            .replace(Regex("""\s+"""), " ")
             .trim()
     }
 
     private fun String.cleanPlot(): String? {
-        return this
+        return decodeEscaped()
             .replace(Regex("""\s+"""), " ")
             .trim()
             .takeIf { it.isNotBlank() && it.length > 20 }
     }
 
     private fun String.isUiText(): Boolean {
-        val l = trim().lowercase()
-        if (l.isBlank()) return true
-        if (l.length <= 1) return true
-        if (l.all { it.isDigit() }) return true
+        val lower = trim().lowercase()
+        if (lower.isBlank()) return true
+        if (lower.length <= 1) return true
+        if (lower.matches(Regex("""^\d+$"""))) return true
 
-        return l in setOf(
-            "home", "next", "previous", "prev", "movies", "tv", "series", "search",
-            "genre", "country", "year", "watch", "play", "download", "more"
+        return lower in setOf(
+            "home", "next", "previous", "prev", "movies", "movie", "tv series", "series",
+            "trending", "search", "genre", "country", "year", "tag", "category", "quality",
+            "watch", "watch movie", "watch now", "tonton", "download", "trailer", "play", "login",
+            "register", "read more", "more", "lihat semua", "nonton", "nonton movie", "nonton film",
+            "hd", "sd", "cam", "ts", "hdrip", "bluray", "web-dl", "semua tipe", "film"
         )
-    }
-
-    private fun Element.getImageAttr(): String? {
-        return attr("data-src").takeIf { it.isNotBlank() }
-            ?: attr("data-lazy-src").takeIf { it.isNotBlank() }
-            ?: attr("data-original").takeIf { it.isNotBlank() }
-            ?: attr("src").takeIf { it.isNotBlank() }
-            ?: attr("data-srcset").takeIf { it.isNotBlank() }?.substringBefore(",")
     }
 }
