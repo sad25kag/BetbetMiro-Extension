@@ -82,40 +82,50 @@ class FourKHDHub : MainAPI() {
         return newHomePageResponse(request.name, results, true)
     }
 
-    override suspend fun search(query: String): List<SearchResponse> {
-        val results = mutableListOf<SearchResponse>()
-        val encodedQuery = java.net.URLEncoder.encode(query, "UTF-8")
-        var page = 1
-        while (true) {
-            val url = if (page == 1) {
-                "$mainUrl/?s=$encodedQuery"
-            } else {
-                "$mainUrl/page/$page/?s=$encodedQuery"
-            }
+override suspend fun search(query: String): List<SearchResponse> {
+    val results = mutableListOf<SearchResponse>()
 
-            val document = try {
-                app.get(url).document
-            } catch (e: Exception) {
-                Log.e("Search", "error page=$page url=$url")
-                break
-            }
+    val encodedQuery = java.net.URLEncoder.encode(query, "UTF-8")
 
-            val items = document.select("div.card-grid a")
-                .mapNotNull { it.toSearchResult() }
+    var page = 1
+    val maxPages = 20
 
-            if (items.isEmpty()) break
+    val seen = HashSet<String>()
 
-            val currentUrls = results.map { it.url }.toSet()
-            val newItems = items.filter { it.url !in currentUrls }
-            
-            if (newItems.isEmpty()) break
+    while (page <= maxPages) {
 
-            results.addAll(newItems)
-            page++
+        val url = if (page == 1) {
+            "$mainUrl/?s=$encodedQuery"
+        } else {
+            "$mainUrl/page/$page/?s=$encodedQuery"
         }
 
-        return results
+        val document = try {
+            app.get(url).document
+        } catch (e: Exception) {
+            Log.e("Search", "error page=$page url=$url")
+            break
+        }
+
+        val items = document.select("div.card-grid a")
+            .mapNotNull { it.toSearchResult() }
+
+        if (items.isEmpty()) break
+
+        for (item in items) {
+            val key = item.url
+
+            if (key !in seen) {
+                seen.add(key)
+                results.add(item)
+            }
+        }
+
+        page++
     }
+
+    return results
+}
 
     @RequiresApi(Build.VERSION_CODES.N)
     override suspend fun load(url: String): LoadResponse {
