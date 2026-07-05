@@ -35,7 +35,7 @@ cloudstream {
     description = "ShowBox (Retrieve the cookie using Login with Google to properly utilize ShowBox."
 
     // description = "Lorem Ipsum"
-    authors = listOf("Phisher98")
+    authors = listOf("sad25kag98")
 
     /**
      * Status int as the following:

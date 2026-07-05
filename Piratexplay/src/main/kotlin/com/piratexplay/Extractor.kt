@@ -54,7 +54,7 @@ open class GDMirrorbot : ExtractorApi() {
 
         sids.forEach { sid ->
             try {
-                Log.d("Phisher", "Processing SID: $sid")
+                Log.d("sad25kag", "Processing SID: $sid")
 
                 val responseText = app.post(
                     "$host/embedhelper.php",
@@ -90,7 +90,7 @@ open class GDMirrorbot : ExtractorApi() {
                             base64Decode(root["mresult"].asString)
                                 .let { JsonParser.parseString(it).asJsonObject }
                         } catch (e: Exception) {
-                            Log.e("Phisher", "Decode failed: $e")
+                            Log.e("sad25kag", "Decode failed: $e")
                             return@forEach
                         }
                     }

@@ -266,7 +266,7 @@ class HubCloud : ExtractorApi() {
             val link = element.attr("href")
             val text = element.ownText()
             val label = text.lowercase()
-            Log.d("Phisher",label)
+            Log.d("sad25kag",label)
             when {
                 "fsl server" in label -> {
                     callback(

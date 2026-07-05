@@ -182,7 +182,7 @@ class Animedubhindi : MainAPI() {
                                 }
                             }
                     ).toJson()
-            Log.d("Phisher",hrefs)
+            Log.d("sad25kag",hrefs)
             newMovieLoadResponse(title, url, TvType.Movie, hrefs) {
                 this.posterUrl = backgroundposter
                 this.tags = genres
@@ -199,7 +199,7 @@ class Animedubhindi : MainAPI() {
         subtitleCallback: (SubtitleFile) -> Unit,
         callback: (ExtractorLink) -> Unit
     ): Boolean {
-        Log.d("Phisher",data.toJson())
+        Log.d("sad25kag",data.toJson())
         val links = tryParseJson<List<Map<String, String>>>(data) ?: return false
         links.amap { item ->
             val url = item["url"] ?: return@amap

@@ -96,7 +96,7 @@ class FivemovierulzProvider : MainAPI() { // all providers must be an instance o
             .filter { it.isNotBlank() }
 
         links.amap { link ->
-            Log.d("Phisher",link)
+            Log.d("sad25kag",link)
             loadExtractor(
                 link,
                 "$mainUrl/",

@@ -116,7 +116,7 @@ class Animenosub : MainAPI() {
                 loadExtractor(fixiframe,referer = fixiframe,subtitleCallback, callback)
             }
             else {
-                Log.d("Phisher",iframe)
+                Log.d("sad25kag",iframe)
                 loadExtractor(iframe, referer = iframe, subtitleCallback, callback)
             }
         }

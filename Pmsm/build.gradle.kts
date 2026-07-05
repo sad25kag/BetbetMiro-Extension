@@ -3,7 +3,7 @@ version = 3
 cloudstream {
     description = "PMSM (Pencuri Movie Sub Malay)"
     language = "id"
-    authors = listOf("Phisher98,Duro92")
+    authors = listOf("sad25kag98,Duro92")
     status = 1
     tvTypes = listOf(
         "Movie",

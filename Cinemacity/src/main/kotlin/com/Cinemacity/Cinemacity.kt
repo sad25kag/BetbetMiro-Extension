@@ -292,7 +292,7 @@ class Cinemacity : MainAPI() {
         val episodeRegex = Regex("Episode\\s*(\\d+)", RegexOption.IGNORE_CASE)
 
         val episodeList = mutableListOf<Episode>()
-        Log.d("Phisher",fileArray.toString())
+        Log.d("sad25kag",fileArray.toString())
         val movieHrefs: String? = fileArray.optJSONObject(0)
                 ?.takeIf { !it.has("folder") }
                 ?.optString("file")
@@ -399,7 +399,7 @@ class Cinemacity : MainAPI() {
             }
         }
 
-        responseData?.meta?.appExtras?.certification?.let { Log.d("Phisher", it) }
+        responseData?.meta?.appExtras?.certification?.let { Log.d("sad25kag", it) }
 
         return newMovieLoadResponse(
             responseData?.meta?.name ?: title,

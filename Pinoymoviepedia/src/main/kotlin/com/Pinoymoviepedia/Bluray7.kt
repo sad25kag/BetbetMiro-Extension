@@ -68,7 +68,7 @@ class Bluray : Pinoymoviepedia() {
         callback: (ExtractorLink) -> Unit
     ): Boolean {
         val loadData = tryParseJson<LinkData>(data)
-        Log.d("Phisher", loadData.toString())
+        Log.d("sad25kag", loadData.toString())
         val source = app.post(
             url = "$mainUrl/wp-admin/admin-ajax.php", data = mapOf(
                 "action" to "doo_player_ajax", "post" to "${loadData?.post}", "nume" to "${loadData?.nume}", "type" to "movie"

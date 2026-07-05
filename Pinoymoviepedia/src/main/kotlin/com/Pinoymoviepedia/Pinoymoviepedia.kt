@@ -132,10 +132,10 @@ open class Pinoymoviepedia : MainAPI() {
         subtitleCallback: (SubtitleFile) -> Unit,
         callback: (ExtractorLink) -> Unit
     ): Boolean {
-            Log.d("Phisher",data)
+            Log.d("sad25kag",data)
             app.get(data).document.select("div.pframe iframe").amap {
                 val href=it.attr("src")
-                Log.d("Phisher",href)
+                Log.d("sad25kag",href)
                 loadExtractor(
                     href,
                     "",

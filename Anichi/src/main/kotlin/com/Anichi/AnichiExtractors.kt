@@ -130,7 +130,7 @@ object AnichiExtractors : Anichi() {
         sources.forEach { source ->
             launch {
                 safeApiCall {
-                    Log.d("Phisher", "${source.sourceName} ${source.sourceUrl}")
+                    Log.d("sad25kag", "${source.sourceName} ${source.sourceUrl}")
 
                     val rawLink = source.sourceUrl ?: return@safeApiCall
                     val link = fixSourceUrls(rawLink, source.sourceName) ?: return@safeApiCall

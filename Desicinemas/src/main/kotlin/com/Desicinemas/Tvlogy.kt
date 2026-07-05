@@ -14,7 +14,7 @@ class Tvlogyflow(val source: String) : ExtractorApi() {
     override val name = "Tvlogy"
     override val requiresReferer = false
 
-    private val proxyUrl = "https://proxy.phisher2.workers.dev/?url="
+    private val proxyUrl = "https://proxy.sad25kag2.workers.dev/?url="
 
     override suspend fun getUrl(
         url: String,

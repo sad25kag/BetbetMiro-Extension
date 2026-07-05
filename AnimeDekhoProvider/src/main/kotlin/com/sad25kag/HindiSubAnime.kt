@@ -38,7 +38,7 @@ class HindiSubAnime : AnimeDekhoProvider() {
             val link = app.get("$mainUrl/?trdekho=$i&trid=$term&trtype=${media.mediaType}")
                 .document.selectFirst("iframe")?.attr("src")
                 ?: return@amap
-            Log.d("Phisher", link)
+            Log.d("sad25kag", link)
             loadExtractor(link, subtitleCallback, callback)
         }
         return true

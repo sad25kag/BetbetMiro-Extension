@@ -78,7 +78,7 @@ class RingZ : MainAPI() {
                 "user-agent" to "Dart/3.8 (dart:io)"
             )).text
             val jsonArray = JSONArray(responseText)
-            
+
             var selected: JSONObject? = null
             var highestId = Long.MIN_VALUE
 
@@ -481,7 +481,7 @@ class RingZ : MainAPI() {
         subtitleCallback: (SubtitleFile) -> Unit,
         callback: (ExtractorLink) -> Unit
     ): Boolean {
-        Log.d("Phisher", data)
+        Log.d("sad25kag", data)
 
         val urlsArray = try {
             JSONArray(data)

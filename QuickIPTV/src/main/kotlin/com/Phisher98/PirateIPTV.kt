@@ -1,4 +1,4 @@
-package com.phisher98
+package com.sad25kag98
 
 import com.lagradost.cloudstream3.*
 import com.lagradost.cloudstream3.utils.AppUtils.parseJson

@@ -478,7 +478,7 @@ class HDhub4uProvider : MainAPI() {
                 }
 
             } catch (e: Exception) {
-                Log.e("Phisher", "Failed to process $link: ${e.message}")
+                Log.e("sad25kag", "Failed to process $link: ${e.message}")
             }
         }
 

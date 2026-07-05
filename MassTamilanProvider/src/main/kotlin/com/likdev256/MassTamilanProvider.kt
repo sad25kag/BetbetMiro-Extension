@@ -34,7 +34,7 @@ class MassTamilanProvider : MainAPI() { // all providers must be an instance of 
         request: MainPageRequest
     ): HomePageResponse {
         val document = app.get("${request.data}?page=$page").document
-        Log.d("Phisher","${request.data}?page=$page")
+        Log.d("sad25kag","${request.data}?page=$page")
         val home = document.select("div.a-i").mapNotNull {
                 it.toSearchResult()
             }

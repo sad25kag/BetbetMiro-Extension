@@ -45,7 +45,7 @@ open class Hownetwork : ExtractorApi() {
         ).text
         val json = JSONObject(response)
         val file = json.optString("file")
-        Log.d("Phisher", file)
+        Log.d("sad25kag", file)
             M3u8Helper.generateM3u8(
                 this.name,
                 file,

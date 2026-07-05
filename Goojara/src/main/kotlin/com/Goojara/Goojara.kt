@@ -279,10 +279,10 @@ class Goojara : MainAPI() {
             try {
                 val redirectResp = app.get(href, mapOf("Referer" to "https://ww1.goojara.to", "Cookie" to cookieHeader), allowRedirects = false)
                 val iframe = redirectResp.headers["location"] ?: redirectResp.headers["Location"] ?: return@amap
-                Log.d("Phisher", iframe)
+                Log.d("sad25kag", iframe)
                 loadSourceNameExtractor("", iframe, "", Qualities.P720.value, subtitleCallback, callback)
             } catch (e: Exception) {
-                Log.w("Phisher", "failed to fetch embed redirect: ${e.message}")
+                Log.w("sad25kag", "failed to fetch embed redirect: ${e.message}")
             }
         }
         return true

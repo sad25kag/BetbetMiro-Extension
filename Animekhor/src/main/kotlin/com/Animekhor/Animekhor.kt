@@ -126,7 +126,7 @@ open class Animekhor : MainAPI() {
             {
                     url= httpsify(url)
             }
-            Log.d("Phisher",url)
+            Log.d("sad25kag",url)
                 loadExtractor(url, referer = mainUrl, subtitleCallback, callback)
 
         }

@@ -48,10 +48,10 @@ object RingzConfigLoader {
                     highestId = idNum
                     selected = obj
                 }
-                Log.d("Phisher",highestId.toString())
+                Log.d("sad25kag",highestId.toString())
 
             }
-            Log.d("Phisher",selected.toString())
+            Log.d("sad25kag",selected.toString())
 
             if (selected == null && array.length() > 0)
                 selected = array.getJSONObject(array.length() - 1)

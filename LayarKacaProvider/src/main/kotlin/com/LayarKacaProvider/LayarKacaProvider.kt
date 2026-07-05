@@ -197,7 +197,7 @@ class LayarKacaProvider : MainAPI() {
             }.amap {
             val test=it.getIframe()
             val referer=getBaseUrl(it)
-            Log.d("Phisher",test)
+            Log.d("sad25kag",test)
             loadExtractor(it.getIframe(), referer, subtitleCallback, callback)
         }
         return true

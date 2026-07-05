@@ -147,7 +147,7 @@ class MovieBlast : MainAPI() {
             ?: json.optString("backdrop_path")
                 .takeIf { it.isNotBlank() }
             ?: poster
-        Log.d("Phisher","$poster")
+        Log.d("sad25kag","$poster")
         val backdroppath = json.optString("backdrop_path")
 
         val overview = json.optString("overview")

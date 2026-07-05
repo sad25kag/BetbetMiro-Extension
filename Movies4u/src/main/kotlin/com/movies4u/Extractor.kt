@@ -101,7 +101,7 @@ class VCloud : ExtractorApi() {
                 app.get(url).document.selectFirst("div.main h4 a")?.attr("href")
             }.getOrNull() ?: return
         }
-        Log.d("Phisher",href)
+        Log.d("sad25kag",href)
         val doc = runCatching { app.get(href).document }.getOrNull() ?: return
         val scriptTag = doc.selectFirst("script:containsData(url)")?.data() ?: ""
 
@@ -118,7 +118,7 @@ class VCloud : ExtractorApi() {
                     .orEmpty()
 
         if (urlValue.isEmpty()) return
-        Log.d("Phisher",urlValue)
+        Log.d("sad25kag",urlValue)
 
         val document = runCatching { app.get(urlValue).document }.getOrNull() ?: return
         val size = document.selectFirst("i#size")?.text().orEmpty()
@@ -137,8 +137,8 @@ class VCloud : ExtractorApi() {
             val link = it.attr("href")
             val text = it.text()
             val quality = getIndexQuality(header)
-            Log.d("Phisher",link)
-            Log.d("Phisher",text)
+            Log.d("sad25kag",link)
+            Log.d("sad25kag",text)
 
             when {
                 text.contains("FSLv2", ignoreCase = true) -> {
@@ -344,7 +344,7 @@ open class HubCloud : ExtractorApi() {
             val link = element.attr("href")
             val text = element.ownText()
             val label = text.lowercase()
-            Log.d("Phisher",label)
+            Log.d("sad25kag",label)
             when {
                 "fsl server" in label -> {
                     callback(
