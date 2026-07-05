@@ -3,7 +3,7 @@ version = 31
 cloudstream {
     description = "AnoBoy — Streaming Anime Subtitle Indonesia"
     language = "id"
-    authors = listOf(sad25kag)
+    authors = listOf("sad25kag")
 
     /**
      * Status int as the following:

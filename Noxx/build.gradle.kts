@@ -3,7 +3,7 @@ version = 9
 cloudstream {
     description = "Noxx"
     language = "id"
-    authors = listOf(sad25kag)
+    authors = listOf("sad25kag")
 
     status = 3
     tvTypes = listOf(
