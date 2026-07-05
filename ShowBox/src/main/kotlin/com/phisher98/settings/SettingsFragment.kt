@@ -1,4 +1,4 @@
-package com.phisher98.settings
+package com.sad25kag.settings
 
 import android.annotation.SuppressLint
 import android.content.Intent
@@ -20,8 +20,8 @@ import com.google.android.material.bottomsheet.BottomSheetBehavior
 import com.google.android.material.bottomsheet.BottomSheetDialog
 import com.google.android.material.bottomsheet.BottomSheetDialogFragment
 import com.lagradost.cloudstream3.CommonActivity.showToast
-import com.phisher98.BuildConfig
-import com.phisher98.SuperStreamPlugin
+import com.sad25kag.BuildConfig
+import com.sad25kag.SuperStreamPlugin
 
 class SettingsFragment(
     plugin: SuperStreamPlugin,

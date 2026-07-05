@@ -1,4 +1,4 @@
-package com.phisher98
+package com.sad25kag
 
 /**
  * Compatibility shim for code that expects BuildConfig in the provider package.

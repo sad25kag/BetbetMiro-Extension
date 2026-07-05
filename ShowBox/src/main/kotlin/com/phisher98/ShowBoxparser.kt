@@ -1,4 +1,4 @@
-package com.phisher98
+package com.sad25kag
 
 import com.fasterxml.jackson.annotation.JsonProperty
 import com.lagradost.cloudstream3.TvType

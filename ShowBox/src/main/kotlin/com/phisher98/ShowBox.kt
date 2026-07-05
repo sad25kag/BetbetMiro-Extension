@@ -1,4 +1,4 @@
-package com.phisher98
+package com.sad25kag
 
 import android.content.SharedPreferences
 import android.util.Base64
@@ -37,12 +37,12 @@ import com.lagradost.cloudstream3.runAllAsync
 import com.lagradost.cloudstream3.utils.AppUtils.parseJson
 import com.lagradost.cloudstream3.utils.AppUtils.toJson
 import com.lagradost.cloudstream3.utils.ExtractorLink
-import com.phisher98.ShowBox.CipherUtils.getVerify
-import com.phisher98.ShowBoxExtractor.invokeExternalM3u8Source
-import com.phisher98.ShowBoxExtractor.invokeExternalSource
-import com.phisher98.ShowBoxExtractor.invokeInternalSource
-import com.phisher98.ShowBoxExtractor.invokeOpenSubs
-import com.phisher98.ShowBoxExtractor.invokeWatchsomuch
+import com.sad25kag.ShowBox.CipherUtils.getVerify
+import com.sad25kag.ShowBoxExtractor.invokeExternalM3u8Source
+import com.sad25kag.ShowBoxExtractor.invokeExternalSource
+import com.sad25kag.ShowBoxExtractor.invokeInternalSource
+import com.sad25kag.ShowBoxExtractor.invokeOpenSubs
+import com.sad25kag.ShowBoxExtractor.invokeWatchsomuch
 import okhttp3.FormBody
 import okhttp3.Headers.Companion.toHeaders
 import okhttp3.Interceptor
