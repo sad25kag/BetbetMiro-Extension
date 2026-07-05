@@ -237,7 +237,6 @@ class BioskopKerenVidHide : ExtractorApi() {
                 ?: continue
             val label = track.optString("label").ifBlank { "Subtitle" }
             if (file.endsWith(".vtt", true) || file.endsWith(".srt", true)) {
-    @Suppress("DEPRECATION")
                 subtitleCallback.invoke(SubtitleFile(label, file))
             }
         }
