@@ -45,7 +45,7 @@ open class Aniworld(sharedPref: SharedPreferences?=null) : MainAPI() {
     override var mainUrl = "https://aniworld.to"
     override var name = "Aniworld"
     override val hasMainPage = true
-    override var lang = "de"
+    override var lang = "id"
     open val token = sharedPref?.getString("serienstream_token", null)
 
     override val supportedTypes = setOf(

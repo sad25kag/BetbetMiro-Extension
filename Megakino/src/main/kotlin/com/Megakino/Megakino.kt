@@ -11,7 +11,7 @@ class Megakino : MainAPI() {
     override var mainUrl              = "https://megakino5.org" //https://megakino.me
     override var name                 = "Megakino"
     override val hasMainPage          = true
-    override var lang                 = "de"
+    override var lang                 = "id"
     override val hasDownloadSupport   = true
     override val supportedTypes       = setOf(TvType.Movie,TvType.Anime,TvType.TvSeries,TvType.Documentary)
 

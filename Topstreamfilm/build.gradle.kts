@@ -21,7 +21,7 @@ cloudstream {
         "Movie",
         "TvSeries"
     )
-    language = "de"
+    language = "id"
 
     iconUrl = "https://www.topstreamfilm.live/templates/topstreamfilm/images/logo-1.png"
 

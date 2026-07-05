@@ -155,7 +155,7 @@ class StremioX(override var mainUrl: String, override var name: String) : TmdbPr
             .ifEmpty { res.keywords?.keywords?.mapNotNull { it.name } }
 
         val isCartoon = genres?.contains("Animation") ?: false
-        val isAsian = !isAnime && (res.original_language == "zh" || res.original_language == "ko")
+        val isAsian = !isAnime && (res.original_language == "zh" || res.original_language == "id")
         val isBollywood = res.production_countries?.any { it.name == "India" } ?: false
 
         val actors = res.credits?.cast?.mapNotNull { cast ->

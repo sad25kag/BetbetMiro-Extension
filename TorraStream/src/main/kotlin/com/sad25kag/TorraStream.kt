@@ -165,7 +165,7 @@ class TorraStream(private val sharedPref: SharedPreferences) : TmdbProvider() {
         val genres = res.genres?.mapNotNull { it.name }
         val isCartoon = genres?.contains("Animation") ?: false
         val isAnime = isCartoon && (res.original_language == "zh" || res.original_language == "ja")
-        val isAsian = !isAnime && (res.original_language == "zh" || res.original_language == "ko")
+        val isAsian = !isAnime && (res.original_language == "zh" || res.original_language == "id")
         val isBollywood = res.production_countries?.any { it.name == "India" } ?: false
 
 

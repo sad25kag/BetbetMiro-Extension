@@ -17,7 +17,7 @@ open class Pinoymoviepedia : MainAPI() {
     override var name = "Pinoymoviepedia"
     override val hasMainPage= true
     override var supportedTypes = setOf(TvType.Movie)
-    override var lang = "fil"
+    override var lang = "id"
     override val mainPage = mainPageOf(
         "trending" to "Trending",
         "movies" to "Movies",

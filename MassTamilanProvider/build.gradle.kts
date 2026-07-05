@@ -6,7 +6,7 @@ cloudstream {
     // All of these properties are optional, you can safely remove them
 
     description = "Indian Multi-language Music Provider"
-    language = "ta"
+    language = "id"
     authors = listOf("sad25kag,LikDev-256")
 
     /**

@@ -21,7 +21,7 @@ cloudstream {
         "Movie",
     )
 
-    language = "ko"
+    language = "id"
 
     iconUrl = "https://ani.ohli24.com/img/logo@2x.png"
 

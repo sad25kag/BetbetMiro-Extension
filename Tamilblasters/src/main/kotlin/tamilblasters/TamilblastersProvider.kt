@@ -30,7 +30,7 @@ class TamilblastersProvider : MainAPI() {
     private val streamhg = "https://cavanhabg.com"
     override var name = "Tamilblasters"
     override val supportedTypes = setOf(TvType.Movie, TvType.TvSeries)
-    override var lang = "ta"
+    override var lang = "id"
     override val hasMainPage = true
 
     override suspend fun getMainPage(page: Int, request: MainPageRequest): HomePageResponse {
@@ -69,7 +69,7 @@ class TamilblastersProvider : MainAPI() {
         val posterUrl = document.selectFirst("meta[property='og:image']")?.attr("content")
         val plotParagraph = document.select("p:has(strong)")
         .firstOrNull { it.selectFirst("strong")?.text()?.contains("plot", ignoreCase = true) == true }
-        val desc = plotParagraph?.apply { select("strong").remove() }?.text() ?: ""  
+        val desc = plotParagraph?.apply { select("strong").remove() }?.text() ?: ""
         return if (type == TvType.TvSeries) {
             val episodes = extractVideos(document).map { ep ->
                 newEpisode(ep.toJson()) {

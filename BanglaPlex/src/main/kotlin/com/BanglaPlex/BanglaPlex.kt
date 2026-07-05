@@ -11,7 +11,7 @@ class Banglaplex : MainAPI() {
     }
     override var name                 = "Banglaplex"
     override val hasMainPage          = true
-    override var lang                 = "bn"
+    override var lang                 = "id"
     override val supportedTypes       = setOf(TvType.Movie,TvType.TvSeries)
 
     override val mainPage = mainPageOf(

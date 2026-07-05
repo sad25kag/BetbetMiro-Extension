@@ -2,7 +2,7 @@ version = 3
 
 cloudstream {
     authors     = listOf("sad25kag")
-    language    = "fil"
+    language    = "id"
     description = "Contains Bluray7"
 
     /**

@@ -42,7 +42,7 @@ open class Cinefreak : MainAPI() {
         CinefreakPlugin.getDomains()?.cinefreak ?: "https://cinefreak.nl"
     }
     override var name = "Cinefreak"
-    override var lang = "bn"
+    override var lang = "id"
     override val hasMainPage = true
     override val hasDownloadSupport = true
     override val hasQuickSearch = false

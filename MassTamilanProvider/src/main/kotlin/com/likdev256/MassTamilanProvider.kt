@@ -15,7 +15,7 @@ class MassTamilanProvider : MainAPI() { // all providers must be an instance of 
     override var mainUrl = "https://masstamilan.dev"
     override var name = "MassTamilan"
     override val hasMainPage = true
-    override var lang = "ta"
+    override var lang = "id"
     override val hasDownloadSupport = true
     override val supportedTypes = setOf(
         TvType.Music,TvType.Movie

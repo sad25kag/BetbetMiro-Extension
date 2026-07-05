@@ -6,7 +6,7 @@ cloudstream {
 
     description = "Movies & Series"
     authors = listOf("rockhero1234,sad25kag")
-    language    = "ta"
+    language    = "id"
     /**
     * Status int as the following:
     * 0: Down

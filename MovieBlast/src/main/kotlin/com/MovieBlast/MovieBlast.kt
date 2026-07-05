@@ -37,7 +37,7 @@ class MovieBlast : MainAPI() {
     override var mainUrl = base64Decode("aHR0cHM6Ly9hcHAuY2xvdWQtbWIueHl6")
     override var name = "MovieBlast"
     override val hasMainPage = true
-    override var lang = "te"
+    override var lang = "id"
     override val hasDownloadSupport = true
     override val supportedTypes = setOf(TvType.Movie, TvType.Anime, TvType.Cartoon)
 

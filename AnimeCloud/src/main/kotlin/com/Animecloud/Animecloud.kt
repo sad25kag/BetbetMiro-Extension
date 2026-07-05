@@ -28,7 +28,7 @@ class Animecloud : MainAPI() {
     override var mainUrl              = "https://fireani.me"
     override var name                 = "Animecloud"
     override val hasMainPage          = true
-    override var lang                 = "de"
+    override var lang                 = "id"
     override val hasDownloadSupport   = true
     override val hasQuickSearch       = true
     override val supportedTypes       = setOf(TvType.Movie,TvType.Anime)

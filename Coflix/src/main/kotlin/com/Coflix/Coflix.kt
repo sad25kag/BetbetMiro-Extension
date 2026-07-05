@@ -16,7 +16,7 @@ class Coflix : MainAPI() {
     override var mainUrl              = "https://coflix.trade"
     override var name                 = "Coflix"
     override val hasMainPage          = true
-    override var lang                 = "fr"
+    override var lang                 = "id"
     override val hasDownloadSupport   = true
     override val hasQuickSearch       = true
     override val supportedTypes       = setOf(TvType.Movie,TvType.Anime,TvType.TvSeries)

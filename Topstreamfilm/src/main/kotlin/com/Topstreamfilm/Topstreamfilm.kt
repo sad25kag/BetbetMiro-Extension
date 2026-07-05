@@ -11,7 +11,7 @@ class TopStreamFilm : MainAPI() { // all providers must be an instance of MainAP
     override var mainUrl = "https://www.topstreamfilm.live"
     override var name = "TopStreamFilm"
     override val hasMainPage = true
-    override var lang = "de"
+    override var lang = "id"
     override val hasDownloadSupport = true
     override val supportedTypes = setOf(
         TvType.Movie,

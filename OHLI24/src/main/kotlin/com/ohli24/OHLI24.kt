@@ -29,7 +29,7 @@ class OHLI24 : MainAPI() {
     override var mainUrl = "https://ani.ohli24.com"
     override var name = "OHLI24"
     override val hasMainPage = true
-    override var lang = "ko"
+    override var lang = "id"
     override val hasChromecastSupport = true
     override val hasDownloadSupport = true
     override val supportedTypes = setOf(TvType.Anime,TvType.AnimeMovie)

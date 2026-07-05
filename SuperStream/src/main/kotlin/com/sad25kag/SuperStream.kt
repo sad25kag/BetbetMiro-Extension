@@ -360,7 +360,7 @@ open class SuperStream(sharedPref: SharedPreferences? = null) : TmdbProvider() {
 
         val isCartoon = genres?.contains("Animation") ?: false
         val isAnime = isCartoon && (res.original_language == "zh" || res.original_language == "ja")
-        val isAsian = !isAnime && (res.original_language == "zh" || res.original_language == "ko")
+        val isAsian = !isAnime && (res.original_language == "zh" || res.original_language == "id")
         val isBollywood = res.production_countries?.any { it.name == "India" } ?: false
 
         val keywords = res.keywords?.results?.mapNotNull { it.name }.orEmpty()
