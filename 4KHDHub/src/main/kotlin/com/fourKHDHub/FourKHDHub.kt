@@ -64,39 +64,36 @@ class FourKHDHub : MainAPI() {
     }
 
     override suspend fun search(query: String): List<SearchResponse> {
-    val results = mutableListOf<SearchResponse>()
+        val results = mutableListOf<SearchResponse>()
+        val encodedQuery = java.net.URLEncoder.encode(query, "UTF-8")
+        var page = 1
+        val maxPages = 10
 
-    val encodedQuery = java.net.URLEncoder.encode(query, "UTF-8")
+        while (page <= maxPages) {
+            val url = if (page == 1) {
+                "$mainUrl/?s=$encodedQuery"
+            } else {
+                "$mainUrl/?s=$encodedQuery/page/$page"
+            }
 
-    var page = 1
-    val maxPages = 10
+            val document = try {
+                app.get(url).document
+            } catch (e: Exception) {
+                Log.e("Search", "error page=$page url=$url")
+                break
+            }
 
-    while (page <= maxPages) {
+            val items = document.select("div.card-grid a")
+                .mapNotNull { it.toSearchResult() }
 
-        val url = if (page == 1) {
-            "$mainUrl/?s=$encodedQuery"
-        } else {
-            "$mainUrl/?s=$encodedQuery/page/$page"
+            if (items.isEmpty()) break
+
+            results.addAll(items)
+            page++
         }
 
-        val document = try {
-            app.get(url).document
-        } catch (e: Exception) {
-            Log.e("Search", "error page=$page url=$url")
-            break
-        }
-
-        val items = document.select("div.card-grid a")
-            .mapNotNull { it.toSearchResult() }
-
-        if (items.isEmpty()) break
-
-        results.addAll(items)
-        page++
+        return results.distinctBy { it.url }
     }
-
-    return results.distinctBy { it.url }
-}
 
     @RequiresApi(Build.VERSION_CODES.N)
     override suspend fun load(url: String): LoadResponse {
