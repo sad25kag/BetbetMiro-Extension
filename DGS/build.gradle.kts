@@ -1,7 +1,7 @@
 version = 4
 
 cloudstream {
-    language = "en"
+    language = "id"
     description = "DeepGoreTube / DGS provider with HAR-backed categories, detail parsing, and HLS resolver flow."
     authors = listOf("sad25kag")
     status = 1
