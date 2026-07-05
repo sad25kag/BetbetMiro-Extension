@@ -23,7 +23,7 @@ class MelongMovieProvider : MainAPI() {
     override var name = "MelongMovie"
     override var lang = "id"
     override val hasMainPage = true
-    override val hasDownloadSupport = false
+    override val hasDownloadSupport = true
     override val supportedTypes = setOf(TvType.Movie)
 
     override val mainPage = mainPageOf(

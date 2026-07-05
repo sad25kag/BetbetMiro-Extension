@@ -12,7 +12,7 @@ class Vidio : MainAPI() {
     override var name = "Vidio"
     override var lang = "id"
     override val hasMainPage = true
-    override val hasDownloadSupport = false
+    override val hasDownloadSupport = true
     override val supportedTypes = setOf(TvType.Movie, TvType.TvSeries)
 
     private val desktopUrl = "https://www.vidio.com"
