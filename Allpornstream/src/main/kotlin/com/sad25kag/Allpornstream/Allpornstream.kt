@@ -160,25 +160,35 @@ class Allpornstream : MainAPI() {
     }
 
 override suspend fun search(
-        query: String
-    ): List<SearchResponse> {
+    query: String
+): List<SearchResponse> {
 
-        val url =
-            "${mainUrl}/?search=${
-                withContext(Dispatchers.IO) {
-                    URLEncoder.encode(query, "utf-8")
-                }
-            }"
+    val results = mutableListOf<SearchResponse>()
+    var page = 1
+
+    val encodedQuery = URLEncoder.encode(query, "utf-8")
+
+    while (true) {
+
+        val url = "${mainUrl}/?search=$encodedQuery&page=$page"
 
         val res = app.get(
             url,
             headers = appHeaders
         )
 
-        return nextiparseet(res.text)
+        val pageResults = nextiparseet(res.text)
+
+        if (pageResults.isEmpty()) break
+
+        results.addAll(pageResults)
+        page++
     }
 
-    override suspend fun quickSearch(
+    return results.distinctBy { it.url }
+}
+
+override suspend fun quickSearch(
         query: String
     ): List<SearchResponse> = search(query)
 
