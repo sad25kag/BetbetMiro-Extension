@@ -19,7 +19,7 @@ NSFW • 18+ • Age-Restricted Providers • Multi-Source
 
 <p>
   <strong>Channel Shortcode:</strong>
-  <code>BME-NFSW</code>
+  <code>BME-NFSW2</code>
 </p>
 
 </div>
@@ -28,7 +28,7 @@ NSFW • 18+ • Age-Restricted Providers • Multi-Source
 
 ## Tentang Branch Ini
 
-Branch `main` (`BME-NFSW`) adalah channel khusus untuk provider NSFW, 18+, atau sumber yang memiliki pembatasan usia/wilayah. Channel ini dipisahkan dari branch `master` agar dokumentasi, workflow, dan output build dapat dikelola secara terpisah.
+Branch `main` (`BME-NFSW2`) adalah channel khusus untuk provider NSFW, 18+, atau sumber yang memiliki pembatasan usia/wilayah. Channel ini dipisahkan dari branch `master` agar dokumentasi, workflow, dan output build dapat dikelola secara terpisah.
 
 Alur branch ini:
 
