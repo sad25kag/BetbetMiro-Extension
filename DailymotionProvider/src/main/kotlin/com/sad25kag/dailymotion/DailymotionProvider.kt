@@ -259,7 +259,7 @@ class DailymotionProvider : MainAPI() {
                     }
                 }
                 node.isArray -> node.forEach { scan(it) }
-                node.isObject -> node.fields().asSequence().forEach { entry -> scan(entry.value) }
+                node.isObject -> node.fieldNames().asSequence().forEach { name -> scan(node.get(name)) }
             }
         }
 
@@ -299,9 +299,10 @@ class DailymotionProvider : MainAPI() {
                     emit(label, item["url"]?.asText())
                 }
             }
-            subtitles.isObject -> subtitles.fields().asSequence().forEach { langEntry ->
-                val lang = langEntry.key
-                val value = langEntry.value
+            subtitles.isObject -> subtitles.fieldNames().asSequence().forEach { lang ->
+                val langEntry = subtitles.get(lang)
+                val lang = lang
+                val value = langEntry
                 when {
                     value.isArray -> value.forEach { item ->
                         val label = item["label"]?.asText() ?: lang
