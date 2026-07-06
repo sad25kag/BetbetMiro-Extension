@@ -430,7 +430,7 @@ class GudangFilm : MainAPI() {
         document.select("track[src], a[href$=.srt], a[href$=.vtt]").forEach { element ->
             val url = fixUrl(element.attr("src").ifBlank { element.attr("href") }, baseUrl) ?: return@forEach
             val label = cleanText(element.attr("label").ifBlank { element.attr("srclang").ifBlank { element.text().ifBlank { "Subtitle" } } })
-            subtitleCallback(newSubtitleFile(label, url))
+            runCatching { subtitleCallback(newSubtitleFile(label, url))
         }
     }
 
