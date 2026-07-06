@@ -430,7 +430,7 @@ class GudangFilm : MainAPI() {
         document.select("track[src], a[href$=.srt], a[href$=.vtt]").forEach { element ->
             val url = fixUrl(element.attr("src").ifBlank { element.attr("href") }, baseUrl) ?: return@forEach
             val label = cleanText(element.attr("label").ifBlank { element.attr("srclang").ifBlank { element.text().ifBlank { "Subtitle" } } })
-            subtitleCallback(SubtitleFile(label, url))
+            subtitleCallback(newSubtitleFile(label, url))
         }
     }
 
@@ -669,7 +669,7 @@ class GudangFilm : MainAPI() {
                 element.imageUrl(baseUrl)?.let { return cleanImageUrl(it) }
             }
         }
-        return document.body()?.styleImage(baseUrl)?.let { cleanImageUrl(it) }
+        return document.body().styleImage(baseUrl)?.let { cleanImageUrl(it) }
     }
 
     private fun Element.bestContainer(): Element {
