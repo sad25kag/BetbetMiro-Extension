@@ -11,7 +11,7 @@ Pilih channel repository sesuai kebutuhan penggunaan.
     <img alt="BME-REPO Regular Channel" src="https://img.shields.io/badge/BME--REPO-Regular%20Channel-2ea44f?style=for-the-badge" />
   </a>
   <a href="https://github.com/sad25kag/BetbetMiro-Extension/tree/main">
-    <img alt="BME-NFSW NSFW Channel" src="https://img.shields.io/badge/BME--NFSW-NSFW%20%2F%2018%2B%20Channel-d73a49?style=for-the-badge" />
+    <img alt="BME-NFSW2 NSFW Channel" src="https://img.shields.io/badge/BME--NFSW-NSFW%20%2F%2018%2B%20Channel-d73a49?style=for-the-badge" />
   </a>
 </p>
 
@@ -74,7 +74,7 @@ Setelah file APK diunduh:
 | Shortcode | Branch | Channel | Fungsi |
 |---|---|---|---|
 | `BME-REPO` | [`master`](https://github.com/sad25kag/BetbetMiro-Extension/tree/master) | Regular Channel | Provider reguler untuk anime, donghua, drama, movie, dan multi-source provider |
-| `BME-NFSW` | [`main`](https://github.com/sad25kag/BetbetMiro-Extension/tree/main) | NSFW / 18+ Channel | Provider khusus NSFW, 18+, age-restricted, atau sumber dengan pembatasan usia/wilayah |
+| `BME-NFSW2` | [`main`](https://github.com/sad25kag/BetbetMiro-Extension/tree/main) | NSFW / 18+ Channel | Provider khusus NSFW, 18+, age-restricted, atau sumber dengan pembatasan usia/wilayah |
 
 ---
 
@@ -102,7 +102,7 @@ cloudstreamrepo://raw.githubusercontent.com/sad25kag/BetbetMiro-Extension/master
 
 ---
 
-## NSFW / 18+ Channel — `BME-NFSW`
+## NSFW / 18+ Channel — `BME-NFSW2`
 
 Gunakan branch `main` hanya jika Anda memang ingin memakai channel NSFW / 18+.
 
@@ -152,7 +152,7 @@ Pemilik repository tidak berafiliasi dengan CloudStream maupun sumber pihak keti
 
 ### BetbetMiro Extension
 
-`BME-REPO` • `BME-NFSW`
+`BME-REPO` • `BME-NFSW2`
 
 CloudStream Provider Repository Navigation
 
