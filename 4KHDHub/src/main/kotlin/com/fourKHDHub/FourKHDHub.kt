@@ -128,54 +128,23 @@ override suspend fun search(query: String): List<SearchResponse> {
 }
 
     @RequiresApi(Build.VERSION_CODES.N)
-override suspend fun load(url: String): LoadResponse {
+    override suspend fun load(url: String): LoadResponse {
+        val document = app.get(url).document
+        val title = document.selectFirst("h1.page-title")?.text()?.substringBefore("(")?.trim().toString()
+        val poster = document.select("meta[property=og:image]").attr("content")
+        val tags = document.select("div.mt-2 span.badge").map { it.text() }
+        val year = document.selectFirst("div.mt-2 span")?.text()?.toIntOrNull()
+        val tvType = if ("Movies" in tags) TvType.Movie else TvType.TvSeries
+        val isMovie = tvType == TvType.Movie
+        val tmdbId = runCatching { fetchtmdb(title,isMovie) }.getOrNull()
+        val hrefs: List<String> = document.select("div.download-item a").eachAttr("href")
 
-    val document = app.get(url).document
+        val description = document.selectFirst("div.content-section p.mt-4")?.text()?.trim()
+        val trailer = document.selectFirst("#trailer-btn")?.attr("data-trailer-url")
 
-    val title =
-        document.selectFirst("h1.page-title")
-            ?.text()
-            ?.substringBefore("(")
-            ?.trim()
-            ?: ""
-
-    val poster =
-        document.select("meta[property=og:image]").attr("content")
-
-    val tags =
-        document.select("div.mt-2 span.badge").map { it.text() }
-
-    val year =
-        document.selectFirst("div.mt-2 span")
-            ?.text()
-            ?.let { Regex("""\d{4}""").find(it)?.value?.toIntOrNull() }
-
-    val tvType =
-        if (tags.any { it.contains("Movie", true) }) TvType.Movie
-        else TvType.TvSeries
-
-    val isMovie = tvType == TvType.Movie
-
-    val tmdbId =
-        runCatching { fetchtmdb(title, isMovie) }.getOrNull()
-
-    val hrefs =
-        document.select("div.download-item a")
-            .mapNotNull { it.attr("href").takeIf { it.isNotBlank() } }
-
-    val description =
-        document.selectFirst("div.content-section p.mt-4")
-            ?.text()
-            ?.trim()
-
-    val trailer =
-        document.selectFirst("#trailer-btn")
-            ?.attr("data-trailer-url")
-
-    val recommendations =
-        document.select("div.card-grid-small a, div.card-grid a")
-            .mapNotNull { it.toSearchResult() }
-}
+        val recommendations = document.select("div.card-grid-small a").mapNotNull {
+            it.toSearchResult()
+        }
 
         var tmdbTitle: String? = null
         var tmdbOverview: String? = null
