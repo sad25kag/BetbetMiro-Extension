@@ -11,7 +11,7 @@ Choose the repository channel that matches your use case.
     <img alt="BME-REPO Regular Channel" src="https://img.shields.io/badge/BME--REPO-Regular%20Channel-2ea44f?style=for-the-badge" />
   </a>
   <a href="https://github.com/sad25kag/BetbetMiro-Extension/tree/main">
-    <img alt="BME-NFSW NSFW Channel" src="https://img.shields.io/badge/BME--NFSW-NSFW%20%2F%2018%2B%20Channel-d73a49?style=for-the-badge" />
+    <img alt="BME-NFSW2 NSFW Channel" src="https://img.shields.io/badge/BME--NFSW-NSFW%20%2F%2018%2B%20Channel-d73a49?style=for-the-badge" />
   </a>
 </p>
 
@@ -74,7 +74,7 @@ After downloading the APK file:
 | Shortcode | Branch | Channel | Purpose |
 |---|---|---|---|
 | `BME-REPO` | [`master`](https://github.com/sad25kag/BetbetMiro-Extension/tree/master) | Regular Channel | Regular providers for anime, donghua, drama, movies, and multi-source providers |
-| `BME-NFSW` | [`main`](https://github.com/sad25kag/BetbetMiro-Extension/tree/main) | NSFW / 18+ Channel | NSFW, 18+, age-restricted, or region-restricted provider channel |
+| `BME-NFSW2` | [`main`](https://github.com/sad25kag/BetbetMiro-Extension/tree/main) | NSFW / 18+ Channel | NSFW, 18+, age-restricted, or region-restricted provider channel |
 
 ---
 
@@ -102,7 +102,7 @@ cloudstreamrepo://raw.githubusercontent.com/sad25kag/BetbetMiro-Extension/master
 
 ---
 
-## NSFW / 18+ Channel — `BME-NFSW`
+## NSFW / 18+ Channel — `BME-NFSW2`
 
 Use branch `main` only if you intentionally want to use the NSFW / 18+ channel.
 
@@ -152,7 +152,7 @@ The repository owner is not affiliated with CloudStream or the third-party sourc
 
 ### BetbetMiro Extension
 
-`BME-REPO` • `BME-NFSW`
+`BME-REPO` • `BME-NFSW2`
 
 CloudStream Provider Repository Navigation
 
