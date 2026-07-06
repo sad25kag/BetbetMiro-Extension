@@ -128,21 +128,38 @@ class Allpornstream : MainAPI() {
         request: MainPageRequest
     ): HomePageResponse {
 
-        val res = app.get(
-            request.data,
-            headers = appHeaders
-        )
+        val all = mutableListOf<SearchResponse>()
+        var p = 1
 
-        val results = nextiparseet(res.text)
+        while (true) {
+
+            val url = if (p == 1) {
+                request.data
+            } else {
+                "${request.data}?page=$p"
+            }
+
+            val res = app.get(
+                url,
+                headers = appHeaders
+            )
+
+            val results = nextiparseet(res.text)
+
+            if (results.isEmpty()) break
+
+            all.addAll(results)
+            p++
+        }
 
         return newHomePageResponse(
             request.name,
-            results,
+            all.distinctBy { it.url },
             hasNext = false
         )
     }
 
-    override suspend fun search(
+override suspend fun search(
         query: String
     ): List<SearchResponse> {
 
