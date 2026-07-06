@@ -339,7 +339,7 @@ object FilmLokalExtractor {
                 ?.groupValues
                 ?.getOrNull(1)
             ?: Regex("""(?i)\bpostid-(\d+)\b""")
-                .find(document.body()?.className().orEmpty())
+                .find(document.body().className())
                 ?.groupValues
                 ?.getOrNull(1)
             ?: Regex("""(?i)data-id=["'](\d+)["']""")
