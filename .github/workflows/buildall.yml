@@ -90,7 +90,9 @@ jobs:
           chmod +x gradlew
           ./gradlew make makePluginsJson
           cp **/build/*.cs3 $GITHUB_WORKSPACE/maintenance
-          cp build/plugins.json $GITHUB_WORKSPACE/maintenance
+          # Ensure plugins.json points to the 'maintenance' branch instead of 'builds'
+          # Replace common URL/parameter patterns that reference the branch name
+          sed -E 's#(/(blob|raw)/)builds#\1maintenance#g; s#(branch=)builds#\1maintenance#g; s#"branch"\s*:\s*"builds"#"branch":"maintenance"#g' build/plugins.json > $GITHUB_WORKSPACE/maintenance/plugins.json
 
       - name: Push maintenance
         run: |
