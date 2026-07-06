@@ -43,7 +43,7 @@ Prioritas pengembangan repository ini:
 
 1. Provider tetap aktif dan dapat digunakan.
 2. Build tetap bersih dan kompatibel dengan CloudStream.
-3. `repo.json` dan `plugins.json` tetap valid.
+3. `repo2.json` dan `plugins.json` tetap valid.
 4. GitHub Actions berjalan sukses.
 5. Dokumentasi jelas dan mudah dipahami.
 6. Perubahan kosmetik dilakukan hanya bila diperlukan.
@@ -79,7 +79,7 @@ Ketersediaan kategori mengikuti provider yang sedang aktif dan dapat berubah sew
 Buka link berikut dari perangkat Android yang sudah terpasang CloudStream:
 
 ```text
-cloudstreamrepo://raw.githubusercontent.com/sad25kag/BetbetMiro-Extension/main/repo.json
+cloudstreamrepo://raw.githubusercontent.com/sad25kag/BetbetMiro-Extension/main/repo2.json
 ```
 
 ### Instalasi Manual
@@ -91,7 +91,7 @@ cloudstreamrepo://raw.githubusercontent.com/sad25kag/BetbetMiro-Extension/main/r
 5. Masukkan URL berikut:
 
 ```text
-https://raw.githubusercontent.com/sad25kag/BetbetMiro-Extension/main/repo.json
+https://raw.githubusercontent.com/sad25kag/BetbetMiro-Extension/main/repo2.json
 ```
 
 6. Simpan repository.
