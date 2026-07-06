@@ -43,7 +43,7 @@ Development priorities:
 
 1. Keep providers alive and usable.
 2. Keep builds clean and compatible with CloudStream.
-3. Keep `repo.json` and `plugins.json` valid.
+3. Keep `repo2.json` and `plugins.json` valid.
 4. Keep GitHub Actions working when available.
 5. Keep documentation clear and useful.
 6. Apply cosmetic changes only when they do not break provider functionality.
@@ -79,7 +79,7 @@ The actual availability of each category depends on the active providers in this
 Open this link on an Android device with CloudStream installed:
 
 ```text
-cloudstreamrepo://raw.githubusercontent.com/sad25kag/BetbetMiro-Extension/main/repo.json
+cloudstreamrepo://raw.githubusercontent.com/sad25kag/BetbetMiro-Extension/main/repo2.json
 ```
 
 ### Manual Installation
@@ -91,7 +91,7 @@ cloudstreamrepo://raw.githubusercontent.com/sad25kag/BetbetMiro-Extension/main/r
 5. Enter this repository URL:
 
 ```text
-https://raw.githubusercontent.com/sad25kag/BetbetMiro-Extension/main/repo.json
+https://raw.githubusercontent.com/sad25kag/BetbetMiro-Extension/main/repo2.json
 ```
 
 6. Save the repository.
