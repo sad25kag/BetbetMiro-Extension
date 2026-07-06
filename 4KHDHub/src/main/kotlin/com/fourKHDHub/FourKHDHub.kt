@@ -14,7 +14,9 @@ import org.jsoup.nodes.Element
 
 class FourKHDHub : MainAPI() {
     override var mainUrl: String = runBlocking {
-        FourKHDHubProvider.getDomains()?.n4khdhub ?: "https://4khdhub.dad"
+        (FourKHDHubProvider.getDomains()?.n4khdhub
+            ?: "https://4khdhub.dad")
+            .trimEnd('/')
     }
     override var name                 = "4K HDHUB"
     override val hasMainPage          = true
