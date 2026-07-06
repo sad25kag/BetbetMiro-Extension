@@ -89,8 +89,15 @@ jobs:
           cd $GITHUB_WORKSPACE/src
           chmod +x gradlew
           ./gradlew make makePluginsJson
-          cp **/build/*.cs3 $GITHUB_WORKSPACE/release
-          cp build/plugins.json $GITHUB_WORKSPACE/release
+          cp **/build/*.cs3 $GITHUB_WORKSPACE/release || true
+          cp build/plugins.json $GITHUB_WORKSPACE/release || true
+          # Ensure plugins.json references the release branch (not "builds").
+          if [ -f "$GITHUB_WORKSPACE/release/plugins.json" ]; then
+            # Replace occurrences of /builds/ → /release/ and the bare string "builds" → "release"
+            sed -i -e 's/\/builds\//\/release\//g' -e 's/"builds"/"release"/g' $GITHUB_WORKSPACE/release/plugins.json || true
+            # Also replace any remaining standalone builds tokens (e.g., branch: builds)
+            sed -i -e 's/\bbuilds\b/release/g' $GITHUB_WORKSPACE/release/plugins.json || true
+          fi
 
       - name: Push release
         run: |
