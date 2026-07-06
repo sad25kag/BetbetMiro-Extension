@@ -128,67 +128,40 @@ class Allpornstream : MainAPI() {
         request: MainPageRequest
     ): HomePageResponse {
 
-        val all = mutableListOf<SearchResponse>()
-        var p = 1
+        val res = app.get(
+            request.data,
+            headers = appHeaders
+        )
 
-        while (true) {
-
-            val url = if (p == 1) {
-                request.data
-            } else {
-                "${request.data}?page=$p"
-            }
-
-            val res = app.get(
-                url,
-                headers = appHeaders
-            )
-
-            val results = nextiparseet(res.text)
-
-            if (results.isEmpty()) break
-
-            all.addAll(results)
-            p++
-        }
+        val results = nextiparseet(res.text)
 
         return newHomePageResponse(
             request.name,
-            all.distinctBy { it.url },
+            results,
             hasNext = false
         )
     }
 
-override suspend fun search(
-    query: String
-): List<SearchResponse> {
+    override suspend fun search(
+        query: String
+    ): List<SearchResponse> {
 
-    val results = mutableListOf<SearchResponse>()
-    var page = 1
-
-    val encodedQuery = URLEncoder.encode(query, "utf-8")
-
-    while (true) {
-
-        val url = "${mainUrl}/?search=$encodedQuery&page=$page"
+        val url =
+            "${mainUrl}/?search=${
+                withContext(Dispatchers.IO) {
+                    URLEncoder.encode(query, "utf-8")
+                }
+            }"
 
         val res = app.get(
             url,
             headers = appHeaders
         )
 
-        val pageResults = nextiparseet(res.text)
-
-        if (pageResults.isEmpty()) break
-
-        results.addAll(pageResults)
-        page++
+        return nextiparseet(res.text)
     }
 
-    return results.distinctBy { it.url }
-}
-
-override suspend fun quickSearch(
+    override suspend fun quickSearch(
         query: String
     ): List<SearchResponse> = search(query)
 
