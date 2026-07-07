@@ -226,7 +226,7 @@ class Allpornstream : MainAPI() {
                 .joinToString(",")
 
         val tags =
-            Regex("""categories":\[(.*?)]""")
+            Regex("""categories":\[(.*?)\]""")
                 .find(postdata)
                 ?.groupValues?.get(1)
                 ?.split(",")
@@ -235,7 +235,7 @@ class Allpornstream : MainAPI() {
                 }
 
         val actors =
-            Regex("""item_name":"(.*?)"""")
+            Regex("""actor_name":"(.*?)"""")
                 .findAll(postdata)
                 .map {
                     Actor(it.groupValues[1])
