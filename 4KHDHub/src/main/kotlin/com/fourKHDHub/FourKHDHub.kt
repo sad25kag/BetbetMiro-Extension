@@ -12,6 +12,7 @@ import kotlinx.coroutines.runBlocking
 import org.json.JSONObject
 import org.jsoup.nodes.Element
 import com.lagradost.cloudstream3.toNewSearchResponseList
+import android.util.Log
 
 class FourKHDHub : MainAPI() {
     override var mainUrl: String = runBlocking {
@@ -433,7 +434,7 @@ override suspend fun load(url: String): LoadResponse {
         callback: (ExtractorLink) -> Unit
     ): Boolean {
 
-        val links = AppUtils.tryParseJson<List<String>>(data)?.asSequence()?.filter { it.isNotBlank() }?.distinct()?.toList()
+        val links = AppUtils.tryParseJson<List<String>>(data) ?: return false?.asSequence()?.filter { it.isNotBlank() }?.distinct()?.toList()
             ?: return false
 
         links.amap { raw ->
