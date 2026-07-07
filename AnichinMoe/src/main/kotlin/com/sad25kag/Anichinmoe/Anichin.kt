@@ -511,7 +511,12 @@ class Anichin : MainAPI() {
             value.contains("geo.dailymotion.com") ||
             value.contains("dai.ly") ||
             value.contains("ok.ru") ||
-            value.contains("odnoklassniki.ru")
+            value.contains("odnoklassniki.ru") ||
+            value.contains("rumble.com") ||
+            value.contains("vidguard") ||
+            value.contains("vidhide") ||
+            value.contains("streamruby") ||
+            value.contains("streamruby.com")
     }
 
     private fun candidatePriority(url: String, label: String): Int {
@@ -519,6 +524,9 @@ class Anichin : MainAPI() {
         return when {
             value.contains("dailymotion.com") || value.contains("geo.dailymotion.com") || value.contains("dai.ly") -> 0
             value.contains("ok.ru") || value.contains("odnoklassniki.ru") -> 1
+            value.contains("streamruby") -> 2
+            value.contains("vidguard") || value.contains("vidhide") -> 3
+            value.contains("rumble.com") -> 4
             else -> 99
         }
     }
