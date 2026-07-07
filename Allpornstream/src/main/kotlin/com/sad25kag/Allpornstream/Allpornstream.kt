@@ -168,7 +168,7 @@ class Allpornstream : MainAPI() {
 
     override suspend fun quickSearch(
         query: String
-    ): List<SearchResponse> = search(query, 1)
+    ): List<SearchResponse> = search(query, 1)?.items ?: emptyList()
 
     override suspend fun load(
         url: String
