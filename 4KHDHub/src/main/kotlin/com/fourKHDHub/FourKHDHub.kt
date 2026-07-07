@@ -107,11 +107,13 @@ override suspend fun search(query: String, page: Int): SearchResponseList? {
         app.get(url).document
     } catch (e: Exception) {
         Log.e("Search", "error url=$url")
-        return emptyList()
+        return SearchResponseList(emptyList())
     }
 
-    return document.select("article, .post-item, .result-item, div.card-grid a")
+    val results = document.select("article, .post-item, .result-item, div.card-grid a")
         .mapNotNull { it.toSearchPageResult() }
+
+    return SearchResponseList(results)
 }
 
 /*
