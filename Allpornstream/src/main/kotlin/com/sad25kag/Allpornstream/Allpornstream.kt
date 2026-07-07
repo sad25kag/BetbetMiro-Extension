@@ -7,6 +7,7 @@ import com.lagradost.cloudstream3.utils.*
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.withContext
 import java.net.URLEncoder
+import com.lagradost.cloudstream3.toNewSearchResponseList
 
 class Allpornstream : MainAPI() {
 
@@ -145,7 +146,7 @@ class Allpornstream : MainAPI() {
     override suspend fun search(
         query: String,
         page: Int
-    ): List<SearchResponse> {
+    ): SearchResponseList? {
 
         val encodedQuery = withContext(Dispatchers.IO) {
             URLEncoder.encode(query, "utf-8")
@@ -162,7 +163,7 @@ class Allpornstream : MainAPI() {
             headers = appHeaders
         )
 
-        return nextiparseet(res.text)
+        return nextiparseet(res.text).toNewSearchResponseList()
     }
 
     override suspend fun quickSearch(
