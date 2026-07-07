@@ -24,8 +24,18 @@ open class Gdplayer : ExtractorApi() {
         val sources = json.optJSONArray("sources") ?: return
         for (i in 0 until sources.length()) {
             val file = sources.optJSONObject(i)?.optString("file") ?: ""
-            if (file.isNotBlank()) MasterLinkGenerator.createSmartLink(this
-                .name, file, mainUrl, callback = callback)
+            if (file.isNotBlank()) {
+                callback(
+                    ExtractorLink(
+                        name,
+                        name,
+                        file,
+                        mainUrl,
+                        Qualities.Unknown.value,
+                        isM3u8 = file.contains(".m3u8")
+                    )
+                )
+            }
         }
     }
 }
