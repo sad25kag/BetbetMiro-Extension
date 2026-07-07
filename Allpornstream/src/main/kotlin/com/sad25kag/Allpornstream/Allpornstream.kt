@@ -7,6 +7,9 @@ import com.lagradost.cloudstream3.utils.*
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.withContext
 import java.net.URLEncoder
+import org.jsoup.Jsoup
+import org.jsoup.nodes.Document
+import org.jsoup.nodes.Element
 
 class Allpornstream : MainAPI() {
 
@@ -73,7 +76,7 @@ class Allpornstream : MainAPI() {
         val document = Jsoup.parse(html)
 
         return document.select("[data-href], a[href]")
-            .mapNotNull { element ->
+            .mapNotNull { element: Element ->
                 val href = element.attr("data-href")
                     .ifBlank { element.attr("href") }
 
