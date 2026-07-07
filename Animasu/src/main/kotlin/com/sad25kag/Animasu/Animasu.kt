@@ -58,21 +58,16 @@ class Animasu : MainAPI() {
     }
 
     override val mainPage = mainPageOf(
-        "urutan=update" to "Baru diupdate",
-        "status=&tipe=&urutan=publikasi" to "Baru ditambahkan",
-        "status=&tipe=&urutan=populer" to "Terpopuler",
-        "status=&tipe=&urutan=rating" to "Rating Tertinggi",
-        "status=&tipe=Movie&urutan=update" to "Movie Terbaru",
-        "genre%5B%5D=aksi&status=&tipe=&urutan=update" to "Aksi",
-        "genre%5B%5D=petualangan&status=&tipe=&urutan=update" to "Petualangan",
-        "genre%5B%5D=komedi&status=&tipe=&urutan=update" to "Komedi",
-        "genre%5B%5D=drama&status=&tipe=&urutan=update" to "Drama",
-        "genre%5B%5D=fantasi&status=&tipe=&urutan=update" to "Fantasi",
-        "genre%5B%5D=isekai&status=&tipe=&urutan=update" to "Isekai",
-        "genre%5B%5D=romansa&status=&tipe=&urutan=update" to "Romansa",
-        "genre%5B%5D=sci-fi&status=&tipe=&urutan=update" to "Sci-Fi",
-        "genre%5B%5D=supranatural&status=&tipe=&urutan=update" to "Supranatural",
-        "genre%5B%5D=donghua&status=&tipe=&urutan=update" to "Donghua",
+        "anime-sedang-tayang-terbaru/" to "Sedang Tayang",
+        "pencarian/?status=&tipe=TV&urutan=default" to "Anime",
+        "pencarian/?status=&tipe=Movie&urutan=default" to "Movie",
+        "pencarian/?status=&tipe=Live+Action&urutan=default" to "Live Action",
+        "pencarian/?status=&tipe=ONA&urutan=default" to "ONA",
+        "pencarian/?status=&tipe=OVA&urutan=default" to "OVA",
+        "pencarian/?status=&tipe=Special&urutan=default" to "Spesial",
+        "genre/donghua/" to "Donghua",
+        "pencarian/?status=&tipe=Drama+Jepang&urutan=default" to "Drama Jepang",
+        "pencarian/?status=&tipe=Drama+China&urutan=default" to "Drama China",
     )
 
     private fun animasuHeaders(referer: String = mainUrl): Map<String, String> {
@@ -96,7 +91,12 @@ class Animasu : MainAPI() {
         page: Int,
         request: MainPageRequest
     ): HomePageResponse {
-        val document = getAnimasuDocument("$mainUrl/pencarian/?${request.data}&halaman=$page")
+        val pageUrl = if (request.data.startsWith("http")) {
+            "${request.data}${if (request.data.contains("?")) "&" else "?"}halaman=$page"
+        } else {
+            "$mainUrl/${request.data}${if (request.data.contains("?")) "&" else "?"}halaman=$page"
+        }
+        val document = getAnimasuDocument(pageUrl)
 
         val home = document.select("div.listupd div.bs")
             .mapNotNull { it.OrNull() }
