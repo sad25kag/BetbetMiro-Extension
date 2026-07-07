@@ -13,6 +13,7 @@ import org.json.JSONObject
 import org.jsoup.nodes.Element
 import java.net.URI
 import java.net.URLDecoder
+import com.lagradost.cloudstream3.toNewSearchResponseList
 
 class Alqanime : MainAPI() {
     override var mainUrl = "https://alqanime.net".trimEnd('/')
@@ -105,7 +106,7 @@ class Alqanime : MainAPI() {
         }
     }
 
-    override suspend fun search(query: String, page: Int): List<SearchResponse> {
+    override suspend fun search(query: String, page: Int): SearchResponseList? {
         val encodedQuery = query.trim().replace(" ", "+")
 
         val url = if (page <= 1) {
@@ -116,9 +117,15 @@ class Alqanime : MainAPI() {
 
         val document = app.get(url, headers = commonHeaders).document
 
-        return document
+        val results = document
             .select("article.bs")
             .mapNotNull { it.toSearchResult() }
+
+        return results.toNewSearchResponseList(
+            hasNext = document.selectFirst(
+                "a.next, .pagination .next, .nav-previous a"
+            ) != null
+        )
     }
 
     override suspend fun load(url: String): LoadResponse? {
