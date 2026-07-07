@@ -15,7 +15,7 @@ import java.net.URI
 import java.net.URLDecoder
 
 class Alqanime : MainAPI() {
-    override var mainUrl = "https://alqanime.net"
+    override var mainUrl = "https://alqanime.net".trimEnd('/')
     override var name = "Alqanime"
     override val hasMainPage = true
     override var lang = "id"
