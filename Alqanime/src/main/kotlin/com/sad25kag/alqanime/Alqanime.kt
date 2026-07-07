@@ -105,9 +105,20 @@ class Alqanime : MainAPI() {
         }
     }
 
-    override suspend fun search(query: String): List<SearchResponse> {
-        val document = app.get("$mainUrl/?s=$query", headers = commonHeaders).document
-        return document.select("article.bs").mapNotNull { it.toSearchResult() }
+    override suspend fun search(query: String, page: Int): List<SearchResponse> {
+        val encodedQuery = query.trim().replace(" ", "+")
+
+        val url = if (page <= 1) {
+            "$mainUrl/?s=$encodedQuery"
+        } else {
+            "$mainUrl/page/$page/?s=$encodedQuery"
+        }
+
+        val document = app.get(url, headers = commonHeaders).document
+
+        return document
+            .select("article.bs")
+            .mapNotNull { it.toSearchResult() }
     }
 
     override suspend fun load(url: String): LoadResponse? {
