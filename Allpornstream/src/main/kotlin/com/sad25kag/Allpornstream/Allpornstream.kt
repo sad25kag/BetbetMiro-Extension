@@ -75,7 +75,7 @@ class Allpornstream : MainAPI() {
     private fun nextiparseet(html: String): List<SearchResponse> {
         val document = Jsoup.parse(html)
 
-        return document.select("[data-href], a[href*="/post/"]")
+        return document.select("""[data-href], a[href*="/post/"]""")
             .mapNotNull { element: Element ->
                 val href = element.attr("data-href")
                     .ifBlank { element.attr("href") }
