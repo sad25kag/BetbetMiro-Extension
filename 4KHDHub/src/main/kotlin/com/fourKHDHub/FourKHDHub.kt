@@ -153,7 +153,7 @@ override suspend fun search(query: String, page: Int): SearchResponseList? {
         page++
     }
 
-    return newSearchResponseList(results)
+    return SearchResponseList(results)
 }
 */
 
