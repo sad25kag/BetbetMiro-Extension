@@ -272,6 +272,11 @@ class Allpornstream : MainAPI() {
         callback: (ExtractorLink) -> Unit
     ): Boolean {
 
+        if (data.isBlank() || !data.startsWith("http")) {
+            return false
+        }
+
+
         val links =
             if (data.contains("/post/")) {
 
