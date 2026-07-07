@@ -11,6 +11,7 @@ import com.lagradost.cloudstream3.LoadResponse.Companion.addTrailer
 import kotlinx.coroutines.runBlocking
 import org.json.JSONObject
 import org.jsoup.nodes.Element
+import com.lagradost.cloudstream3.toNewSearchResponseList
 
 class FourKHDHub : MainAPI() {
     override var mainUrl: String = runBlocking {
@@ -107,13 +108,13 @@ override suspend fun search(query: String, page: Int): SearchResponseList? {
         app.get(url).document
     } catch (e: Exception) {
         Log.e("Search", "error url=$url")
-        return SearchResponseList(emptyList())
+        return emptyList<SearchResponse>().toNewSearchResponseList()
     }
 
     val results = document.select("article, .post-item, .result-item, div.card-grid a")
         .mapNotNull { it.toSearchPageResult() }
 
-    return SearchResponseList(results)
+    return results.toNewSearchResponseList()
 }
 
 /*
@@ -155,7 +156,7 @@ override suspend fun search(query: String, page: Int): SearchResponseList? {
         page++
     }
 
-    return SearchResponseList(results)
+    return results.toNewSearchResponseList()
 }
 */
 
