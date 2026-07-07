@@ -10,7 +10,7 @@ import java.net.URLEncoder
 
 class Allpornstream : MainAPI() {
 
-    override var mainUrl = "https://allpornstream.com".trimEnd('/')
+    override var mainUrl = "https://allpornstream.com"
     override var name = "Allpornstream"
 
     override val hasMainPage = true
@@ -138,7 +138,7 @@ class Allpornstream : MainAPI() {
         return newHomePageResponse(
             request.name,
             results,
-            hasNext = false
+            hasNext = results.isNotEmpty()
         )
     }
 
