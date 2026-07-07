@@ -94,7 +94,7 @@ class FourKHDHub : MainAPI() {
         return newHomePageResponse(request.name, results, true)
     }
 
-override suspend fun search(query: String, page: Int): List<SearchResponse> {
+override suspend fun search(query: String, page: Int): SearchResponseList? {
     val encodedQuery = java.net.URLEncoder.encode(query, "UTF-8")
 
     val url = if (page <= 1) {
@@ -153,7 +153,7 @@ override suspend fun search(query: String, page: Int): List<SearchResponse> {
         page++
     }
 
-    return results
+    return newSearchResponseList(results)
 }
 */
 
