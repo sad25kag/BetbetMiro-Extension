@@ -347,7 +347,7 @@ class HubCloud : ExtractorApi() {
             ?.groupValues
             ?.getOrNull(1)
             ?.toIntOrNull()
-            ?: Qualities.P2160.value
+            ?: Qualities.Unknown.value
     }
 
     private fun getBaseUrl(url: String): String {
@@ -419,12 +419,15 @@ class HUBCDN : ExtractorApi() {
         val doc = app.get(url).document
         val scriptText = doc.selectFirst("script:containsData(var reurl)")?.data()
 
-        val encodedUrl = Regex("reurl\\s*=\\s*\"([^\"]+)\"")
+        val encodedUrl = Regex("""reurl\s*=\s*["\']([^"\']+)["\']""")
             .find(scriptText ?: "")
             ?.groupValues?.get(1)
             ?.substringAfter("?r=")
 
-        val decodedUrl = encodedUrl?.let { base64Decode(it) }?.substringAfterLast("link=")
+        val decodedUrl = runCatching {
+            encodedUrl?.let { base64Decode(it) }
+                ?.substringAfterLast("link=")
+        }.getOrNull()?.substringAfterLast("link=")
 
 
         if (decodedUrl != null) {
