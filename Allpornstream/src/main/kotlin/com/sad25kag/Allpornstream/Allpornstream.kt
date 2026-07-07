@@ -143,15 +143,19 @@ class Allpornstream : MainAPI() {
     }
 
     override suspend fun search(
-        query: String
+        query: String,
+        page: Int
     ): List<SearchResponse> {
 
-        val url =
-            "${mainUrl}/?search=${
-                withContext(Dispatchers.IO) {
-                    URLEncoder.encode(query, "utf-8")
-                }
-            }"
+        val encodedQuery = withContext(Dispatchers.IO) {
+            URLEncoder.encode(query, "utf-8")
+        }
+
+        val url = if (page <= 1) {
+            "${mainUrl}/?search=$encodedQuery"
+        } else {
+            "${mainUrl}/?search=$encodedQuery&page=$page"
+        }
 
         val res = app.get(
             url,
@@ -163,7 +167,7 @@ class Allpornstream : MainAPI() {
 
     override suspend fun quickSearch(
         query: String
-    ): List<SearchResponse> = search(query)
+    ): List<SearchResponse> = search(query, 1)
 
     override suspend fun load(
         url: String
