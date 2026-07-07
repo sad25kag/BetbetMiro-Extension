@@ -3,6 +3,7 @@ package com.sad25kag.Animasu
 import android.util.Base64
 import android.util.Log
 import com.lagradost.cloudstream3.*
+import com.lagradost.cloudstream3.toNewSearchResponseList
 import com.lagradost.cloudstream3.LoadResponse.Companion.addTrailer
 import com.lagradost.cloudstream3.utils.*
 import kotlinx.coroutines.CancellationException
@@ -104,12 +105,28 @@ class Animasu : MainAPI() {
         return newHomePageResponse(request.name, home)
     }
 
-    override suspend fun search(query: String): List<SearchResponse> {
+    override suspend fun search(query: String, page: Int): SearchResponseList? {
         val encodedQuery = URLEncoder.encode(query, "UTF-8")
 
-        return getAnimasuDocument("$mainUrl/?s=$encodedQuery")
+        val url = if (page <= 1) {
+            "$mainUrl/?s=$encodedQuery"
+        } else {
+            "$mainUrl/page/$page/?s=$encodedQuery"
+        }
+
+        val document = getAnimasuDocument(url)
+
+        val results = document
             .select("div.listupd div.bs")
             .mapNotNull { it.OrNull() }
+
+        val hasNext = document.selectFirst(
+            "a.next, a.next.page-numbers, .nav-links a.next, .pagination .next"
+        ) != null
+
+        return results.toNewSearchResponseList(
+            hasNext = hasNext
+        )
     }
 
     override suspend fun load(url: String): LoadResponse {
