@@ -9,6 +9,7 @@ import org.jsoup.nodes.Element
 import java.net.URI
 import java.net.URLDecoder
 import java.net.URLEncoder
+import com.lagradost.cloudstream3.toNewSearchResponseList
 
 class Anichin : MainAPI() {
     companion object {
@@ -62,19 +63,30 @@ class Anichin : MainAPI() {
         }
     }
 
-    override suspend fun search(query: String): List<SearchResponse> {
-        val searchResponse = mutableListOf<SearchResponse>()
+    override suspend fun search(query: String, page: Int): SearchResponseList? {
         val encodedQuery = URLEncoder.encode(query, "UTF-8")
 
-        for (i in 1..3) {
-            val document = app.get("${mainUrl}/page/$i/?s=$encodedQuery").document
-            val results = document.select("div.listupd > article").mapNotNull { it.toSearchResult() }
-
-            if (results.isEmpty()) break
-            searchResponse.addAll(results)
+        val url = if (page <= 1) {
+            "${mainUrl}/?s=$encodedQuery"
+        } else {
+            "${mainUrl}/page/$page/?s=$encodedQuery"
         }
 
-        return searchResponse.distinctBy { it.url }
+        val document = app.get(url).document
+
+        val results = document
+            .select("div.listupd > article")
+            .mapNotNull { it.toSearchResult() }
+
+        val hasNext = document.select(".pagination a.page-numbers").any {
+            it.text().toIntOrNull()?.let { number ->
+                number > page
+            } ?: false
+        }
+
+        return results.toNewSearchResponseList(
+            hasNext = hasNext
+        )
     }
 
     override suspend fun load(url: String): LoadResponse {
