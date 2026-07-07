@@ -78,11 +78,9 @@ class Anichin : MainAPI() {
             .select("div.listupd > article")
             .mapNotNull { it.toSearchResult() }
 
-        val hasNext = document.select(".pagination a.page-numbers").any {
-            it.text().toIntOrNull()?.let { number ->
-                number > page
-            } ?: false
-        }
+        val hasNext = document.selectFirst(
+            "a.next, a.next.page-numbers, .nav-links a.next, .pagination .next"
+        ) != null
 
         return results.toNewSearchResponseList(
             hasNext = hasNext
