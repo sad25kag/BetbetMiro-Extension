@@ -66,7 +66,7 @@ class FourKHDHub : MainAPI() {
         }
 
         return newMovieSearchResponse(title, fixUrl(href), TvType.Movie) {
-            this.posterUrl = fixUrl(posterUrl)
+            this.posterUrl = posterUrl?.let { fixUrl(it) }
         }
     }
 
