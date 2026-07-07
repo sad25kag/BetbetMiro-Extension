@@ -1,4 +1,4 @@
-package com.fourKHDHub
+﻿package com.fourKHDHub
 
 import com.fasterxml.jackson.annotation.JsonProperty
 import com.lagradost.cloudstream3.app
@@ -26,12 +26,7 @@ class FourKHDHubProvider: BasePlugin() {
         suspend fun getDomains(forceRefresh: Boolean = false): Domains? {
             if (cachedDomains == null || forceRefresh) {
                 try {
-                    cachedDomains = app.get(DOMAINS_URL).parsedSafe<Domains>()?.let { domains ->
-                        domains.copy(
-                            n4khdhub = domains.n4khdhub.trimEnd('/'),
-                            hubcloud = domains.hubcloud.trimEnd('/')
-                        )
-                    }
+                    cachedDomains = app.get(DOMAINS_URL).parsedSafe<Domains>()
                 } catch (e: Exception) {
                     e.printStackTrace()
                     return null

@@ -14,9 +14,7 @@ import org.jsoup.nodes.Element
 
 class FourKHDHub : MainAPI() {
     override var mainUrl: String = runBlocking {
-        (FourKHDHubProvider.getDomains()?.n4khdhub
-            ?: "https://4khdhub.dad")
-            .trimEnd('/')
+        FourKHDHubProvider.getDomains()?.n4khdhub ?: "https://4khdhub.dad"
     }
     override var name                 = "4K HDHUB"
     override val hasMainPage          = true
@@ -53,22 +51,27 @@ class FourKHDHub : MainAPI() {
     )
 
     private fun Element.toSearchResult(): SearchResponse? {
-        val href = this.attr("href")
-        if (href.isBlank()) return null
-
-        val title = this.attr("title").takeIf { it.isNotBlank() }
-            ?: this.selectFirst(".title, h2, h3")?.text()
-            ?: this.text()
+        val href = attr("href").takeIf { it.isNotBlank() } ?: return null
+        val title = attr("title")
+            .ifBlank { selectFirst(".title, h2, h3")?.text() ?: text() }
+            .trim()
 
         if (title.isBlank()) return null
 
-        val posterUrl = this.selectFirst("img")?.let {
-            it.attr("data-src").takeIf { src -> src.isNotBlank() } ?: it.attr("src")
+        val posterUrl = selectFirst("img")?.let {
+            it.attr("data-src")
+                .ifBlank { it.attr("data-lazy-src") }
+                .ifBlank { it.attr("data-original") }
+                .ifBlank { it.attr("src") }
         }
 
-        return newMovieSearchResponse(title, href, TvType.Movie) {
-            this.posterUrl = posterUrl
+        return newMovieSearchResponse(title, fixUrl(href), TvType.Movie) {
+            this.posterUrl = fixUrl(posterUrl)
         }
+    }
+
+    private fun Element.toHomePageResult(): SearchResponse? {
+        return toSearchResult()
     }
 
 
@@ -78,8 +81,10 @@ class FourKHDHub : MainAPI() {
     ): HomePageResponse {
         val url = "$mainUrl${if (request.data.isNotBlank()) "/${request.data}" else ""}${if (page > 1) "/page/$page" else ""}"
         val document = app.get(url).document
-        val results = document.select("div.card-grid a").mapNotNull {
-                it.toSearchResult()
+        val results = document.select(
+            "div.card-grid a, div.movie-grid a, div.items a, article a, .film-item a"
+        ).mapNotNull {
+            it.toHomePageResult()
         }
         return newHomePageResponse(request.name, results, true)
     }
