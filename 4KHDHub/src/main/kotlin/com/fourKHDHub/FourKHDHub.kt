@@ -53,7 +53,7 @@ class FourKHDHub : MainAPI() {
     private fun Element.toSearchResult(): SearchResponse? {
         val href = attr("href").takeIf { it.isNotBlank() } ?: return null
         val title = attr("title")
-            .ifBlank { selectFirst(".title, h2, h3")?.text() ?: text() }
+            .ifBlank { selectFirst(".title, h2, h3, .name")?.text() ?: text() }
             .trim()
 
         if (title.isBlank()) return null
@@ -68,6 +68,11 @@ class FourKHDHub : MainAPI() {
         return newMovieSearchResponse(title, fixUrl(href), TvType.Movie) {
             this.posterUrl = fixUrl(posterUrl)
         }
+    }
+
+    private fun Element.toSearchPageResult(): SearchResponse? {
+        val link = selectFirst("a") ?: this
+        return link.toSearchResult()
     }
 
     private fun Element.toHomePageResult(): SearchResponse? {
@@ -89,17 +94,34 @@ class FourKHDHub : MainAPI() {
         return newHomePageResponse(request.name, results, true)
     }
 
-override suspend fun search(query: String): List<SearchResponse> {
-    val results = mutableListOf<SearchResponse>()
-
+override suspend fun search(query: String, page: Int): List<SearchResponse> {
     val encodedQuery = java.net.URLEncoder.encode(query, "UTF-8")
 
-    var page = 1
-    val maxPages = 20
+    val url = if (page <= 1) {
+        "$mainUrl/?s=$encodedQuery"
+    } else {
+        "$mainUrl/page/$page/?s=$encodedQuery"
+    }
 
-    val seen = HashSet<String>()
+    val document = try {
+        app.get(url).document
+    } catch (e: Exception) {
+        Log.e("Search", "error url=$url")
+        return emptyList()
+    }
 
-    while (page <= maxPages) {
+    return document.select("article, .post-item, .result-item, div.card-grid a")
+        .mapNotNull { it.toSearchPageResult() }
+}
+
+/*
+    Search pagination follows the website source.
+    No artificial page limit is applied.
+
+    Previous implementation fetched pages internally and stopped at maxPages.
+    CloudStream handles pagination through the page parameter.
+*/
+/*
 
         val url = if (page == 1) {
             "$mainUrl/?s=$encodedQuery"
@@ -133,6 +155,7 @@ override suspend fun search(query: String): List<SearchResponse> {
 
     return results
 }
+*/
 
 @RequiresApi(Build.VERSION_CODES.N)
 override suspend fun load(url: String): LoadResponse {
