@@ -9,6 +9,7 @@ import org.jsoup.nodes.Element
 import java.net.URI
 import java.net.URLDecoder
 import java.net.URLEncoder
+import com.lagradost.cloudstream3.toNewSearchResponseList
 
 class Anichin : MainAPI() {
     companion object {
@@ -62,19 +63,28 @@ class Anichin : MainAPI() {
         }
     }
 
-    override suspend fun search(query: String): List<SearchResponse> {
-        val searchResponse = mutableListOf<SearchResponse>()
+    override suspend fun search(query: String, page: Int): SearchResponseList? {
         val encodedQuery = URLEncoder.encode(query, "UTF-8")
 
-        for (i in 1..3) {
-            val document = app.get("${mainUrl}/page/$i/?s=$encodedQuery").document
-            val results = document.select("div.listupd > article").mapNotNull { it.toSearchResult() }
-
-            if (results.isEmpty()) break
-            searchResponse.addAll(results)
+        val url = if (page <= 1) {
+            "${mainUrl}/?s=$encodedQuery"
+        } else {
+            "${mainUrl}/page/$page/?s=$encodedQuery"
         }
 
-        return searchResponse.distinctBy { it.url }
+        val document = app.get(url).document
+
+        val results = document
+            .select("div.listupd > article")
+            .mapNotNull { it.toSearchResult() }
+
+        val hasNext = document.selectFirst(
+            "a.next, a.next.page-numbers, .nav-links a.next, .pagination .next"
+        ) != null
+
+        return results.toNewSearchResponseList(
+            hasNext = hasNext
+        )
     }
 
     override suspend fun load(url: String): LoadResponse {
@@ -83,9 +93,14 @@ class Anichin : MainAPI() {
         var poster = document.select("div.ime > img").attr("src")
         val description = document.selectFirst("div.entry-content")?.text()?.trim()
         val type = document.selectFirst(".spe")?.text().orEmpty()
-        val year = Regex("\\b(19|20)\\d{2}\\b").find(document.text())?.value?.toIntOrNull()
-        val status = document.selectFirst(".spe span:contains(Status), .spe .status")?.text()?.trim()
-        val tags = document.select(".genre a, .genxed a, .genres a")
+
+        // Safe metadata only: no episode/extractor logic changes
+        val year = Regex("\\b(19|20)\\d{2}\\b")
+            .find(document.text())
+            ?.value
+            ?.toIntOrNull()
+
+        val tags = document.select(".genre a, .genres a, .genxed a")
             .map { it.text().trim() }
             .filter { it.isNotBlank() }
 
