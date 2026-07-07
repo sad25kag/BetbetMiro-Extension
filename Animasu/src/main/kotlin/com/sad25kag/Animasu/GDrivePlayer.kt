@@ -26,14 +26,15 @@ open class Gdplayer : ExtractorApi() {
             val file = sources.optJSONObject(i)?.optString("file") ?: ""
             if (file.isNotBlank()) {
                 callback(
-                    ExtractorLink(
+                    newExtractorLink(
                         name,
                         name,
                         file,
-                        mainUrl,
-                        Qualities.Unknown.value,
-                        isM3u8 = file.contains(".m3u8")
-                    )
+                        mainUrl
+                    ) {
+                        this.quality = Qualities.Unknown.value
+                        this.isM3u8 = file.contains(".m3u8")
+                    }
                 )
             }
         }
