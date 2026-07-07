@@ -333,7 +333,9 @@ class Alqanime : MainAPI() {
             return true
         }
 
-        for (linkData in links) {
+        for (linkData in links.sortedByDescending {
+            it.quality.fixQuality()
+        }) {
             val resolvedUrl = resolvePlaybackUrl(linkData.url)
             if (resolvedUrl.isBlank()) continue
 
