@@ -3,11 +3,9 @@ package com.sad25kag.Anichinmoe
 import com.lagradost.cloudstream3.SubtitleFile
 import com.lagradost.cloudstream3.app
 import com.lagradost.cloudstream3.USER_AGENT
-import com.lagradost.cloudstream3.newSubtitleFile
 import com.lagradost.cloudstream3.utils.ExtractorApi
 import com.lagradost.cloudstream3.utils.ExtractorLink
 import com.lagradost.cloudstream3.utils.M3u8Helper.Companion.generateM3u8
-import kotlinx.coroutines.runBlocking
 import org.json.JSONArray
 import org.json.JSONObject
 import java.net.URI
@@ -105,7 +103,7 @@ open class Dailymotion : ExtractorApi() {
             emitSubtitles(json, subtitleCallback)
             extractQualityUrls(json)
         } else {
-            Regex(""""url"s*:s*"([^"]+)"""")
+            Regex(""""url"\s*:\s*"([^"]+)"""")
                 .findAll(response)
                 .map { it.groupValues[1].replace("\\/", "/") }
                 .filter { it.contains(".m3u8", true) }
@@ -143,12 +141,11 @@ open class Dailymotion : ExtractorApi() {
         return urls.toList()
     }
 
-    private suspend fun emitSubtitles(json: JSONObject, subtitleCallback: (SubtitleFile) -> Unit) {
+    private fun emitSubtitles(json: JSONObject, subtitleCallback: (SubtitleFile) -> Unit) {
         val subtitles = json.optJSONObject("subtitles")
         subtitles?.keys()?.forEach { lang ->
             val value = subtitles.opt(lang)
             val entries = when (value) {
-                null -> JSONArray()
                 is JSONArray -> value
                 is JSONObject -> value.optJSONArray("data") ?: JSONArray().put(value)
                 else -> JSONArray()
@@ -161,15 +158,11 @@ open class Dailymotion : ExtractorApi() {
                 if (urls != null) {
                     for (urlIndex in 0 until urls.length()) {
                         val subUrl = urls.optString(urlIndex).trim()
-                        if (subUrl.isNotBlank()) {
-                            subtitleCallback(newSubtitleFile(label, subUrl))
-                        }
+                        if (subUrl.isNotBlank()) subtitleCallback(SubtitleFile(url = subUrl, lang = label))
                     }
                 } else {
                     val subUrl = item.optString("url").trim()
-                    if (subUrl.isNotBlank()) {
-                        subtitleCallback(newSubtitleFile(label, subUrl))
-                    }
+                    if (subUrl.isNotBlank()) subtitleCallback(SubtitleFile(url = subUrl, lang = label))
                 }
             }
         }
@@ -186,7 +179,7 @@ open class Dailymotion : ExtractorApi() {
         val decoded = runCatching { URLDecoder.decode(url, "UTF-8") }.getOrDefault(url)
         return listOf(
             Regex("""(?i)[?&]video=([A-Za-z0-9]+)"""),
-            Regex("""(?i)/video/([A-Za-z0-9]+).json"""),
+            Regex("""(?i)/video/([A-Za-z0-9]+)\.json"""),
             Regex("""(?i)/video/([A-Za-z0-9]+)"""),
         ).firstNotNullOfOrNull { regex -> regex.find(decoded)?.groupValues?.getOrNull(1) }
             ?.takeIf { it.matches(videoIdRegex) }
@@ -209,7 +202,7 @@ open class Dailymotion : ExtractorApi() {
         referer: String,
         callback: (ExtractorLink) -> Unit
     ) {
-        generateM3u8(
+        return generateM3u8(
             source = name,
             streamUrl = streamLink,
             referer = referer,
@@ -217,6 +210,6 @@ open class Dailymotion : ExtractorApi() {
                 "User-Agent" to USER_AGENT,
                 "Referer" to referer,
             )
-        ).forEach { callback(it) }
+        ).forEach(callback)
     }
 }
