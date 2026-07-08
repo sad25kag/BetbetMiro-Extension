@@ -114,48 +114,32 @@ open class Animekhor : MainAPI() {
             lower.contains("subtitles-indonesian")
     }
 
-    override suspend fun search(query: String): List<SearchResponse> {
+    override suspend fun search(query: String, page: Int): SearchResponseList {
         val encodedQuery = URLEncoder.encode(query, "UTF-8")
-        val queryParts = query.lowercase()
-            .split(Regex("""\s+"""))
-            .map { it.trim() }
-            .filter { it.length >= 2 }
 
-        if (queryParts.isEmpty()) return emptyList()
-
-        val searchResponse = mutableListOf<SearchResponse>()
-
-        suspend fun collectSearchPage(url: String, strictTitleFilter: Boolean = true): Boolean {
-            val document = runCatching { app.get(url).document }.getOrNull() ?: return false
-            val results = document.select(CARD_SELECTOR)
-                .mapNotNull { it.toSearchResult() }
-                .filter { result ->
-                    if (!strictTitleFilter) return@filter true
-                    val name = result.name.lowercase()
-                    queryParts.all { name.contains(it) }
+        val document = runCatching {
+            app.get(
+                if (page <= 1) {
+                    "$mainUrl/?s=$encodedQuery"
+                } else {
+                    "$mainUrl/page/$page/?s=$encodedQuery"
                 }
+            ).document
+        }.getOrNull() ?: return newSearchResponseList(emptyList(), hasNext = false)
 
-            results.forEach { result ->
-                if (searchResponse.none { it.url == result.url }) searchResponse.add(result)
-            }
+        val results = document.select(CARD_SELECTOR)
+            .mapNotNull { it.toSearchResult() }
+            .distinctBy { it.url }
 
-            return results.isNotEmpty()
+        val hasNext = document.select("a[href]").any {
+            val href = it.attr("href")
+            href.contains("/page/${page + 1}/")
         }
 
-        collectSearchPage("$mainUrl/?s=$encodedQuery", strictTitleFilter = false)
-        for (page in 2..3) {
-            val hasResults = collectSearchPage("$mainUrl/page/$page/?s=$encodedQuery", strictTitleFilter = false)
-            if (!hasResults) break
-        }
-
-        if (searchResponse.isNotEmpty()) return searchResponse.distinctBy { it.url }
-
-        for (page in 1..5) {
-            val hasResults = collectSearchPage("$mainUrl/anime/?order=&status=&type=&page=$page")
-            if (!hasResults && page > 1) break
-        }
-
-        return searchResponse.distinctBy { it.url }
+        return newSearchResponseList(
+            results,
+            hasNext = hasNext
+        )
     }
 
     override suspend fun load(url: String): LoadResponse {
