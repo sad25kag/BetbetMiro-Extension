@@ -47,13 +47,34 @@ class AnimeChina : MainAPI() {
         return newHomePageResponse(request.name, results, hasNext)
     }
 
-    override suspend fun search(query: String): List<SearchResponse> {
-        val encoded = URLEncoder.encode(query, "UTF-8")
-        val document = app.get("$mainUrl/?s=$encoded", headers = browserHeaders).document
-        return parseAnimeChinaCards(document)
-            .filter { it.name.contains(query, ignoreCase = true) || query.length < 3 }
-            .distinctBy { it.url.normalizedKey() }
+    override suspend fun search(query: String, page: Int): SearchResponseList? {
+        val encoded = URLEncoder.encode(query.trim(), "UTF-8")
+
+        val url = if (page <= 1) {
+            "$mainUrl/?s=$encoded&post_type=post"
+        } else {
+            "$mainUrl/page/$page/?s=$encoded&post_type=post"
+        }
+
+        val document = try {
+            app.get(url, referer = mainUrl).document
+        } catch (_: Exception) {
+            return null
+        }
+
+        val results = parseCards(document)
+
+        val hasNext = document.select("a[href]").any {
+            val href = it.attr("href")
+            href.contains("/page/${page + 1}/")
+        }
+
+        return newSearchResponseList(
+            results,
+            hasNext = hasNext
+        )
     }
+
 
     override suspend fun load(url: String): LoadResponse? {
         val canonicalUrl = canonicalSeriesUrl(url)
