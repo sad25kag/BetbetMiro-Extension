@@ -34,32 +34,12 @@ class AnimeIndo : MainAPI() {
     )
 
     override val mainPage = mainPageOf(
-        "$mainUrl/" to "Episode Terbaru",
-        "$mainUrl/genres/action/" to "Action",
-        "$mainUrl/genres/adventure/" to "Adventure",
-        "$mainUrl/genres/comedy/" to "Comedy",
-        "$mainUrl/genres/demons/" to "Demons",
+        "$mainUrl/" to "Update Terbaru",
+        "$mainUrl/movie/" to "Movie",
+        "$mainUrl/genres/live-action/" to "Live Action",
         "$mainUrl/genres/donghua/" to "Donghua",
-        "$mainUrl/genres/drama/" to "Drama",
-        "$mainUrl/genres/fantasy/" to "Fantasy",
-        "$mainUrl/genres/game/" to "Game",
-        "$mainUrl/genres/historical/" to "Historical",
-        "$mainUrl/genres/horror/" to "Horror",
         "$mainUrl/genres/isekai/" to "Isekai",
-        "$mainUrl/genres/magic/" to "Magic",
-        "$mainUrl/genres/martial-arts/" to "Martial Arts",
-        "$mainUrl/genres/military/" to "Military",
-        "$mainUrl/genres/mystery/" to "Mystery",
-        "$mainUrl/genres/psychological/" to "Psychological",
-        "$mainUrl/genres/reincarnation/" to "Reincarnation",
-        "$mainUrl/genres/romance/" to "Romance",
-        "$mainUrl/genres/school/" to "School",
-        "$mainUrl/genres/sci-fi/" to "Sci-Fi",
-        "$mainUrl/genres/seinen/" to "Seinen",
-        "$mainUrl/genres/slice-of-life/" to "Slice of Life",
-        "$mainUrl/genres/super-power/" to "Super Power",
-        "$mainUrl/genres/thriller/" to "Thriller",
-        "$mainUrl/genres/vampire/" to "Vampire"
+        "$mainUrl/genres/romance/" to "Romance"
     )
 
     private val blockedSlugs = setOf(
