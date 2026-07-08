@@ -1,6 +1,7 @@
 package com.sad25kag.animebagus
 
 import com.lagradost.cloudstream3.*
+import com.lagradost.cloudstream3.toNewSearchResponseList
 import com.lagradost.cloudstream3.utils.ExtractorLink
 import com.lagradost.cloudstream3.utils.ExtractorLinkType
 import com.lagradost.cloudstream3.utils.Qualities
@@ -170,32 +171,39 @@ class AnimeBagus : MainAPI() {
         return path.length > 2
     }
 
-    override suspend fun search(query: String): List<SearchResponse> {
+    override suspend fun search(query: String, page: Int): SearchResponseList? {
         val normalizedQuery = normalizeSearchText(query)
-        if (normalizedQuery.isBlank()) return emptyList()
+        if (normalizedQuery.isBlank()) return null
 
         val encoded = URLEncoder.encode(query.trim(), "UTF-8").replace("+", "%20")
-        val apiUrl = "$mainUrl/data/search?keyword=$encoded"
 
-        val apiResults = try {
-            parseSearchApi(app.get(apiUrl, referer = "$mainUrl/search?s=$encoded").text, normalizedQuery)
-        } catch (_: Exception) {
-            emptyList()
+        val url = if (page <= 1) {
+            "$mainUrl/search?s=$encoded"
+        } else {
+            "$mainUrl/search?page=$page&s=$encoded"
         }
 
-        if (apiResults.isNotEmpty()) return apiResults
-
-        // Fallback only when the source API fails; keep it query-filtered so search does not
-        // return homepage/latest grids as false-positive results.
-        return try {
-            parseCards(app.get("$mainUrl/search?s=$encoded", referer = mainUrl).document, false)
+        val results = try {
+            parseCards(app.get(url, referer = mainUrl).document, false)
                 .filter { it.matchesSearchQuery(normalizedQuery) }
-                .sortedWith(compareByDescending<SearchResponse> { it.searchScore(normalizedQuery) }
-                    .thenBy { it.name.lowercase() })
                 .distinctBy { it.url }
         } catch (_: Exception) {
             emptyList()
         }
+
+        val document = try {
+            app.get(url, referer = mainUrl).document
+        } catch (_: Exception) {
+            null
+        }
+
+        val hasNext = document?.selectFirst(
+            "a.next, a.next.page-numbers, .pagination a, nav.pagination a"
+        ) != null
+
+        return results.toNewSearchResponseList(
+            hasNext = hasNext
+        )
     }
 
     private fun parseSearchApi(jsonText: String, normalizedQuery: String): List<SearchResponse> {
