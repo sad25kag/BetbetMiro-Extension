@@ -32,9 +32,7 @@ class AnimeChina : MainAPI() {
     )
 
     override val mainPage = mainPageOf(
-        "$mainUrl/latest-update/?order=DESC&type=tv" to "Donghua Series Terbaru",
-        "$mainUrl/latest-update/?order=DESC&type=movie" to "Donghua Movie Terbaru",
-        "$mainUrl/" to "Donghua Lengkap"
+        "$mainUrl/latest-update/?order=DESC&type=tv" to "Donghua Series Terbaru"
     )
 
     override suspend fun getMainPage(page: Int, request: MainPageRequest): HomePageResponse {
@@ -62,7 +60,7 @@ class AnimeChina : MainAPI() {
             return null
         }
 
-        val results = parseCards(document)
+        val results = parseAnimeChinaCards(document)
 
         val hasNext = document.select("a[href]").any {
             val href = it.attr("href")
