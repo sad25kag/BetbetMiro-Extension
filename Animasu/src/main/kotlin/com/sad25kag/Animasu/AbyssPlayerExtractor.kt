@@ -1,4 +1,4 @@
-package com.sad25kag.animasu
+package com.sad25kag.Animasu
 
 import com.lagradost.cloudstream3.*
 import com.lagradost.cloudstream3.extractors.*
@@ -37,7 +37,16 @@ class AbyssPlayer : ExtractorApi() {
             if (src.optBoolean("status", false)) {
                 val srcUrl = src.optString("url")
                 if (srcUrl.isNotBlank()) {
-                    MasterLinkGenerator.createSmartLink(this.name, srcUrl, "https://playhydrax.com", callback = callback)
+                    callback(
+                        newExtractorLink(
+                            name,
+                            name,
+                            srcUrl,
+                            ExtractorLinkType.VIDEO
+                        ) {
+                            quality = Qualities.Unknown.value
+                        }
+                    )
                 }
             }
         }
