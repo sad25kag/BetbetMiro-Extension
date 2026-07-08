@@ -23,5 +23,5 @@ cloudstream {
     tvTypes = listOf("AnimeMovie","Anime","Cartoon")
     iconUrl="https://raw.githubusercontent.com/sad25kag/TVVVV/refs/heads/main/Icons/toonstream.png"
 
-    isCrossPlatform = true
+    isCrossPlatform = false
 }

@@ -24,5 +24,5 @@ cloudstream {
     tvTypes = listOf("Movie","TvSeries")
     iconUrl = "https://www.google.com/s2/favicons?domain=goojara.to/&sz=%size%"
 
-    isCrossPlatform = true
+    isCrossPlatform = false
 }

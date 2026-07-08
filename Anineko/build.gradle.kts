@@ -19,5 +19,5 @@ cloudstream {
     tvTypes = listOf("Anime", "AnimeMovie", "OVA")
     language = "id"
     iconUrl = "https://raw.githubusercontent.com/sad25kag/TVVVV/refs/heads/main/Icons/Anineko.png"
-    isCrossPlatform = true
+    isCrossPlatform = false
 }

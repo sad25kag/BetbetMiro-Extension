@@ -22,5 +22,5 @@ cloudstream {
     language = "id"
     iconUrl = "https://raw.githubusercontent.com/sad25kag/TVVVV/refs/heads/main/Icons/cinefreak.png"
 
-    isCrossPlatform = true
+    isCrossPlatform = false
 }

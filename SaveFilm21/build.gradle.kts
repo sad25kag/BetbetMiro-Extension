@@ -13,5 +13,5 @@ cloudstream {
     )
 
     iconUrl = "https://www.google.com/s2/favicons?domain=new13.savefilm21info.com&sz=%size%"
-    isCrossPlatform = true
+    isCrossPlatform = false
 }

@@ -24,5 +24,5 @@ cloudstream {
     )
 
     iconUrl = "https://www.google.com/s2/favicons?domain=www.dailymotion.com&sz=%size%"
-    isCrossPlatform = true
+    isCrossPlatform = false
 }

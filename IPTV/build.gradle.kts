@@ -15,5 +15,5 @@ cloudstream {
     status = 3
     tvTypes = listOf("Live")
     iconUrl = "https://www.google.com/s2/favicons?domain=iptv-org.github.io&sz=%size%"
-    isCrossPlatform = true
+    isCrossPlatform = false
 }

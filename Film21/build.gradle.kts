@@ -13,5 +13,5 @@ cloudstream {
     )
 
     iconUrl = "https://www.google.com/s2/favicons?domain=tv13.filem21.net&sz=%size%"
-    isCrossPlatform = true
+    isCrossPlatform = false
 }

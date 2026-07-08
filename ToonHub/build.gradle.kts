@@ -24,5 +24,5 @@ cloudstream {
     tvTypes = listOf("AnimeMovie","Anime","Cartoon")
     iconUrl="https://toonhub4u.co/wp-content/uploads/2024/02/Untitled.png"
 
-    isCrossPlatform = true
+    isCrossPlatform = false
 }
