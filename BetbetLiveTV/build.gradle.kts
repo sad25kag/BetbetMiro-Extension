@@ -15,5 +15,5 @@ cloudstream {
     status = 3
     tvTypes = listOf("Live")
     iconUrl = "https://www.google.com/s2/favicons?domain=globetv.app&sz=%size%"
-    isCrossPlatform = true
+    isCrossPlatform = false
 }
