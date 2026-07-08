@@ -34,12 +34,32 @@ class AnimeIndo : MainAPI() {
     )
 
     override val mainPage = mainPageOf(
-        "$mainUrl/" to "Update Terbaru",
-        "$mainUrl/movie/" to "Movie",
-        "$mainUrl/genres/live-action/" to "Live Action",
+        "$mainUrl/" to "Episode Terbaru",
+        "$mainUrl/genres/action/" to "Action",
+        "$mainUrl/genres/adventure/" to "Adventure",
+        "$mainUrl/genres/comedy/" to "Comedy",
+        "$mainUrl/genres/demons/" to "Demons",
         "$mainUrl/genres/donghua/" to "Donghua",
+        "$mainUrl/genres/drama/" to "Drama",
+        "$mainUrl/genres/fantasy/" to "Fantasy",
+        "$mainUrl/genres/game/" to "Game",
+        "$mainUrl/genres/historical/" to "Historical",
+        "$mainUrl/genres/horror/" to "Horror",
         "$mainUrl/genres/isekai/" to "Isekai",
-        "$mainUrl/genres/romance/" to "Romance"
+        "$mainUrl/genres/magic/" to "Magic",
+        "$mainUrl/genres/martial-arts/" to "Martial Arts",
+        "$mainUrl/genres/military/" to "Military",
+        "$mainUrl/genres/mystery/" to "Mystery",
+        "$mainUrl/genres/psychological/" to "Psychological",
+        "$mainUrl/genres/reincarnation/" to "Reincarnation",
+        "$mainUrl/genres/romance/" to "Romance",
+        "$mainUrl/genres/school/" to "School",
+        "$mainUrl/genres/sci-fi/" to "Sci-Fi",
+        "$mainUrl/genres/seinen/" to "Seinen",
+        "$mainUrl/genres/slice-of-life/" to "Slice of Life",
+        "$mainUrl/genres/super-power/" to "Super Power",
+        "$mainUrl/genres/thriller/" to "Thriller",
+        "$mainUrl/genres/vampire/" to "Vampire"
     )
 
     private val blockedSlugs = setOf(
@@ -260,22 +280,20 @@ class AnimeIndo : MainAPI() {
         return "$mainUrl/anime/$animeSlug/"
     }
 
-    override suspend fun search(query: String): List<SearchResponse> {
-        val encodedQuery = URLEncoder.encode(query, "UTF-8").replace("+", "-")
-        val document = app.get("$mainUrl/search/$encodedQuery/").document
-        val results = mutableListOf<AnimeIndoItem>()
-
-        document.select(
-            ".list-anime, .listupd article, .list-anime-parent > *, .animepost, .bs, .bsx, article, .post, " +
-                ".latest a[href], table.otable tr, .item, .ml-item, main a[href]"
-        ).forEach { element ->
-            val item = element.toAnimeIndoItem(requireContentUrl = true) ?: return@forEach
-            if (item.url.substringBefore("#").trimEnd('/') != mainUrl && results.none { it.url == item.url }) {
-                results.add(item)
-            }
-        }
-
-        return results.map { it.toSearchResponse() }
+    override suspend fun search(
+        query: String,
+        page: Int
+    ): SearchResponseList {
+        return newSearchResponseList(
+            listOf(
+                newMovieSearchResponse(
+                    "Maaf, pencarian kamu telah dinonaktifkan oleh sumber websitenya",
+                    "",
+                    TvType.Anime
+                )
+            ),
+            hasNext = false
+        )
     }
 
     override suspend fun load(url: String): LoadResponse {
