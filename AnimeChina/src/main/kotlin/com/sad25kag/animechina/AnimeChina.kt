@@ -34,7 +34,7 @@ class AnimeChina : MainAPI() {
     override val mainPage = mainPageOf(
         "$mainUrl/latest-update/?order=DESC&type=tv" to "Donghua Series Terbaru",
         "$mainUrl/latest-update/?order=DESC&type=movie" to "Donghua Movie Terbaru",
-        "$mainUrl/all-genres/" to "Donghua Lengkap"
+        "$mainUrl/" to "Donghua Lengkap"
     )
 
     override suspend fun getMainPage(page: Int, request: MainPageRequest): HomePageResponse {
