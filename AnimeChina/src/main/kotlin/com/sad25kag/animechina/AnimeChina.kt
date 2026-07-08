@@ -198,13 +198,160 @@ class AnimeChina : MainAPI() {
     }
 
     private fun buildPageUrl(path: String, page: Int): String {
-        val parts = path.split("?", limit = 2)
-        val base = parts[0].trimEnd('/')
-        val query = if (parts.size > 1) "?${parts[1]}" else ""
-
-        if (page <= 1) return "$base/$query"
-
-        return "$base/page/$page/$query"
+        val cleanPath = path.trim().trimStart('/')
+        val base = if (cleanPath.startsWith("http", true)) cleanPath.trimEnd('/')
+        else if (cleanPath.isBlank()) mainUrl
+        else "$mainUrl/$cleanPath".trimEnd('/')
+        if (page <= 1) return "$base/"
+        return "$base/page/$page/"
     }
 
+    private fun parseAnimeChinaCards(document: Document): List<SearchResponse> {
+        return document.select("a[href*='/watch/']").mapNotNull { it.toAnimeChinaCard() }
+            .filterNot { it.name.equals("Watch", true) || it.name.startsWith("Episode ", true) }
+            .distinctBy { it.url.normalizedKey() }
+    }
 
+    private fun Element.toAnimeChinaCard(): SearchResponse? {
+        val href = attr("href").toAbsoluteUrl() ?: return null
+        if (!href.contains("/watch/", true) || !href.startsWith(mainUrl)) return null
+        val rawTitle = attr("title").cleanText().takeIf { it.length > 2 }
+            ?: selectFirst("img")?.attr("alt")?.cleanText()?.takeIf { it.length > 2 }
+            ?: text().cleanText().takeIf { it.length > 2 }
+            ?: return null
+        val title = cleanCardTitle(rawTitle).takeIf { it.length > 2 } ?: return null
+        val poster = selectFirst("img")?.imageUrl(href)
+        val responseUrl = canonicalSeriesUrl(href)
+        return newMovieSearchResponse(title, responseUrl, TvType.Anime) {
+            this.posterUrl = poster
+            this.posterHeaders = mapOf("Referer" to "$mainUrl/")
+        }
+    }
+
+    private fun parseEpisodeList(document: Document, baseUrl: String): List<Episode> {
+        val anchors = document.select("div.gsd a[href*='episode='], .gsd a[href*='episode=']").ifEmpty {
+            document.select("a[href*='episode=']").filterNot { anchor ->
+                val href = anchor.attr("href")
+                href.contains("/genres/") || href.contains("/category/")
+            }
+        }
+
+        val episodes = anchors.mapNotNull { anchor ->
+            val href = anchor.attr("href").toAbsoluteUrl(baseUrl) ?: return@mapNotNull null
+            if (!href.contains("episode=", ignoreCase = true)) return@mapNotNull null
+            val episodeNumber = href.substringAfter("episode=").substringBefore("&").toIntOrNull()
+                ?: anchor.text().toEpisodeNumber()
+            newEpisode(href) {
+                this.name = anchor.text().cleanText().takeIf { it.isNotBlank() } ?: episodeNumber?.let { "Episode $it" }
+                this.episode = episodeNumber
+            }
+        }.distinctBy { it.data.normalizedKey() }
+            .sortedWith(compareBy<Episode> { it.episode ?: Int.MAX_VALUE }.thenBy { it.name ?: "" })
+
+        if (episodes.isNotEmpty()) return episodes
+
+        val currentEpisode = baseUrl.toEpisodeNumber()
+        return if (currentEpisode != null) {
+            listOf(newEpisode(baseUrl) {
+                this.name = "Episode $currentEpisode"
+                this.episode = currentEpisode
+            })
+        } else {
+            listOf(newEpisode(baseUrl) { this.name = "Play" })
+        }
+    }
+
+    private fun extractPlot(document: Document): String? {
+        return document.select(
+            ".the__content p, .info__ori .the__content p, .entry-content p, .synopsis p, .desc p, .storyline p"
+        ).map { it.text().cleanText() }
+            .filter { it.isGoodPlot() }
+            .distinct()
+            .joinToString("\n\n")
+            .takeIf { it.isNotBlank() }
+    }
+
+    private fun String.isGoodPlot(title: String? = null): Boolean {
+        val value = cleanText()
+        if (value.isBlank() || value.length < 20) return false
+        if (title != null && value.equals(title, ignoreCase = true)) return false
+        if (value.contains("Share on", true)) return false
+        if (value.contains("Article Rating", true)) return false
+        if (value.contains("Login", true) && value.contains("Register", true)) return false
+        if (value.contains("Nonton Donghua Sub Indo", true) && value.length < 90) return false
+        return true
+    }
+
+    private fun String.isValidGenreTag(): Boolean {
+        val value = cleanText()
+        if (value.isBlank() || value.equals("All Genres", true)) return false
+        if (Regex("""^\d{4}$""").matches(value)) return false
+        if (value.length < 3) return false
+        if (value.contains("Episode", true)) return false
+        if (value.contains("Subtitle", true)) return false
+        if (value.contains("Nonton", true)) return false
+        return true
+    }
+
+    private fun cleanCardTitle(raw: String): String {
+        return raw.cleanText()
+            .replace(Regex("(?i)^HD\\s*"), "")
+            .replace(Regex("(?i)^Episode\\s*\\d+\\s*"), "")
+            .replace(Regex("(?i)^Eps?\\s*\\d+\\s*"), "")
+            .replace(Regex("(?i)\\s*Subtitle\\s*Indonesia.*$"), "")
+            .replace(Regex("(?i)\\s*Sub\\s*Indo.*$"), "")
+            .trim()
+    }
+
+    private fun cleanTitle(raw: String?): String? {
+        return raw?.cleanText()
+            ?.replace(Regex("(?i)^Nonton\\s+Donghua\\s+"), "")
+            ?.replace(Regex("(?i)\\s+Subtitle\\s+Indonesia.*$"), "")
+            ?.replace(Regex("(?i)\\s+-\\s+AnimeChina.*$"), "")
+            ?.replace(Regex("(?i)^HD\\s*"), "")
+            ?.trim()
+            ?.takeIf { it.length > 1 }
+    }
+
+    private fun canonicalSeriesUrl(url: String): String {
+        return url.substringBefore("?").trimEnd('/') + "/"
+    }
+
+    private fun detectStatus(document: Document): ShowStatus? {
+        val text = document.text().lowercase(Locale.ROOT)
+        return when {
+            "completed" in text || "complete" in text || "tamat" in text -> ShowStatus.Completed
+            "ongoing" in text || "sedang tayang" in text -> ShowStatus.Ongoing
+            else -> null
+        }
+    }
+
+    private fun Element.imageUrl(referer: String = mainUrl): String? {
+        val image = if (tagName().equals("img", true)) this else selectFirst("img")
+        return listOf("data-src", "data-original", "data-lazy-src", "src")
+            .firstNotNullOfOrNull { key ->
+                image?.attr(key)?.trim()?.takeIf { it.isNotBlank() && !it.startsWith("data:") }
+            }?.toAbsoluteUrl(referer)
+    }
+
+    private fun String.toAbsoluteUrl(base: String = mainUrl): String? {
+        val value = trim().trim('\'', '"').replace("\\/", "/")
+        if (value.isBlank() || value.startsWith("javascript:", true) || value == "#") return null
+        if (value.startsWith("//")) return "https:$value"
+        if (value.startsWith("http://", true) || value.startsWith("https://", true)) return value
+        return runCatching { URI(base).resolve(value).toString() }.getOrNull()
+    }
+
+    private fun String.cleanText(): String {
+        return replace("\u00a0", " ")
+            .replace(Regex("\\s+"), " ")
+            .trim()
+    }
+
+    private fun String.toEpisodeNumber(): Int? {
+        return Regex("(?i)(?:episode|eps?|ep)[^0-9]{0,4}(\\d+)").find(this)?.groupValues?.getOrNull(1)?.toIntOrNull()
+            ?: substringAfter("episode=", "").substringBefore("&").toIntOrNull()
+    }
+
+    private fun String.normalizedKey(): String = substringBefore("#").trimEnd('/').lowercase(Locale.ROOT)
+}
