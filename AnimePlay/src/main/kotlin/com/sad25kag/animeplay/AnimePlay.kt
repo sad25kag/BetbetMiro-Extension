@@ -107,7 +107,14 @@ class AnimePlay : MainAPI() {
         val url = if (page > 1) "${request.data}?page=$page" else request.data
         val res = app.get(url, headers = mapOf("Accept-Language" to "id-ID,id;q=0.9"))
         val items = parseCards(res.text, res.document).distinctBy { it.url }
-        return newHomePageResponse(request.name, items)
+
+        // AnimePlay does not provide valid category pagination.
+        // Prevent CloudStream from looping the first page repeatedly.
+        return newHomePageResponse(
+            request.name,
+            items,
+            hasNext = false
+        )
     }
 
     // ─── Search (/search?q=...) ───────────────────────────────────────────────
