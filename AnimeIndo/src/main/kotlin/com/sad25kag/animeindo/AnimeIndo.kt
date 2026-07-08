@@ -260,22 +260,20 @@ class AnimeIndo : MainAPI() {
         return "$mainUrl/anime/$animeSlug/"
     }
 
-    override suspend fun search(query: String): List<SearchResponse> {
-        val encodedQuery = URLEncoder.encode(query, "UTF-8").replace("+", "-")
-        val document = app.get("$mainUrl/search/$encodedQuery/").document
-        val results = mutableListOf<AnimeIndoItem>()
-
-        document.select(
-            ".list-anime, .listupd article, .list-anime-parent > *, .animepost, .bs, .bsx, article, .post, " +
-                ".latest a[href], table.otable tr, .item, .ml-item, main a[href]"
-        ).forEach { element ->
-            val item = element.toAnimeIndoItem(requireContentUrl = true) ?: return@forEach
-            if (item.url.substringBefore("#").trimEnd('/') != mainUrl && results.none { it.url == item.url }) {
-                results.add(item)
-            }
-        }
-
-        return results.map { it.toSearchResponse() }
+    override suspend fun search(
+        query: String,
+        page: Int
+    ): SearchResponseList {
+        return newSearchResponseList(
+            listOf(
+                newMovieSearchResponse(
+                    "Maaf, pencarian kamu telah dinonaktifkan oleh sumber websitenya",
+                    "",
+                    TvType.Anime
+                )
+            ),
+            hasNext = false
+        )
     }
 
     override suspend fun load(url: String): LoadResponse {
