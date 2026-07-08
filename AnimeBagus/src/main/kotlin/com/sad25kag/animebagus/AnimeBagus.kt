@@ -202,8 +202,8 @@ class AnimeBagus : MainAPI() {
                 href.contains("search")
             }
 
-        return SearchResponseList(
-            results = results,
+        return newSearchResponseList(
+            results,
             hasNext = hasNext
         )
     }
