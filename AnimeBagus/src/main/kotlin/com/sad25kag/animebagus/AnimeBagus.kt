@@ -36,16 +36,6 @@ class AnimeBagus : MainAPI() {
         "$mainUrl/ongoing" to "Sedang Tayang",
         "$mainUrl/movies" to "Movie Terbaru",
         "$mainUrl/release" to "Daftar Lengkap Terbaru",
-        "$mainUrl/genre/action" to "Action",
-        "$mainUrl/genre/adventure" to "Adventure",
-        "$mainUrl/genre/comedy" to "Comedy",
-        "$mainUrl/genre/drama" to "Drama",
-        "$mainUrl/genre/fantasy" to "Fantasy",
-        "$mainUrl/genre/isekai" to "Isekai",
-        "$mainUrl/genre/romance" to "Romance",
-        "$mainUrl/genre/school" to "School",
-        "$mainUrl/genre/slice-of-life" to "Slice of Life",
-        "$mainUrl/genre/suspense" to "Suspense"
     )
 
     private fun buildPageUrl(baseUrl: String, page: Int): String {
