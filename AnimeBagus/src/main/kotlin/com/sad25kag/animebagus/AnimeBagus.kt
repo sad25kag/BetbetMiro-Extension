@@ -175,33 +175,35 @@ class AnimeBagus : MainAPI() {
         val normalizedQuery = normalizeSearchText(query)
         if (normalizedQuery.isBlank()) return null
 
-        val encoded = URLEncoder.encode(query.trim(), "UTF-8").replace("+", "%20")
+        val encoded = URLEncoder.encode(query.trim(), "UTF-8")
+            .replace("+", "%20")
 
         val url = if (page <= 1) {
-            "$mainUrl/search?s=$encoded"
+            "$mainUrl/search?s=${encoded.lowercase()}"
         } else {
-            "$mainUrl/search?page=$page&s=$encoded"
-        }
-
-        val results = try {
-            parseCards(app.get(url, referer = mainUrl).document, false)
-                .filter { it.matchesSearchQuery(normalizedQuery) }
-                .distinctBy { it.url }
-        } catch (_: Exception) {
-            emptyList()
+            "$mainUrl/search?page=$page&s=${encoded.lowercase()}"
         }
 
         val document = try {
             app.get(url, referer = mainUrl).document
         } catch (_: Exception) {
-            null
+            return null
         }
 
-        val hasNext = document?.selectFirst(
-            "a.next, a.next.page-numbers, .pagination a, nav.pagination a"
-        ) != null
+        val results = parseCards(document, false)
+            .filter { it.matchesSearchQuery(normalizedQuery) }
+            .distinctBy { it.url }
 
-        return results.toNewSearchResponseList(
+        val hasNext = document
+            .select("a[href]")
+            .any {
+                val href = it.attr("href")
+                href.contains("page=${page + 1}") &&
+                href.contains("search")
+            }
+
+        return SearchResponseList(
+            results = results,
             hasNext = hasNext
         )
     }
