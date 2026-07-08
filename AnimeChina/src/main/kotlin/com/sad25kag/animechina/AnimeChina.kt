@@ -198,13 +198,18 @@ class AnimeChina : MainAPI() {
     }
 
     private fun buildPageUrl(path: String, page: Int): String {
-        val cleanPath = path.trim().trimStart('/')
-        val base = if (cleanPath.startsWith("http", true)) cleanPath.trimEnd('/')
-        else if (cleanPath.isBlank()) mainUrl
-        else "$mainUrl/$cleanPath".trimEnd('/')
-        if (page <= 1) return "$base/"
-        return "$base/page/$page/"
+        val parts = path.split("?", limit = 2)
+
+        val base = parts[0].trimEnd('/')
+        val query = if (parts.size > 1) "?${parts[1]}" else ""
+
+        return if (page <= 1) {
+            "$base/$query"
+        } else {
+            "$base/page/$page/$query"
+        }
     }
+
 
     private fun parseAnimeChinaCards(document: Document): List<SearchResponse> {
         return document.select("a[href*='/watch/']").mapNotNull { it.toAnimeChinaCard() }
