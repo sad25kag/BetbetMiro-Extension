@@ -560,7 +560,11 @@ class AnimeMovies : MainAPI() {
     }
 
     private fun Document.hasNextPage(page: Int): Boolean {
-        return selectFirst("a[rel=next], .pagination a[href*='page=${page + 1}'], a[href*='page=${page + 1}']") != null
+        val nextPage = page + 1
+        return select("a[href]").any {
+            val href = it.attr("href")
+            href.contains("page=$nextPage")
+        }
     }
 
     private fun Document.bestTitle(): String? {
