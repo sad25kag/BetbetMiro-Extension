@@ -41,7 +41,10 @@ class AnimeIsMe : MainAPI() {
     )
 
     override val mainPage = mainPageOf(
-        "$mainUrl/" to "Update Terbaru"
+        "$mainUrl/anime/?status=&type=&order=update" to "Rilisan Terbaru",
+        "$mainUrl/anime/?status=&type=tv&sub=&order=" to "Semua Anime",
+        "$mainUrl/anime/?type=movie" to "Movie",
+        "$mainUrl/anime/?status=completed&type=&sub=&order=" to "Sudah Tamat"
     )
 
     override suspend fun getMainPage(page: Int, request: MainPageRequest): HomePageResponse {
