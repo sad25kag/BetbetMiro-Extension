@@ -30,10 +30,9 @@ open class Gdplayer : ExtractorApi() {
                         name,
                         name,
                         file,
-                        mainUrl
+                        if (file.contains(".m3u8")) ExtractorLinkType.M3U8 else ExtractorLinkType.VIDEO
                     ) {
-                        this.quality = Qualities.Unknown.value
-                        this.isM3u8 = file.contains(".m3u8")
+                        quality = Qualities.Unknown.value
                     }
                 )
             }
