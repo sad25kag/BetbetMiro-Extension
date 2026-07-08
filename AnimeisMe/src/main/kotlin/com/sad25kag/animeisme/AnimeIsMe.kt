@@ -408,7 +408,8 @@ class AnimeIsMe : MainAPI() {
         val nextPage = page + 1
         return select("a[href]").any {
             val href = it.attr("href")
-            href.contains("page=$nextPage")
+            href.contains("page=$nextPage") ||
+                href.contains("/page/$nextPage/")
         }
     }
 
