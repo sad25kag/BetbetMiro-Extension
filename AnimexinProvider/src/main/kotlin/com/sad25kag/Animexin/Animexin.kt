@@ -25,14 +25,10 @@ class Animexin : MainAPI() {
     )
 
     override val mainPage = mainPageOf(
-        "anime/?status=ongoing&order=update" to "Recently Updated",
-        "anime/?status=ongoing&order=popular" to "Popular",
-        "anime/?" to "Donghua",
-        "anime/?status=&type=movie" to "Movies",
-        "genres/demon/" to "Demon",
-        "genres/historical/" to "Historical",
-        "genres/romance/" to "Romance",
-        "genres/supernatural/" to "Supernatural"
+        "anime/?status=&type=&order=update" to "Update Terbaru",
+        "anime/?type=ona&order=update" to "Donghua",
+        "anime/?type=movie&order=update" to "Movie",
+        "anime/?type=special&order=update" to "Spesial"
     )
 
     override suspend fun getMainPage(page: Int, request: MainPageRequest): HomePageResponse {
