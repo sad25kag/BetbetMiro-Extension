@@ -4,8 +4,9 @@
     "iconUrl": "https://avatars.githubusercontent.com/u/114850487?v=4",
     "manifestVersion": 1,
     "pluginLists": [
-        "https://raw.githubusercontent.com/sad25kag/BetbetMiro-Extension/master/repo.json",
-        "https://raw.githubusercontent.com/sad25kag/BetbetMiro-Extension/main/repo2.json",
-        "https://raw.githubusercontent.com/sad25kag/BetbetMiro-Extension/quarantine/repo.json"
+        "https://raw.githubusercontent.com/sad25kag/BetbetMiro-Extension/builds/plugins.json",
+        "https://raw.githubusercontent.com/sad25kag/BetbetMiro-Extension/master/plugins.json",
+        "https://raw.githubusercontent.com/sad25kag/BetbetMiro-Extension/release/plugins.json",
+        "https://raw.githubusercontent.com/sad25kag/BetbetMiro-Extension/maintenance/plugins.json"
     ]
 }
