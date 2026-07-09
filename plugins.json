@@ -284,14 +284,14 @@
     {
         "url": "https://raw.githubusercontent.com/sad25kag/BetbetMiro-Extension/builds/AnimexinProvider.cs3",
         "status": 1,
-        "version": 18,
+        "version": 19,
         "name": "AnimexinProvider",
         "internalName": "AnimexinProvider",
         "authors": [
             "sad25kag"
         ],
         "description": "Animexin \u2014 Streaming Donghua Subtitle Indonesia",
-        "fileSize": 42948,
+        "fileSize": 42818,
         "repositoryUrl": "https://github.com/sad25kag/BetbetMiro-Extension",
         "language": "id",
         "tvTypes": [
@@ -301,7 +301,7 @@
         ],
         "iconUrl": "https://animexin.dev/wp-content/uploads/2020/06/animexinv1.png",
         "apiVersion": 1,
-        "fileHash": "sha256-43ca22e339ccf4bad1cf67bf248176e6859b561c31d762f6dc5ed00f45c14ce5"
+        "fileHash": "sha256-57be5f65eff129425b3c714457e57dc8d552ed1effa28c2e45f10e84694e2597"
     },
     {
         "url": "https://raw.githubusercontent.com/sad25kag/BetbetMiro-Extension/builds/Anineko.cs3",
