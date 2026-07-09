@@ -55,7 +55,6 @@ class Anineko : MainAPI() {
 
     override val mainPage = mainPageOf(
         "/updates" to "Update Terbaru",
-        "/browse?sort=title_az" to "Semua Anime",
     )
 
     override suspend fun getMainPage(
