@@ -306,14 +306,14 @@
     {
         "url": "https://raw.githubusercontent.com/sad25kag/BetbetMiro-Extension/builds/Anineko.cs3",
         "status": 1,
-        "version": 2,
+        "version": 3,
         "name": "Anineko",
         "internalName": "Anineko",
         "authors": [
             "sad25kag"
         ],
         "description": "Anime from Anineko",
-        "fileSize": 31847,
+        "fileSize": 31970,
         "repositoryUrl": "https://github.com/sad25kag/BetbetMiro-Extension",
         "language": "id",
         "tvTypes": [
@@ -323,7 +323,7 @@
         ],
         "iconUrl": "https://raw.githubusercontent.com/sad25kag/TVVVV/refs/heads/main/Icons/Anineko.png",
         "apiVersion": 1,
-        "fileHash": "sha256-5cc6a071bb0c7302616fa5a24315fcfc08b57f86aefe7c40195c65b545e2a0be"
+        "fileHash": "sha256-7b29536429a83189a408a625675ab85a32e5704f29944fd5cba6bebb98b4ff7e"
     },
     {
         "url": "https://raw.githubusercontent.com/sad25kag/BetbetMiro-Extension/builds/AnixCafeProvider.cs3",
