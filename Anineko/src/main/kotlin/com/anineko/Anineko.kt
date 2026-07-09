@@ -28,10 +28,17 @@ import com.lagradost.cloudstream3.extractors.StreamWishExtractor
 import com.lagradost.cloudstream3.addDate
 import com.lagradost.cloudstream3.utils.ExtractorLinkType
 import com.lagradost.cloudstream3.amap
-import com.lagradost.cloudstream3.utils.fixUrl
-import com.lagradost.cloudstream3.utils.fixUrlNull
 
 class Anineko : MainAPI() {
+    private fun normalizeUrl(url: String?): String? {
+        if (url.isNullOrBlank()) return null
+        return when {
+            url.startsWith("http") -> url
+            url.startsWith("//") -> "https:$url"
+            url.startsWith("/") -> "$mainUrl$url"
+            else -> "$mainUrl/$url"
+        }
+    }
     override var mainUrl = "https://anineko.to"
     override var name = "Anineko"
     override val hasMainPage = true
@@ -57,11 +64,11 @@ class Anineko : MainAPI() {
         val doc = app.get(url).document
 
         val list = doc.select(".nv-anime-card").mapNotNull { element ->
-            val href = fixUrlNull(element.selectFirst("a.nv-anime-thumb")?.attr("href")) ?: return@mapNotNull null
+            val href = normalizeUrl(element.selectFirst("a.nv-anime-thumb")?.attr("href")) ?: return@mapNotNull null
             val title = element.selectFirst("h3.nv-anime-title a")?.text()
                 ?: element.selectFirst("img")?.attr("alt")
                 ?: return@mapNotNull null
-            val posterUrl = fixUrlNull(element.selectFirst("img")?.attr("src"))
+            val posterUrl = normalizeUrl(element.selectFirst("img")?.attr("src"))
 
             val subCount = element.selectFirst(".nv-stat-cc")?.text()?.replace(Regex("[^0-9]"), "")?.toIntOrNull()
             val dubCount = element.selectFirst(".nv-stat-dub span")?.text()?.replace(Regex("[^0-9]"), "")?.toIntOrNull()
@@ -85,11 +92,11 @@ class Anineko : MainAPI() {
         val doc = app.get(url).document
 
         return doc.select(".nv-anime-card").mapNotNull { element ->
-            val href = fixUrlNull(element.selectFirst("a.nv-anime-thumb")?.attr("href")) ?: return@mapNotNull null
+            val href = normalizeUrl(element.selectFirst("a.nv-anime-thumb")?.attr("href")) ?: return@mapNotNull null
             val title = element.selectFirst("h3.nv-anime-title a")?.text()
                 ?: element.selectFirst("img")?.attr("alt")
                 ?: return@mapNotNull null
-            val posterUrl = fixUrlNull(element.selectFirst("img")?.attr("src"))
+            val posterUrl = normalizeUrl(element.selectFirst("img")?.attr("src"))
 
             val subCount = element.selectFirst(".nv-stat-cc")?.text()?.replace(Regex("[^0-9]"), "")?.toIntOrNull()
             val dubCount = element.selectFirst(".nv-stat-dub span")?.text()?.replace(Regex("[^0-9]"), "")?.toIntOrNull()
@@ -111,7 +118,7 @@ class Anineko : MainAPI() {
 
         val title = doc.selectFirst("h1")?.text() ?: return null
         val altTitle = doc.selectFirst(".nv-info-alt-title")?.text()
-        val poster = fixUrlNull(doc.selectFirst("aside.nv-info-poster img")?.attr("src"))
+        val poster = normalizeUrl(doc.selectFirst("aside.nv-info-poster img")?.attr("src"))
 
         val bgStyle = doc.selectFirst(".nv-info-bg")?.attr("style")
         val background = bgStyle?.let { Regex("""url\(['"]?(.*?)['"]?\)""").find(it)?.groupValues?.get(1) }
@@ -170,7 +177,7 @@ class Anineko : MainAPI() {
             val hasDub = badges.contains("dub")
 
             if (hasSub || (!hasDub)) {
-                subEpisodes.add(newEpisode("${fixUrl(epHref)}|sub") {
+                subEpisodes.add(newEpisode("${normalizeUrl(epHref)}|sub") {
                     this.name = finalName
                     this.episode = epNum
                     this.description = description
@@ -181,7 +188,7 @@ class Anineko : MainAPI() {
                 })
             }
             if (hasDub) {
-                dubEpisodes.add(newEpisode("${fixUrl(epHref)}|dub") {
+                dubEpisodes.add(newEpisode("${normalizeUrl(epHref)}|dub") {
                     this.name = finalName
                     this.episode = epNum
                     this.description = description
