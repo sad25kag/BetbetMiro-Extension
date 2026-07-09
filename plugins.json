@@ -328,14 +328,14 @@
     {
         "url": "https://raw.githubusercontent.com/sad25kag/BetbetMiro-Extension/builds/AnixCafeProvider.cs3",
         "status": 1,
-        "version": 10,
+        "version": 11,
         "name": "AnixCafeProvider",
         "internalName": "AnixCafeProvider",
         "authors": [
             "sad25kag"
         ],
         "description": "AnixCafe / Anixverse donghua provider with dynamic server-option playback resolver",
-        "fileSize": 64423,
+        "fileSize": 64178,
         "repositoryUrl": "https://github.com/sad25kag/BetbetMiro-Extension",
         "language": "id",
         "tvTypes": [
@@ -345,7 +345,7 @@
         ],
         "iconUrl": "https://t2.gstatic.com/faviconV2?client=SOCIAL&type=FAVICON&fallback_opts=TYPE,SIZE,URL&url=https://anixcafe.com&size=%size%",
         "apiVersion": 1,
-        "fileHash": "sha256-b66f42b021a074aedfeeb6b25b07c0ec0fe55f4a5df9bf6c39e53e9fe079b268"
+        "fileHash": "sha256-efad184fc838defff5aac568cd4f1907ae574041b98ad50730dae63836ba3f0c"
     },
     {
         "url": "https://raw.githubusercontent.com/sad25kag/BetbetMiro-Extension/builds/AnizoneProvider.cs3",
