@@ -103,7 +103,11 @@ class AnixCafeProvider : MainAPI() {
                 addEpisodes(DubStatus.Subbed, episodes)
             }
         } else {
-            newMovieLoadResponse(title, fixedUrl, type, fixedUrl) {
+            // Halaman "/anime/slug/" hanya berisi daftar episode (.eplister),
+            // player/iframe-nya ada di halaman episode itu sendiri.
+            // Jadi loadLinks harus dikasih URL episode, bukan fixedUrl.
+            val movieDataUrl = episodes.firstOrNull()?.data ?: fixedUrl
+            newMovieLoadResponse(title, fixedUrl, type, movieDataUrl) {
                 posterUrl = poster
                 this.year = year
                 plot?.let { this.plot = it }
