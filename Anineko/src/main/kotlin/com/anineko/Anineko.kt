@@ -23,11 +23,14 @@ import com.lagradost.cloudstream3.utils.M3u8Helper.Companion.generateM3u8
 import com.lagradost.cloudstream3.utils.loadExtractor
 import com.lagradost.cloudstream3.addDubStatus
 import com.lagradost.cloudstream3.SearchResponse
+import com.lagradost.cloudstream3.SearchResponseList
+import com.lagradost.cloudstream3.toNewSearchResponseList
 import com.lagradost.cloudstream3.utils.newExtractorLink
 import com.lagradost.cloudstream3.extractors.StreamWishExtractor
 import com.lagradost.cloudstream3.addDate
 import com.lagradost.cloudstream3.utils.ExtractorLinkType
 import com.lagradost.cloudstream3.amap
+import java.net.URLEncoder
 
 class Anineko : MainAPI() {
     private fun normalizeUrl(url: String?): String? {
@@ -86,11 +89,16 @@ class Anineko : MainAPI() {
         return newHomePageResponse(request.name, list)
     }
 
-    override suspend fun search(query: String): List<SearchResponse> {
-        val url = "$mainUrl/browser?keyword=${query}"
+    override suspend fun search(query: String, page: Int): SearchResponseList? {
+        val encodedQuery = URLEncoder.encode(query, "UTF-8")
+        val url = if (page <= 1) {
+            "$mainUrl/browser?keyword=$encodedQuery"
+        } else {
+            "$mainUrl/browser?keyword=$encodedQuery&page=$page"
+        }
         val doc = app.get(url).document
 
-        return doc.select(".nv-anime-card").mapNotNull { element ->
+        val results = doc.select(".nv-anime-card").mapNotNull { element ->
             val href = normalizeUrl(element.selectFirst("a.nv-anime-thumb")?.attr("href")) ?: return@mapNotNull null
             val title = element.selectFirst("h3.nv-anime-title a")?.text()
                 ?: element.selectFirst("img")?.attr("alt")
@@ -110,6 +118,12 @@ class Anineko : MainAPI() {
                 )
             }
         }
+
+        val hasNext = doc.selectFirst("a.next, a.next-page, .pagination .next") != null
+
+        return results.toNewSearchResponseList(
+            hasNext = hasNext
+        )
     }
 
     override suspend fun load(url: String): LoadResponse? {
