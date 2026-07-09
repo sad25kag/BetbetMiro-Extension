@@ -38,12 +38,24 @@ class AnixCafeProvider : MainAPI() {
         return newHomePageResponse(request.name, items, hasNext = hasNext)
     }
 
-    override suspend fun search(query: String): List<SearchResponse> {
+    override suspend fun search(query: String, page: Int): SearchResponseList? {
         val encoded = URLEncoder.encode(query.trim(), "UTF-8")
-        val document = app.get("$mainUrl/?s=$encoded", referer = "$mainUrl/").document
-        return document.select("div.listupd article.bs, div.listupd div.bs, article.bs")
+        val url = if (page <= 1) {
+            "$mainUrl/?s=$encoded"
+        } else {
+            "$mainUrl/page/$page/?s=$encoded"
+        }
+
+        val document = app.get(url, referer = "$mainUrl/").document
+        val results = document.select("div.listupd article.bs, div.listupd div.bs, article.bs")
             .mapNotNull { it.toSearchResult() }
             .distinctBy { it.url }
+
+        val hasNext = document.select(
+            "a.next, a.next.page-numbers, div.hpage a.r, .pagination .next"
+        ).isNotEmpty()
+
+        return results.toNewSearchResponseList(hasNext = hasNext)
     }
 
     override suspend fun load(url: String): LoadResponse {
