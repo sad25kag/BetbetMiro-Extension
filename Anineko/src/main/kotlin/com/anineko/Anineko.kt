@@ -28,6 +28,8 @@ import com.lagradost.cloudstream3.extractors.StreamWishExtractor
 import com.lagradost.cloudstream3.addDate
 import com.lagradost.cloudstream3.utils.ExtractorLinkType
 import com.lagradost.cloudstream3.amap
+import com.lagradost.cloudstream3.utils.fixUrl
+import com.lagradost.cloudstream3.utils.fixUrlNull
 
 class Anineko : MainAPI() {
     override var mainUrl = "https://anineko.to"
@@ -55,16 +57,16 @@ class Anineko : MainAPI() {
         val doc = app.get(url).document
 
         val list = doc.select(".nv-anime-card").mapNotNull { element ->
-            val href = element.selectFirst("a.nv-anime-thumb")?.attr("href") ?: return@mapNotNull null
+            val href = fixUrlNull(element.selectFirst("a.nv-anime-thumb")?.attr("href")) ?: return@mapNotNull null
             val title = element.selectFirst("h3.nv-anime-title a")?.text()
                 ?: element.selectFirst("img")?.attr("alt")
                 ?: return@mapNotNull null
-            val posterUrl = element.selectFirst("img")?.attr("src")
+            val posterUrl = fixUrlNull(element.selectFirst("img")?.attr("src"))
 
             val subCount = element.selectFirst(".nv-stat-cc")?.text()?.replace(Regex("[^0-9]"), "")?.toIntOrNull()
             val dubCount = element.selectFirst(".nv-stat-dub span")?.text()?.replace(Regex("[^0-9]"), "")?.toIntOrNull()
 
-            newAnimeSearchResponse(title, "$mainUrl$href", TvType.Anime) {
+            newAnimeSearchResponse(title, href, TvType.Anime) {
                 this.posterUrl = posterUrl
                 addDubStatus(
                     dubExist = dubCount != null,
@@ -83,16 +85,16 @@ class Anineko : MainAPI() {
         val doc = app.get(url).document
 
         return doc.select(".nv-anime-card").mapNotNull { element ->
-            val href = element.selectFirst("a.nv-anime-thumb")?.attr("href") ?: return@mapNotNull null
+            val href = fixUrlNull(element.selectFirst("a.nv-anime-thumb")?.attr("href")) ?: return@mapNotNull null
             val title = element.selectFirst("h3.nv-anime-title a")?.text()
                 ?: element.selectFirst("img")?.attr("alt")
                 ?: return@mapNotNull null
-            val posterUrl = element.selectFirst("img")?.attr("src")
+            val posterUrl = fixUrlNull(element.selectFirst("img")?.attr("src"))
 
             val subCount = element.selectFirst(".nv-stat-cc")?.text()?.replace(Regex("[^0-9]"), "")?.toIntOrNull()
             val dubCount = element.selectFirst(".nv-stat-dub span")?.text()?.replace(Regex("[^0-9]"), "")?.toIntOrNull()
 
-            newAnimeSearchResponse(title, "$mainUrl$href", TvType.Anime) {
+            newAnimeSearchResponse(title, href, TvType.Anime) {
                 this.posterUrl = posterUrl
                 addDubStatus(
                     dubExist = dubCount != null,
@@ -109,7 +111,7 @@ class Anineko : MainAPI() {
 
         val title = doc.selectFirst("h1")?.text() ?: return null
         val altTitle = doc.selectFirst(".nv-info-alt-title")?.text()
-        val poster = doc.selectFirst("aside.nv-info-poster img")?.attr("src")
+        val poster = fixUrlNull(doc.selectFirst("aside.nv-info-poster img")?.attr("src"))
 
         val bgStyle = doc.selectFirst(".nv-info-bg")?.attr("style")
         val background = bgStyle?.let { Regex("""url\(['"]?(.*?)['"]?\)""").find(it)?.groupValues?.get(1) }
@@ -168,7 +170,7 @@ class Anineko : MainAPI() {
             val hasDub = badges.contains("dub")
 
             if (hasSub || (!hasDub)) {
-                subEpisodes.add(newEpisode("$mainUrl$epHref|sub") {
+                subEpisodes.add(newEpisode("${fixUrl(epHref)}|sub") {
                     this.name = finalName
                     this.episode = epNum
                     this.description = description
@@ -179,7 +181,7 @@ class Anineko : MainAPI() {
                 })
             }
             if (hasDub) {
-                dubEpisodes.add(newEpisode("$mainUrl$epHref|dub") {
+                dubEpisodes.add(newEpisode("${fixUrl(epHref)}|dub") {
                     this.name = finalName
                     this.episode = epNum
                     this.description = description
