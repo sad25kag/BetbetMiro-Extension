@@ -306,7 +306,7 @@
     {
         "url": "https://raw.githubusercontent.com/sad25kag/BetbetMiro-Extension/builds/Anineko.cs3",
         "status": 1,
-        "version": 3,
+        "version": 4,
         "name": "Anineko",
         "internalName": "Anineko",
         "authors": [
@@ -323,7 +323,7 @@
         ],
         "iconUrl": "https://raw.githubusercontent.com/sad25kag/TVVVV/refs/heads/main/Icons/Anineko.png",
         "apiVersion": 1,
-        "fileHash": "sha256-7b29536429a83189a408a625675ab85a32e5704f29944fd5cba6bebb98b4ff7e"
+        "fileHash": "sha256-bc842541b3676dd8b6a8d33905fc9aa236ff10487883ace540072a2bde78e213"
     },
     {
         "url": "https://raw.githubusercontent.com/sad25kag/BetbetMiro-Extension/builds/AnixCafeProvider.cs3",
