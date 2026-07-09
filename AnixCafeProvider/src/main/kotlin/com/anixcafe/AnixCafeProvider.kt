@@ -182,13 +182,21 @@ class AnixCafeProvider : MainAPI() {
 
         for ((url, label) in normalizedCandidates) {
             val before = emittedUrls.size
-            runCatching { loadExtractor(url, episodeUrl, subtitleCallback, safeCallback) }
+            val extractorReferer = when {
+                url.contains("ok.ru", ignoreCase = true) ||
+                url.contains("odnoklassniki", ignoreCase = true) ||
+                url.contains("dailymotion.com", ignoreCase = true) ||
+                url.contains("dai.ly", ignoreCase = true) -> url
+                else -> episodeUrl
+            }
+
+            runCatching { loadExtractor(url, extractorReferer, subtitleCallback, safeCallback) }
 
             if (emittedUrls.size == before) {
                 AnixCafeExtractorHelper.resolveLink(
                     url = url,
                     label = label,
-                    referer = episodeUrl,
+                    referer = extractorReferer,
                     visited = visited,
                     subtitleCallback = subtitleCallback,
                     callback = safeCallback
