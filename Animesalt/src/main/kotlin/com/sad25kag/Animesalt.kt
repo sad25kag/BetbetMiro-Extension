@@ -38,14 +38,18 @@ class Animesalt : MainAPI() {
 
     override val mainPage =
             mainPageOf(
-                    "category/status/ongoing" to "On-Air Shows",
-                    "category/type/anime/?type=series" to "New Anime Arrivals",
-                    "category/type/cartoon/?type=series" to "Just In: Cartoon Series",
-                    "category/type/anime/?type=movies" to "Latest Anime Movies",
-                    "category/type/cartoon/?type=movies" to "Fresh Cartoon Films",
-                    "category/network/crunchyroll" to "Crunchyroll",
-                    "category/network/netflix" to "Netflix",
-                    "category/network/prime-video" to "Prime Video"
+                    "category/anime/" to "Anime",
+                    "category/cartoon/" to "Cartoon",
+                    "series/" to "Series",
+                    "movies/" to "Movies",
+                    "category/network/disney-channel/" to "Disney Channel",
+                    "category/network/hungama-tv/" to "Hungama TV",
+                    "category/network/sony-yay/" to "Sony Yay",
+                    "category/network/cartoon-network/" to "Cartoon Network",
+                    "category/network/prime-video/" to "Prime Video",
+                    "category/network/netflix/" to "Netflix",
+                    "category/network/disney/" to "Disney+",
+                    "category/network/crunchyroll/" to "Crunchyroll"
             )
 
     override suspend fun getMainPage(page: Int, request: MainPageRequest): HomePageResponse {
