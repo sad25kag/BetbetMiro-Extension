@@ -117,7 +117,7 @@ object AnixCafeExtractorHelper {
 
         val patterns = listOf(
             Regex("""https?://[^\s"'<>\\]+?\.(?:m3u8|mp4|webm|txt)(?:\?[^"'<>\\\s]*)?""", RegexOption.IGNORE_CASE),
-            Regex("""https?://[^\s"'<>\\]+?(?:ok\.ru|okru|odnoklassniki|playmogo|dailymotion|geo\.dailymotion|dai\.ly|videoplayer\.vip|dood|streamwish|wishfast|filemoon|vidhide|vidguard|bembed|listeamed|vgfplay|streamtape|mp4upload|mixdrop|voe|streamruby|streamsb|sbembed|sbrapid|playersb|fembed|femax|abyss|lulustream|lulu|drive\.google|pcloud|terabox|pixeldrain)[^\s"'<>\\]*""", RegexOption.IGNORE_CASE),
+            Regex("""https?://[^\s"'<>\\]+?(?:ok\.ru|okru|odnoklassniki|dailymotion\.com|dai\.ly|playmogo|tion|geo\.dailymotion|dai\.ly|videoplayer\.vip|dood|streamwish|wishfast|filemoon|vidhide|vidguard|bembed|listeamed|vgfplay|streamtape|mp4upload|mixdrop|voe|streamruby|streamsb|sbembed|sbrapid|playersb|fembed|femax|abyss|lulustream|lulu|drive\.google|pcloud|terabox|pixeldrain)[^\s"'<>\\]*""", RegexOption.IGNORE_CASE),
             Regex("""(?:file|src|source|video_url|videoUrl|play_url|playUrl|hls|url|embed|embedUrl|embed_url)\s*[:=]\s*["']([^"']+)["']""", RegexOption.IGNORE_CASE),
             Regex("""["']((?:/|//)[^"']+\.(?:m3u8|mp4|webm|txt)[^"']*)["']""", RegexOption.IGNORE_CASE),
         )
