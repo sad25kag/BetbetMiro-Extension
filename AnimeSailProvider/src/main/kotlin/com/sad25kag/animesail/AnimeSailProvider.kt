@@ -140,9 +140,7 @@ class AnimeSailProvider : MainAPI() {
         }
 
         val hasNext = document.selectFirst(
-            "a.next",
-            "a.next.page-numbers",
-            ".pagination .next"
+            "a.next, a.next.page-numbers, .pagination .next"
         ) != null
 
         return results.toNewSearchResponseList(
