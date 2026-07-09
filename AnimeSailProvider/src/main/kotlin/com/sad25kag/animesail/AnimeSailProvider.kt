@@ -15,7 +15,6 @@ import com.lagradost.cloudstream3.utils.INFER_TYPE
 import com.lagradost.cloudstream3.utils.Qualities
 import com.lagradost.cloudstream3.utils.loadExtractor
 import com.lagradost.cloudstream3.utils.newExtractorLink
-import com.lagradost.cloudstream3.utils.newSearchResponseList
 import com.lagradost.nicehttp.NiceResponse
 import kotlinx.coroutines.runBlocking
 import org.json.JSONObject
@@ -123,21 +122,13 @@ class AnimeSailProvider : MainAPI() {
         }
     }
 
-    override suspend fun search(query: String, page: Int): SearchResponseList? {
-        val encodedQuery = query.replace(" ", "+")
-        val link = if (page <= 1) {
-            "$mainUrl/?s=$encodedQuery"
-        } else {
-            "$mainUrl/page/$page/?s=$encodedQuery"
-        }
-
+    override suspend fun search(query: String): List<SearchResponse> {
+        val link = "$mainUrl/?s=$query"
         val document = request(link).document
 
-        val results = document.select("div.listupd article").map {
+        return document.select("div.listupd article").map {
             it.toSearchResult()
         }
-
-        return results.newSearchResponseList()
     }
 
     override suspend fun load(url: String): LoadResponse {
