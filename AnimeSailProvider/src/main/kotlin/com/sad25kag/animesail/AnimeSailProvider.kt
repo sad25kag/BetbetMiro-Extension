@@ -1,10 +1,12 @@
 package com.animesail
 
+import java.net.URLEncoder
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties
 import com.fasterxml.jackson.annotation.JsonProperty
 import com.fasterxml.jackson.databind.DeserializationFeature
 import com.fasterxml.jackson.databind.ObjectMapper
 import com.lagradost.cloudstream3.*
+import com.lagradost.cloudstream3.toNewSearchResponseList
 import com.lagradost.cloudstream3.LoadResponse.Companion.addAniListId
 import com.lagradost.cloudstream3.LoadResponse.Companion.addKitsuId
 import com.lagradost.cloudstream3.LoadResponse.Companion.addMalId
@@ -122,13 +124,30 @@ class AnimeSailProvider : MainAPI() {
         }
     }
 
-    override suspend fun search(query: String): List<SearchResponse> {
-        val link = "$mainUrl/?s=$query"
+    override suspend fun search(query: String, page: Int): SearchResponseList? {
+        val encodedQuery = URLEncoder.encode(query, "UTF-8")
+
+        val link = if (page <= 1) {
+            "$mainUrl/?s=$encodedQuery"
+        } else {
+            "$mainUrl/page/$page/?s=$encodedQuery"
+        }
+
         val document = request(link).document
 
-        return document.select("div.listupd article").map {
+        val results = document.select("div.listupd article").map {
             it.toSearchResult()
         }
+
+        val hasNext = document.selectFirst(
+            "a.next",
+            "a.next.page-numbers",
+            ".pagination .next"
+        ) != null
+
+        return results.toNewSearchResponseList(
+            hasNext = hasNext
+        )
     }
 
     override suspend fun load(url: String): LoadResponse {
