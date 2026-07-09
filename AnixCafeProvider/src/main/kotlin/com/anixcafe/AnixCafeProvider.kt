@@ -20,20 +20,12 @@ class AnixCafeProvider : MainAPI() {
     )
 
     override val mainPage = mainPageOf(
-        "$mainUrl/anime/?order=update&status=&type=&page=%d" to "Pembaruan Terbaru",
-        "$mainUrl/anime/?order=added&status=&type=&page=%d" to "Terbaru Ditambahkan",
-        "$mainUrl/anime/?order=popular&status=&type=&page=%d" to "Populer",
-        "$mainUrl/anime/?order=update&status=ongoing&type=&page=%d" to "Ongoing",
-        "$mainUrl/anime/?order=update&status=completed&type=&page=%d" to "Completed",
-        "$mainUrl/anime/?order=update&status=&type=ova&page=%d" to "OVA",
-        "$mainUrl/genres/action/page/%d/" to "Action",
-        "$mainUrl/genres/adventure/page/%d/" to "Adventure",
-        "$mainUrl/genres/comedy/page/%d/" to "Comedy",
-        "$mainUrl/genres/drama/page/%d/" to "Drama",
-        "$mainUrl/genres/fantasy/page/%d/" to "Fantasy",
-        "$mainUrl/genres/martial-arts/page/%d/" to "Martial Arts",
-        "$mainUrl/genres/romance/page/%d/" to "Romance",
-        "$mainUrl/genres/wuxia/page/%d/" to "Wuxia",
+        "$mainUrl/anime/?type=tv&order=update&page=%d" to "Anime Terbaru",
+        "$mainUrl/anime/?status=&type=ova&sub=&order=update&page=%d" to "OVA Terbaru",
+        "$mainUrl/anime/?type=ona&order=update&page=%d" to "Donghua Terbaru",
+        "$mainUrl/anime/?type=movie&order=update&page=%d" to "Movie Terbaru",
+        "$mainUrl/anime/?status=&type=live+action&sub=&order=update&page=%d" to "Live Action",
+        "$mainUrl/anime/?type=special&order=update&page=%d" to "Spesial",
     )
 
     override suspend fun getMainPage(page: Int, request: MainPageRequest): HomePageResponse {
