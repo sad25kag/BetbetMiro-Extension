@@ -66,14 +66,9 @@ class Anoboy : MainAPI() {
         val pageUrl = buildPageUrl(request.data, page)
         val document = app.get(pageUrl, headers = defaultHeaders()).document
 
-        val items = collectCards(document)
-            .filter { card ->
-                when (request.name) {
-                    "OVA" -> card.type == TvType.OVA
-                    "Movie" -> card.type == TvType.AnimeMovie
-                    else -> true
-                }
-            }
+        val categoryType = categoryTypeFromUrl(pageUrl)
+
+        val items = collectCards(document, categoryType)
             .distinctBy { it.url }
             .map { it.toSearchResponse() }
 
@@ -518,7 +513,15 @@ class Anoboy : MainAPI() {
         return tags.toList()
     }
 
-    private fun collectCards(document: Document): List<CardData> {
+    private fun categoryTypeFromUrl(url: String): TvType? {
+        return when {
+            url.contains("type=ova", true) -> TvType.OVA
+            url.contains("type=movie", true) -> TvType.AnimeMovie
+            else -> null
+        }
+    }
+
+    private fun collectCards(document: Document, forcedType: TvType? = null): List<CardData> {
         val selectors = listOf(
             "article.bs",
             "div.bs",
@@ -538,7 +541,7 @@ class Anoboy : MainAPI() {
         ).joinToString(", ")
 
         return document.select(selectors)
-            .mapNotNull { it.toCardData() }
+            .mapNotNull { it.toCardData(forcedType) }
             .filterNot { isNavigationTitle(it.title) }
             .distinctBy { it.url }
     }
@@ -547,11 +550,11 @@ class Anoboy : MainAPI() {
         return document.select(
             "a[href]:has(div.amv), a[href]:has(div#amv), a[href*='/anime/'], " +
                 "div.listupd article.bs, article.bs, div.bs, .topten .serieslist li"
-        ).mapNotNull { it.toCardData() }
+        ).mapNotNull { it.toCardData(forcedType) }
             .filterNot { isNavigationTitle(it.title) }
     }
 
-    private fun Element.toCardData(): CardData? {
+    private fun Element.toCardData(forcedType: TvType? = null): CardData? {
         val href = when {
             tagName().equals("a", true) -> attr("href")
             else -> selectFirst("a[href]")?.attr("href").orEmpty()
@@ -573,7 +576,7 @@ class Anoboy : MainAPI() {
         if (title.length < 2 || isNavigationTitle(title)) return null
 
         val episode = parseEpisodeNumber(rawTitle) ?: parseEpisodeNumber(title) ?: parseEpisodeNumber(fixedHref)
-        val type = detectType(fixedHref, rawTitle, title)
+        val type = forcedType ?: detectType(fixedHref, rawTitle, title)
 
         val poster = selectFirst("img")?.imageAttr()?.let { fixUrlNull(it) }
 
