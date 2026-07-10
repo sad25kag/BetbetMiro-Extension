@@ -541,7 +541,7 @@ class Anoboy : MainAPI() {
         ).joinToString(", ")
 
         return document.select(selectors)
-            .mapNotNull { it.toCardData(forcedType) }
+            .mapNotNull { it.toCardData(null) }
             .filterNot { isNavigationTitle(it.title) }
             .distinctBy { it.url }
     }
