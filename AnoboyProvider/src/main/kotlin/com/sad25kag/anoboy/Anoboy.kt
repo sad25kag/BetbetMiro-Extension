@@ -541,7 +541,7 @@ class Anoboy : MainAPI() {
         ).joinToString(", ")
 
         return document.select(selectors)
-            .mapNotNull { it.toCardData(null) }
+            .mapNotNull { it.toCardData(forcedType) }
             .filterNot { isNavigationTitle(it.title) }
             .distinctBy { it.url }
     }
@@ -550,7 +550,7 @@ class Anoboy : MainAPI() {
         return document.select(
             "a[href]:has(div.amv), a[href]:has(div#amv), a[href*='/anime/'], " +
                 "div.listupd article.bs, article.bs, div.bs, .topten .serieslist li"
-        ).mapNotNull { it.toCardData(forcedType) }
+        ).mapNotNull { it.toCardData(null) }
             .filterNot { isNavigationTitle(it.title) }
     }
 
