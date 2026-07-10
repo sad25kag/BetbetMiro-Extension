@@ -67,6 +67,13 @@ class Anoboy : MainAPI() {
         val document = app.get(pageUrl, headers = defaultHeaders()).document
 
         val items = collectCards(document)
+            .filter { card ->
+                when (request.name) {
+                    "OVA" -> card.type == TvType.OVA
+                    "Movie" -> card.type == TvType.AnimeMovie
+                    else -> true
+                }
+            }
             .distinctBy { it.url }
             .map { it.toSearchResponse() }
 
