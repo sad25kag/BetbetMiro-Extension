@@ -546,7 +546,7 @@ class Anoboy : MainAPI() {
         return document.select(
             "a[href]:has(div.amv), a[href]:has(div#amv), a[href*='/anime/'], " +
                 "div.listupd article.bs, article.bs, div.bs, .topten .serieslist li"
-        ).mapNotNull { it.toCardData(forcedType) }
+        ).mapNotNull { it.toCardData(null) }
             .filterNot { isNavigationTitle(it.title) }
     }
 
