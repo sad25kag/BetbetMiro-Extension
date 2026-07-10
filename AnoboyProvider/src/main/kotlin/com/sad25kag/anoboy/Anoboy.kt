@@ -12,14 +12,6 @@ import org.jsoup.parser.Parser
 class Anoboy : MainAPI() {
     override var mainUrl = "https://anoboy.be"
     override var name = "AnoBoy"
-
-    private val domainAliases = setOf(
-        "anoboy.be",
-        "www.anoboy.be",
-        "www1.anoboy.be",
-        "anoboy.watch",
-        "www1.anoboy.boo"
-    )
     override val hasMainPage = true
     override val hasQuickSearch = true
     override val hasDownloadSupport = true
@@ -47,43 +39,30 @@ class Anoboy : MainAPI() {
     )
 
     private fun buildPageUrl(data: String, page: Int): String {
-        val raw = data.trim()
-        if (raw.isBlank()) return if (page <= 1) mainUrl else "$mainUrl/page/$page/"
+        val url = normalizeAnoboyUrl(data.trim())
+        if (page <= 1) return url
 
-        val firstPage = normalizeAnoboyUrl(raw)
-        if (page <= 1) return firstPage
-
-        val uri = URI(firstPage)
-        val base = "${uri.scheme}://${uri.host}${uri.path.substringBeforeLast("/")}".trimEnd('/')
-        val query = uri.query.orEmpty()
+        val uri = URI(url)
+        val params = uri.query.orEmpty()
             .split("&")
             .filter { it.isNotBlank() && !it.startsWith("page=") }
-            .joinToString("&")
+            .toMutableList()
+        params.add("page=$page")
 
-        val separator = if (query.isBlank()) "" else "&$query"
-        return "$base?${"page=$page"}$separator"
+        return URI(uri.scheme, uri.authority, uri.path, params.joinToString("&"), uri.fragment).toString()
     }
 
     override suspend fun getMainPage(page: Int, request: MainPageRequest): HomePageResponse {
         val pageUrl = buildPageUrl(request.data, page)
         val document = app.get(pageUrl, headers = defaultHeaders()).document
 
-        val forcedType = when {
-            pageUrl.contains("type=ova", true) -> TvType.OVA
-            pageUrl.contains("type=movie", true) -> TvType.AnimeMovie
-            else -> null
-        }
-
-        val items = collectCards(document, forcedType)
+        val items = collectCards(document)
             .distinctBy { it.url }
             .map { it.toSearchResponse() }
 
-        val hasNext = document.select(
-            ".wp-pagenavi a, .pagination a, a.nextpostslink, a.next, a[rel=next]"
-        ).any {
-            val href = it.attr("href")
-            href.contains("page=${page + 1}") || href.contains("page/${page + 1}") || it.text().contains("Next", true)
-        }
+        val hasNext = document.selectFirst(
+            ".wp-pagenavi a.nextpostslink, a.next, a[rel=next], a[href*='page=${page + 1}'], a[href*='/page/${page + 1}/']"
+        ) != null
 
         return newHomePageResponse(
             listOf(HomePageList(request.name, items, isHorizontalImages = true)),
@@ -522,7 +501,7 @@ class Anoboy : MainAPI() {
         return tags.toList()
     }
 
-    private fun collectCards(document: Document, forcedType: TvType? = null): List<CardData> {
+    private fun collectCards(document: Document): List<CardData> {
         val selectors = listOf(
             "article.bs",
             "div.bs",
@@ -542,7 +521,7 @@ class Anoboy : MainAPI() {
         ).joinToString(", ")
 
         return document.select(selectors)
-            .mapNotNull { it.toCardData(forcedType) }
+            .mapNotNull { it.toCardData() }
             .filterNot { isNavigationTitle(it.title) }
             .distinctBy { it.url }
     }
@@ -551,11 +530,11 @@ class Anoboy : MainAPI() {
         return document.select(
             "a[href]:has(div.amv), a[href]:has(div#amv), a[href*='/anime/'], " +
                 "div.listupd article.bs, article.bs, div.bs, .topten .serieslist li"
-        ).mapNotNull { it.toCardData(null) }
+        ).mapNotNull { it.toCardData() }
             .filterNot { isNavigationTitle(it.title) }
     }
 
-    private fun Element.toCardData(forcedType: TvType? = null): CardData? {
+    private fun Element.toCardData(): CardData? {
         val href = when {
             tagName().equals("a", true) -> attr("href")
             else -> selectFirst("a[href]")?.attr("href").orEmpty()
@@ -577,7 +556,7 @@ class Anoboy : MainAPI() {
         if (title.length < 2 || isNavigationTitle(title)) return null
 
         val episode = parseEpisodeNumber(rawTitle) ?: parseEpisodeNumber(title) ?: parseEpisodeNumber(fixedHref)
-        val type = forcedType ?: detectType(fixedHref, rawTitle, title)
+        val type = detectType(fixedHref, rawTitle, title)
 
         val poster = selectFirst("img")?.imageAttr()?.let { fixUrlNull(it) }
 
@@ -857,7 +836,6 @@ class Anoboy : MainAPI() {
     private fun normalizeAnoboyUrl(raw: String): String {
         val trimmed = raw.trim()
         if (trimmed.isBlank()) return mainUrl
-
         val fixed = when {
             trimmed.startsWith("//") -> "https:$trimmed"
             trimmed.startsWith("/") -> "$mainUrl$trimmed"
@@ -865,24 +843,17 @@ class Anoboy : MainAPI() {
             else -> "$mainUrl/${trimmed.trimStart('/')}"
         }
 
-        return runCatching {
-            val uri = URI(fixed)
-            val host = uri.host?.lowercase().orEmpty()
-
-            if (host.isBlank() || domainAliases.none { it.equals(host, ignoreCase = true) }) {
-                fixed
-            } else {
-                URI(
-                    mainUrl.substringBefore("://"),
-                    uri.userInfo,
-                    URI(mainUrl).host,
-                    uri.port,
-                    uri.path,
-                    uri.query,
-                    uri.fragment
-                ).toString()
-            }
-        }.getOrDefault(fixed)
+        return fixed
+            .replace("https://www1.anoboy.boo", mainUrl, ignoreCase = true)
+            .replace("http://www1.anoboy.boo", mainUrl, ignoreCase = true)
+            .replace("https://anoboy.be", mainUrl, ignoreCase = true)
+            .replace("http://anoboy.be", mainUrl, ignoreCase = true)
+            .replace("https://www.anoboy.be", mainUrl, ignoreCase = true)
+            .replace("http://www.anoboy.be", mainUrl, ignoreCase = true)
+            .replace("https://www1.anoboy.be", mainUrl, ignoreCase = true)
+            .replace("http://www1.anoboy.be", mainUrl, ignoreCase = true)
+            .replace("https://anoboy.watch", mainUrl, ignoreCase = true)
+            .replace("http://anoboy.watch", mainUrl, ignoreCase = true)
     }
 
     private fun resolvePlayerUrl(raw: String?, base: String): String? {
