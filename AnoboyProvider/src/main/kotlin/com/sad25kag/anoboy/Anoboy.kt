@@ -12,6 +12,14 @@ import org.jsoup.parser.Parser
 class Anoboy : MainAPI() {
     override var mainUrl = "https://anoboy.be"
     override var name = "AnoBoy"
+
+    private val domainAliases = setOf(
+        "anoboy.be",
+        "www.anoboy.be",
+        "www1.anoboy.be",
+        "anoboy.watch",
+        "www1.anoboy.boo"
+    )
     override val hasMainPage = true
     override val hasQuickSearch = true
     override val hasDownloadSupport = true
@@ -838,6 +846,7 @@ class Anoboy : MainAPI() {
     private fun normalizeAnoboyUrl(raw: String): String {
         val trimmed = raw.trim()
         if (trimmed.isBlank()) return mainUrl
+
         val fixed = when {
             trimmed.startsWith("//") -> "https:$trimmed"
             trimmed.startsWith("/") -> "$mainUrl$trimmed"
@@ -845,17 +854,24 @@ class Anoboy : MainAPI() {
             else -> "$mainUrl/${trimmed.trimStart('/')}"
         }
 
-        return fixed
-            .replace("https://www1.anoboy.boo", mainUrl, ignoreCase = true)
-            .replace("http://www1.anoboy.boo", mainUrl, ignoreCase = true)
-            .replace("https://anoboy.be", mainUrl, ignoreCase = true)
-            .replace("http://anoboy.be", mainUrl, ignoreCase = true)
-            .replace("https://www.anoboy.be", mainUrl, ignoreCase = true)
-            .replace("http://www.anoboy.be", mainUrl, ignoreCase = true)
-            .replace("https://www1.anoboy.be", mainUrl, ignoreCase = true)
-            .replace("http://www1.anoboy.be", mainUrl, ignoreCase = true)
-            .replace("https://anoboy.watch", mainUrl, ignoreCase = true)
-            .replace("http://anoboy.watch", mainUrl, ignoreCase = true)
+        return runCatching {
+            val uri = URI(fixed)
+            val host = uri.host?.lowercase().orEmpty()
+
+            if (host.isBlank() || domainAliases.none { it.equals(host, ignoreCase = true) }) {
+                fixed
+            } else {
+                URI(
+                    mainUrl.substringBefore("://"),
+                    uri.userInfo,
+                    URI(mainUrl).host,
+                    uri.port,
+                    uri.path,
+                    uri.query,
+                    uri.fragment
+                ).toString()
+            }
+        }.getOrDefault(fixed)
     }
 
     private fun resolvePlayerUrl(raw: String?, base: String): String? {
