@@ -53,13 +53,15 @@ class Anoboy : MainAPI() {
         val firstPage = normalizeAnoboyUrl(raw)
         if (page <= 1) return firstPage
 
-        val base = firstPage.substringBefore("?").trimEnd('/')
-        val query = firstPage.substringAfter("?", "")
-        return if (query.isBlank() || query == firstPage) {
-            "$base/page/$page/"
-        } else {
-            "$base/page/$page/?$query"
-        }
+        val uri = URI(firstPage)
+        val base = "${uri.scheme}://${uri.host}${uri.path.substringBeforeLast("/")}".trimEnd('/')
+        val query = uri.query.orEmpty()
+            .split("&")
+            .filter { it.isNotBlank() && !it.startsWith("page=") }
+            .joinToString("&")
+
+        val separator = if (query.isBlank()) "" else "&$query"
+        return "$base?${"page=$page"}$separator"
     }
 
     override suspend fun getMainPage(page: Int, request: MainPageRequest): HomePageResponse {
