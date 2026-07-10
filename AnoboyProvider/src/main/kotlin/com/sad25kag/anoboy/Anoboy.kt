@@ -66,9 +66,13 @@ class Anoboy : MainAPI() {
         val pageUrl = buildPageUrl(request.data, page)
         val document = app.get(pageUrl, headers = defaultHeaders()).document
 
-        val categoryType = categoryTypeFromUrl(pageUrl)
+        val forcedType = when {
+            pageUrl.contains("type=ova", true) -> TvType.OVA
+            pageUrl.contains("type=movie", true) -> TvType.AnimeMovie
+            else -> null
+        }
 
-        val items = collectCards(document, categoryType)
+        val items = collectCards(document, forcedType)
             .distinctBy { it.url }
             .map { it.toSearchResponse() }
 
@@ -513,14 +517,6 @@ class Anoboy : MainAPI() {
         return tags.toList()
     }
 
-    private fun categoryTypeFromUrl(url: String): TvType? {
-        return when {
-            url.contains("type=ova", true) -> TvType.OVA
-            url.contains("type=movie", true) -> TvType.AnimeMovie
-            else -> null
-        }
-    }
-
     private fun collectCards(document: Document, forcedType: TvType? = null): List<CardData> {
         val selectors = listOf(
             "article.bs",
@@ -550,7 +546,7 @@ class Anoboy : MainAPI() {
         return document.select(
             "a[href]:has(div.amv), a[href]:has(div#amv), a[href*='/anime/'], " +
                 "div.listupd article.bs, article.bs, div.bs, .topten .serieslist li"
-        ).mapNotNull { it.toCardData(null) }
+        ).mapNotNull { it.toCardData(forcedType) }
             .filterNot { isNavigationTitle(it.title) }
     }
 
