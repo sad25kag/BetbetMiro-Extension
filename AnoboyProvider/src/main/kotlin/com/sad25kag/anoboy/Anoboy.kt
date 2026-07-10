@@ -88,16 +88,29 @@ class Anoboy : MainAPI() {
 
         val searchResults = mutableListOf<CardData>()
 
-        // Anoboy uses query based pagination. Collect available search pages
-        // instead of stopping after the first result page.
-        for (page in 1..5) {
+        // Anoboy uses query based pagination. Continue collecting pages
+        // until the source no longer provides new results.
+        var page = 1
+        val visitedUrls = mutableSetOf<String>()
+
+        while (true) {
             val pageUrl = if (page == 1) {
                 "$mainUrl/?s=$encodedQuery"
             } else {
                 "$mainUrl/?page=$page&s=$encodedQuery"
             }
 
-            searchResults += parseSearchPage(pageUrl)
+            if (!visitedUrls.add(pageUrl)) break
+
+            val pageResults = parseSearchPage(pageUrl)
+            if (pageResults.isEmpty()) break
+
+            val before = searchResults.size
+            searchResults += pageResults
+
+            if (searchResults.size == before) break
+
+            page++
         }
 
         val uniqueResults = searchResults.distinctBy { it.url }
