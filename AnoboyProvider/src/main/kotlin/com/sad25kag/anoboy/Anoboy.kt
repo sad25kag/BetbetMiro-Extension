@@ -78,9 +78,12 @@ class Anoboy : MainAPI() {
             .distinctBy { it.url }
             .map { it.toSearchResponse() }
 
-        val hasNext = document.selectFirst(
-            ".wp-pagenavi a.nextpostslink, a.next, a[rel=next], a[href*='/page/${page + 1}/']"
-        ) != null
+        val hasNext = document.select(
+            ".wp-pagenavi a, .pagination a, a.nextpostslink, a.next, a[rel=next]"
+        ).any {
+            val href = it.attr("href")
+            href.contains("page=${page + 1}") || href.contains("page/${page + 1}") || it.text().contains("Next", true)
+        }
 
         return newHomePageResponse(
             listOf(HomePageList(request.name, items, isHorizontalImages = true)),
