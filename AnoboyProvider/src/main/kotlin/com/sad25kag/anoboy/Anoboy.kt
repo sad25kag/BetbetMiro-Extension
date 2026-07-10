@@ -24,31 +24,10 @@ class Anoboy : MainAPI() {
     )
 
     override val mainPage = mainPageOf(
-        "" to "Update Terbaru",
-        "anime/?type=movie" to "Movie",
-        "az-list/" to "Anime List",
-        "genres/action/" to "Action",
-        "genres/adventure/" to "Adventure",
-        "genres/comedy/" to "Comedy",
-        "genres/drama/" to "Drama",
-        "genres/ecchi/" to "Ecchi",
-        "genres/fantasy/" to "Fantasy",
-        "genres/harem/" to "Harem",
-        "genres/historical/" to "Historical",
-        "genres/horror/" to "Horror",
-        "genres/isekai/" to "Isekai",
-        "genres/martial-arts/" to "Martial Arts",
-        "genres/mecha/" to "Mecha",
-        "genres/music/" to "Music",
-        "genres/mystery/" to "Mystery",
-        "genres/psychological/" to "Psychological",
-        "genres/romance/" to "Romance",
-        "genres/school/" to "School",
-        "genres/sci-fi/" to "Sci-Fi",
-        "genres/seinen/" to "Seinen",
-        "genres/shoujo/" to "Shoujo",
-        "genres/shounen/" to "Shounen",
-        "genres/slice-of-life/" to "Slice of Life"
+        "anime/?type=tv&sub=&order=update" to "Terbaru",
+        "anime/?status=&type=ona&order=update" to "Anime",
+        "anime/?status=&type=ova&order=update" to "OVA",
+        "anime/?type=movie&sub=&order=update" to "Movie"
     )
 
     private data class CardData(
