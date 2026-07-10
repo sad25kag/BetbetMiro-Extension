@@ -371,14 +371,14 @@
     {
         "url": "https://raw.githubusercontent.com/sad25kag/BetbetMiro-Extension/builds/AnoboyProvider.cs3",
         "status": 1,
-        "version": 32,
+        "version": 33,
         "name": "AnoboyProvider",
         "internalName": "AnoboyProvider",
         "authors": [
             "sad25kag"
         ],
         "description": "AnoBoy \u2014 Streaming Anime Subtitle Indonesia",
-        "fileSize": 48963,
+        "fileSize": 48971,
         "repositoryUrl": "https://github.com/sad25kag/BetbetMiro-Extension",
         "language": "id",
         "tvTypes": [
@@ -388,7 +388,7 @@
         ],
         "iconUrl": "https://t2.gstatic.com/faviconV2?client=SOCIAL&type=FAVICON&fallback_opts=TYPE,SIZE,URL&url=https://anoboy.be&size=%size%",
         "apiVersion": 1,
-        "fileHash": "sha256-80c9bd84e8cb6cebcfd3e16939f7714bf6f3717437d67c3f23c61908d13c48d5"
+        "fileHash": "sha256-608db494f0a8341e2e3d2303f454cf33509c8224596d8aa22853bec78ce7431c"
     },
     {
         "url": "https://raw.githubusercontent.com/sad25kag/BetbetMiro-Extension/builds/Astronime.cs3",
