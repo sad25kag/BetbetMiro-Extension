@@ -85,23 +85,14 @@ class Anoboy : MainAPI() {
         }.getOrNull()
 
         val results = document?.let {
-            collectCards(it)
+            collectSearchCards(it)
                 .distinctBy { card -> card.url }
                 .map { it.toSearchResponse() }
         } ?: emptyList()
 
-        val hasNext = document?.let { doc ->
-            val nextPage = page + 1
-            val hasPageLink = doc.select("a[href]").any { element ->
-                val href = element.attr("href")
-                Regex("""[?&]page=$nextPage(&|$)""")
-                    .containsMatchIn(href)
-            }
-
-            // Anoboy search pages may not expose pagination links in HTML.
-            // Keep loading while the current page still returns results.
-            hasPageLink || (results.isNotEmpty() && page < 50)
-        } ?: false
+        // Anoboy search does not reliably expose pagination links.
+        // Let CloudStream request the next page while this page contains results.
+        val hasNext = results.isNotEmpty() && page < 50
 
         return results.toNewSearchResponseList(
             hasNext = hasNext
@@ -484,6 +475,23 @@ class Anoboy : MainAPI() {
         }
 
         return tags.toList()
+    }
+
+
+
+    private fun collectSearchCards(document: Document): List<CardData> {
+        val searchSelectors = listOf(
+            ".listupd .bs",
+            ".listupd article.bs",
+            ".result .bs",
+            ".result li",
+            ".search-page .bs"
+        ).joinToString(", ")
+
+        return document.select(searchSelectors)
+            .mapNotNull { it.toCardData() }
+            .filterNot { isNavigationTitle(it.title) }
+            .distinctBy { it.url }
     }
 
     private fun collectCards(document: Document): List<CardData> {
