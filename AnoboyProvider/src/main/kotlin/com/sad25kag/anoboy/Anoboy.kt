@@ -86,9 +86,6 @@ class Anoboy : MainAPI() {
 
         val results = document?.let {
             collectCards(it)
-                .filter { card ->
-                    query.isBlank() || card.title.contains(query, ignoreCase = true)
-                }
                 .distinctBy { card -> card.url }
                 .map { it.toSearchResponse() }
         } ?: emptyList()
