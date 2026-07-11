@@ -9,6 +9,7 @@ import com.lagradost.cloudstream3.MainAPI
 import com.lagradost.cloudstream3.MainPageRequest
 import com.lagradost.cloudstream3.SearchResponse
 import com.lagradost.cloudstream3.SearchResponseList
+import com.lagradost.cloudstream3.newSearchResponseList
 import com.lagradost.cloudstream3.ShowStatus
 import com.lagradost.cloudstream3.SubtitleFile
 import com.lagradost.cloudstream3.newSubtitleFile
@@ -91,7 +92,10 @@ class AstronimeProvider : MainAPI() {
 
         val document = app.get(url, referer = mainUrl, timeout = 30).document
         document.setBaseUri(url)
-        return SearchResponseList(document.parseSearchResults(query))
+        return newSearchResponseList(
+            document.parseSearchResults(query),
+            hasNext = document.parseSearchResults(query).isNotEmpty()
+        )
     }
 
     override suspend fun load(url: String): LoadResponse {
