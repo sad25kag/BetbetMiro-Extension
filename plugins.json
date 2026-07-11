@@ -378,7 +378,7 @@
             "sad25kag"
         ],
         "description": "AnoBoy \u2014 Streaming Anime Subtitle Indonesia",
-        "fileSize": 50163,
+        "fileSize": 50595,
         "repositoryUrl": "https://github.com/sad25kag/BetbetMiro-Extension",
         "language": "id",
         "tvTypes": [
@@ -388,7 +388,7 @@
         ],
         "iconUrl": "https://t2.gstatic.com/faviconV2?client=SOCIAL&type=FAVICON&fallback_opts=TYPE,SIZE,URL&url=https://anoboy.be&size=%size%",
         "apiVersion": 1,
-        "fileHash": "sha256-b0534757a0f89ddf39aa27967bab95f56cdd68c0826f02640d74ee4e24526817"
+        "fileHash": "sha256-884bb83688d8d95965a24848531eb3751dfdcf7f79930ca7d5f269085fb2481a"
     },
     {
         "url": "https://raw.githubusercontent.com/sad25kag/BetbetMiro-Extension/builds/Astronime.cs3",
@@ -1796,7 +1796,7 @@
             "sad25kag"
         ],
         "description": "#1 best extention based on MultiAPI",
-        "fileSize": 183470,
+        "fileSize": 183617,
         "repositoryUrl": "https://github.com/sad25kag/BetbetMiro-Extension",
         "language": "id",
         "tvTypes": [
@@ -1807,7 +1807,7 @@
         ],
         "iconUrl": "https://github.com/duro92/ExtCloud/blob/main/SoraStream/Icon.png",
         "apiVersion": 1,
-        "fileHash": "sha256-8bb6cd2f1e9375fb720e30f9b6c07306322b2afd33f042741f0b04c6df7088f6"
+        "fileHash": "sha256-823691321e863ce614125411d878a68534d754ff632132fd2e12d8941c0d4ebf"
     },
     {
         "url": "https://raw.githubusercontent.com/sad25kag/BetbetMiro-Extension/builds/StreamPlay.cs3",
@@ -1819,7 +1819,7 @@
             "sad25kag"
         ],
         "description": "#1 best extention based on MultiAPI",
-        "fileSize": 958230,
+        "fileSize": 958757,
         "repositoryUrl": "https://github.com/sad25kag/BetbetMiro-Extension",
         "language": "id",
         "tvTypes": [
@@ -1832,7 +1832,7 @@
         ],
         "iconUrl": "https://i3.wp.com/yt3.googleusercontent.com/ytc/AIdro_nCBArSmvOc6o-k2hTYpLtQMPrKqGtAw_nC20rxm70akA=s900-c-k-c0x00ffffff-no-rj?ssl=1",
         "apiVersion": 1,
-        "fileHash": "sha256-231c757d3fd5dd9f2a003f75a6fd8fcc67f8a41092bc918a3232c58d86368544"
+        "fileHash": "sha256-6c1abdba268b9bca0699ca601c6b4f27f77d4dea8b28041bd1450bd0b587fadf"
     },
     {
         "url": "https://raw.githubusercontent.com/sad25kag/BetbetMiro-Extension/builds/Terbit21.cs3",
