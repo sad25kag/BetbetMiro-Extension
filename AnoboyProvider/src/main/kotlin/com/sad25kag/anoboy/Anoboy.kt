@@ -77,7 +77,7 @@ class Anoboy : MainAPI() {
         val url = if (page <= 1) {
             "$mainUrl/?s=$encodedQuery"
         } else {
-            "$mainUrl/?page=$page&s=$encodedQuery"
+            "$mainUrl/page/$page/?s=$encodedQuery"
         }
 
         val document = runCatching {
