@@ -59,15 +59,15 @@ class AstronimeProvider : MainAPI() {
     )
 
     override suspend fun getMainPage(page: Int, request: MainPageRequest): HomePageResponse {
-        if (page > 1) {
-            return newHomePageResponse(
-                HomePageList(request.name, emptyList(), request.horizontalImages),
-                hasNext = false
-            )
+        val basePath = fixUrl(request.data).trimEnd('/')
+        val url = if (page <= 1) {
+            "$basePath/"
+        } else {
+            "$basePath/page/$page/"
         }
 
-        val document = app.get(fixUrl(request.data), referer = mainUrl, timeout = 30).document
-        document.setBaseUri(fixUrl(request.data))
+        val document = app.get(url, referer = mainUrl, timeout = 30).document
+        document.setBaseUri(url)
         val cards = document.parseHomeSection(request.name)
 
         return newHomePageResponse(
@@ -76,7 +76,7 @@ class AstronimeProvider : MainAPI() {
                 list = cards,
                 isHorizontalImages = request.horizontalImages
             ),
-            hasNext = false
+            hasNext = cards.isNotEmpty()
         )
     }
 
