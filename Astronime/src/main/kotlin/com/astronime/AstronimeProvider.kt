@@ -80,10 +80,16 @@ class AstronimeProvider : MainAPI() {
         )
     }
 
-    override suspend fun search(query: String): List<SearchResponse> {
+    override suspend fun search(query: String, page: Int): List<SearchResponse> {
         val encodedQuery = URLEncoder.encode(query, "UTF-8")
-        val document = app.get("$mainUrl/?s=$encodedQuery", referer = mainUrl, timeout = 30).document
-        document.setBaseUri("$mainUrl/?s=$encodedQuery")
+        val url = if (page == 1) {
+            "$mainUrl/?s=$encodedQuery"
+        } else {
+            "$mainUrl/page/$page/?s=$encodedQuery"
+        }
+
+        val document = app.get(url, referer = mainUrl, timeout = 30).document
+        document.setBaseUri(url)
         return document.parseSearchResults(query)
     }
 
@@ -320,7 +326,7 @@ class AstronimeProvider : MainAPI() {
 
         return candidates.mapNotNull { it.toSearchResult(sectionName, requirePoster = true) }
             .distinctBy { it.url }
-            .take(30)
+            
     }
 
     private fun Document.findSectionCandidates(sectionName: String, selector: String): List<Element> {
@@ -348,7 +354,7 @@ class AstronimeProvider : MainAPI() {
             .mapNotNull { it.toSearchResult(requirePoster = false) }
             .filter { it.matchesSearchQuery(searchTokens) }
             .distinctBy { it.url }
-            .take(30)
+            
     }
 
     private fun Document.searchResultCandidates(): List<Element> {
