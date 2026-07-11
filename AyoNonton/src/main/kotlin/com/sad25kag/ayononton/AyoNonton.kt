@@ -76,12 +76,6 @@ class AyoNonton : MainAPI() {
     override val mainPage = mainPageOf(
         "$mainUrl/tag/featured/" to "Featured",
         "$mainUrl/latest/" to "Terbaru",
-        "$mainUrl/genre/action/" to "Action",
-        "$mainUrl/genre/animation/" to "Animation",
-        "$mainUrl/genre/horror/" to "Horror",
-        "$mainUrl/genre/sci-fi/" to "Sci-Fi",
-        "$mainUrl/genre/comedy/" to "Comedy",
-        "$mainUrl/genre/romance/" to "Romance",
         "$mainUrl/country/china/" to "China",
         "$mainUrl/country/india/" to "India",
         "$mainUrl/country/japan/" to "Japan",
