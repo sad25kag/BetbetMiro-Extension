@@ -414,14 +414,14 @@
     {
         "url": "https://raw.githubusercontent.com/sad25kag/BetbetMiro-Extension/builds/AyoNonton.cs3",
         "status": 1,
-        "version": 12,
+        "version": 13,
         "name": "AyoNonton",
         "internalName": "AyoNonton",
         "authors": [
             "sad25kag"
         ],
         "description": "AyoNonton provider \u2014 evidence-based categories and HAR-aligned t21.press 540.php playback resolver",
-        "fileSize": 51131,
+        "fileSize": 50938,
         "repositoryUrl": "https://github.com/sad25kag/BetbetMiro-Extension",
         "language": "id",
         "tvTypes": [
@@ -430,7 +430,7 @@
         ],
         "iconUrl": "https://ayononton.live/wp-content/themes/muvipro/images/favicon/96x96.png",
         "apiVersion": 1,
-        "fileHash": "sha256-dba06e1205ac10147f4b8d1598701b8de7cd227677161919c19dfa70279369bd"
+        "fileHash": "sha256-548528aa6577194d98fd6f63d864f6d45b2ff5bd0abcb5c9be8f984ac9bef15c"
     },
     {
         "url": "https://raw.githubusercontent.com/sad25kag/BetbetMiro-Extension/builds/BetbetLiveTV.cs3",
