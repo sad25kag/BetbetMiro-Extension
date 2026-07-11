@@ -92,9 +92,11 @@ class AstronimeProvider : MainAPI() {
 
         val document = app.get(url, referer = mainUrl, timeout = 30).document
         document.setBaseUri(url)
+        val results = document.parseSearchResults(query)
+
         return newSearchResponseList(
-            document.parseSearchResults(query),
-            hasNext = document.parseSearchResults(query).isNotEmpty()
+            results,
+            hasNext = results.isNotEmpty()
         )
     }
 
