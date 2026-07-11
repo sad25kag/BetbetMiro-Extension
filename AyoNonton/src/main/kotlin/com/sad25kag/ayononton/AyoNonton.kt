@@ -15,6 +15,7 @@ import com.lagradost.cloudstream3.SearchResponse
 import com.lagradost.cloudstream3.SubtitleFile
 import com.lagradost.cloudstream3.TvType
 import com.lagradost.cloudstream3.app
+import com.lagradost.cloudstream3.fixUrl
 import com.lagradost.cloudstream3.newEpisode
 import com.lagradost.cloudstream3.newHomePageResponse
 import com.lagradost.cloudstream3.newMovieLoadResponse
@@ -286,7 +287,7 @@ class AyoNonton : MainAPI() {
     private fun parseListingPage(document: Document): List<SearchResponse> {
         return document.select("article.item, article.item-infinite, .gmr-box-content").mapNotNull { item ->
             val anchor = item.selectFirst("a[itemprop=url], .entry-title a, a[href]") ?: return@mapNotNull null
-            val href = anchor.absUrl("href").takeIf { it.startsWith(mainUrl) } ?: return@mapNotNull null
+            val href = fixUrl(anchor.attr("href")).takeIf { it.startsWith(mainUrl) } ?: return@mapNotNull null
             val rawTitle = anchor.attr("title")
                 .ifBlank { item.selectFirst(".entry-title a, h2 a, h3 a")?.text().orEmpty() }
                 .ifBlank { anchor.text() }
