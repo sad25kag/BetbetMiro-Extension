@@ -105,10 +105,12 @@ class Anoboy : MainAPI() {
             val pageResults = parseSearchPage(pageUrl)
             if (pageResults.isEmpty()) break
 
-            val before = searchResults.size
-            searchResults += pageResults
+            val existingUrls = searchResults.map { it.url }.toSet()
+            val newResults = pageResults.filter { it.url !in existingUrls }
 
-            if (searchResults.size == before) break
+            if (newResults.isEmpty()) break
+
+            searchResults += newResults
 
             page++
         }
