@@ -8,6 +8,7 @@ import com.lagradost.cloudstream3.LoadResponse
 import com.lagradost.cloudstream3.MainAPI
 import com.lagradost.cloudstream3.MainPageRequest
 import com.lagradost.cloudstream3.SearchResponse
+import com.lagradost.cloudstream3.SearchResponseList
 import com.lagradost.cloudstream3.ShowStatus
 import com.lagradost.cloudstream3.SubtitleFile
 import com.lagradost.cloudstream3.newSubtitleFile
@@ -80,7 +81,7 @@ class AstronimeProvider : MainAPI() {
         )
     }
 
-    override suspend fun search(query: String, page: Int): List<SearchResponse> {
+    override suspend fun search(query: String, page: Int): SearchResponseList? {
         val encodedQuery = URLEncoder.encode(query, "UTF-8")
         val url = if (page == 1) {
             "$mainUrl/?s=$encodedQuery"
@@ -90,7 +91,7 @@ class AstronimeProvider : MainAPI() {
 
         val document = app.get(url, referer = mainUrl, timeout = 30).document
         document.setBaseUri(url)
-        return document.parseSearchResults(query)
+        return SearchResponseList(document.parseSearchResults(query))
     }
 
     override suspend fun load(url: String): LoadResponse {
