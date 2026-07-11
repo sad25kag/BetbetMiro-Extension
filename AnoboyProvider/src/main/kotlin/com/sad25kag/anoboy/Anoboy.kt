@@ -93,11 +93,18 @@ class Anoboy : MainAPI() {
                 .map { it.toSearchResponse() }
         } ?: emptyList()
 
-        val hasNext = document?.select("a[href]").orEmpty().any { element ->
-            val href = element.attr("href")
-            Regex("""[?&]page=${page + 1}(&|$)""")
-                .containsMatchIn(href)
-        }
+        val hasNext = document?.let { doc ->
+            val nextPage = page + 1
+            val hasPageLink = doc.select("a[href]").any { element ->
+                val href = element.attr("href")
+                Regex("""[?&]page=$nextPage(&|$)""")
+                    .containsMatchIn(href)
+            }
+
+            // Anoboy search pages may not expose pagination links in HTML.
+            // Keep loading while the current page still returns results.
+            hasPageLink || (results.isNotEmpty() && page < 50)
+        } ?: false
 
         return results.toNewSearchResponseList(
             hasNext = hasNext
