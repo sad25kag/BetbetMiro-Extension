@@ -2,6 +2,7 @@ package com.sad25kag.anoboy
 
 import com.lagradost.cloudstream3.*
 import com.lagradost.cloudstream3.utils.*
+import com.lagradost.cloudstream3.toNewSearchResponseList
 import java.net.URI
 import java.net.URLEncoder
 import org.jsoup.Jsoup
@@ -70,86 +71,37 @@ class Anoboy : MainAPI() {
         )
     }
 
-    override suspend fun search(query: String): List<SearchResponse> {
+    override suspend fun search(query: String, page: Int): SearchResponseList {
         val encodedQuery = URLEncoder.encode(query, "UTF-8")
-        val queryWords = query.lowercase().split(Regex("\\s+")).filter { it.isNotBlank() }
 
-        suspend fun parseSearchPage(url: String): List<CardData> {
-            val document = runCatching {
-                app.get(url, headers = defaultHeaders()).document
-            }.getOrNull() ?: return emptyList()
+        val url = if (page <= 1) {
+            "$mainUrl/?s=$encodedQuery"
+        } else {
+            "$mainUrl/?page=$page&s=$encodedQuery"
+        }
 
-            return collectCards(document)
+        val document = runCatching {
+            app.get(url, headers = defaultHeaders()).document
+        }.getOrNull()
+
+        val results = document?.let {
+            collectCards(it)
                 .filter { card ->
-                    queryWords.isEmpty() || queryWords.all { word -> card.title.lowercase().contains(word) }
+                    query.isBlank() || card.title.contains(query, ignoreCase = true)
                 }
-                .distinctBy { it.url }
+                .distinctBy { card -> card.url }
+                .map { it.toSearchResponse() }
+        } ?: emptyList()
+
+        val hasNext = document?.select("a[href]").orEmpty().any { element ->
+            val href = element.attr("href")
+            Regex("""[?&]page=${page + 1}(&|$)""")
+                .containsMatchIn(href)
         }
 
-        val searchResults = mutableListOf<CardData>()
-
-        // Anoboy uses query based pagination. Continue collecting pages
-        // until the source no longer provides new results.
-        var page = 1
-        val visitedUrls = mutableSetOf<String>()
-
-        while (true) {
-            val pageUrl = if (page == 1) {
-                "$mainUrl/?s=$encodedQuery"
-            } else {
-                "$mainUrl/?page=$page&s=$encodedQuery"
-            }
-
-            if (!visitedUrls.add(pageUrl)) break
-
-            val pageResults = parseSearchPage(pageUrl)
-            if (pageResults.isEmpty()) break
-
-            val existingUrls = searchResults.map { it.url }.toSet()
-            val newResults = pageResults.filter { it.url !in existingUrls }
-
-            if (newResults.isEmpty()) break
-
-            searchResults += newResults
-
-            page++
-        }
-
-        val uniqueResults = searchResults.distinctBy { it.url }
-        if (uniqueResults.isNotEmpty()) return uniqueResults.map { it.toSearchResponse() }
-
-        val slug = query
-            .lowercase()
-            .replace(Regex("[^a-z0-9]+"), "-")
-            .trim('-')
-
-        if (slug.isNotBlank()) {
-            val directAnime = runCatching {
-                val directUrl = "$mainUrl/anime/$slug/"
-                val document = app.get(directUrl, headers = defaultHeaders()).document
-                val title = document.selectFirst("h1.entry-title, h1, h2.entry-title, .pagetitle h1")
-                    ?.text()
-                    ?.trim()
-                    .orEmpty()
-                if (title.isNotBlank()) {
-                    CardData(
-                        title = cleanTitle(title),
-                        url = directUrl,
-                        poster = document.selectFirst(".sisi.entry-content img, .deskripsi img, div.bigcontent img, article img")
-                            ?.imageAttr()
-                            ?.let { fixUrlNull(it) },
-                        type = TvType.Anime,
-                        episode = null
-                    )
-                } else {
-                    null
-                }
-            }.getOrNull()
-
-            if (directAnime != null) return listOf(directAnime.toSearchResponse())
-        }
-
-        return parseSearchPage("$mainUrl/az-list/").map { it.toSearchResponse() }
+        return results.toNewSearchResponseList(
+            hasNext = hasNext
+        )
     }
 
     override suspend fun load(url: String): LoadResponse {
