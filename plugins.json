@@ -393,14 +393,14 @@
     {
         "url": "https://raw.githubusercontent.com/sad25kag/BetbetMiro-Extension/builds/Astronime.cs3",
         "status": 1,
-        "version": 6,
+        "version": 7,
         "name": "Astronime",
         "internalName": "Astronime",
         "authors": [
             "sad25kag"
         ],
         "description": "Astronime - anime subtitle Indonesia, runtime-clean parser, player_ajax, Turbovid HLS, and Hydrax/Abyss resolver flow",
-        "fileSize": 40130,
+        "fileSize": 40288,
         "repositoryUrl": "https://github.com/sad25kag/BetbetMiro-Extension",
         "language": "id",
         "tvTypes": [
@@ -409,7 +409,7 @@
             "OVA"
         ],
         "apiVersion": 1,
-        "fileHash": "sha256-909c3dfdcc59b4a5a7b1e248439b3ec6721461d4ee3eadc06c4e093d665e6610"
+        "fileHash": "sha256-463e0f6ae3e4bc69f094989556f7dd319818157a3352901f8dcc8bcdf9ab1f08"
     },
     {
         "url": "https://raw.githubusercontent.com/sad25kag/BetbetMiro-Extension/builds/AyoNonton.cs3",
