@@ -84,8 +84,8 @@ class AZNude : MainAPI() {
         }
     }
 
-    override suspend fun search(query: String): List<SearchResponse> {
-        if (query.isBlank()) return emptyList()
+    override suspend fun search(query: String, page: Int): SearchResponseList? {
+        if (query.isBlank()) return null
         return try {
             val mapper = jacksonObjectMapper().registerKotlinModule()
             val searchToken = app.get(
@@ -96,9 +96,9 @@ class AZNude : MainAPI() {
             val tokenData = mapper.readValue<SearchToken>(searchToken)
             val sid = tokenData.sid.orEmpty()
             val xst = tokenData.token.orEmpty()
-            if (sid.isBlank() || xst.isBlank()) return emptyList()
+            if (sid.isBlank() || xst.isBlank()) return null
 
-            val apiUrl = "$searchApi/exp/initial-search?q=${query.urlEncode()}&gender=f&type=null&sortByDate=DESC&sortByViews=views_alltime&dateRange=anytime"
+            val apiUrl = "$searchApi/exp/initial-search?q=${query.urlEncode()}&page=$page&gender=f&type=null&sortByDate=DESC&sortByViews=views_alltime&dateRange=anytime"
             val jsonString = app.get(
                 apiUrl,
                 referer = "$mainUrl/",
@@ -110,14 +110,19 @@ class AZNude : MainAPI() {
             ).textLarge
 
             val searchWrapper: SearchWrapper = mapper.readValue(jsonString)
-            buildSearchResults(searchWrapper).distinctBy { it.url }
+            val results = buildSearchResults(searchWrapper).distinctBy { it.url }
+
+            newSearchResponseList(
+                results,
+                hasNext = results.isNotEmpty()
+            )
         } catch (e: Exception) {
             Log.e("kraptor_$name", "Search error: ${e.message}")
-            emptyList()
+            null
         }
     }
 
-    override suspend fun quickSearch(query: String): List<SearchResponse> = search(query)
+    override suspend fun quickSearch(query: String): List<SearchResponse> = search(query, 1)?.items.orEmpty()
 
     private fun buildSearchResults(searchWrapper: SearchWrapper): List<SearchResponse> {
         val results = mutableListOf<SearchResponse>()
