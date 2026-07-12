@@ -35,7 +35,7 @@ class AZNude : MainAPI() {
         val url = buildPagedTagUrl(request.data, page)
         val document = app.get(url, headers = browserHeaders).document
         val home = if (request.data.contains("/browse/movies/", true)) {
-            document.select("div.media-list-item.movie-list-item, div.movie-list-item, div.media-list div.media-list-item")
+            document.select("a[href*='/movie/'], div.media-list-item.movie-list-item, div.movie-list-item, div.media-list div.media-list-item, div.media-list-item")
                 .mapNotNull { it.toMovieCategoryResult() }
         } else {
             document.select("div.media-list-item.video-list-item, div.video-list-item, div.media-list div.media-list-item")
@@ -69,12 +69,14 @@ class AZNude : MainAPI() {
 
 
     private fun Element.toMovieCategoryResult(): SearchResponse? {
-        val title = selectFirst("img")?.attr("alt")?.trim()
+        val image = selectFirst("img")
+        val title = image?.attr("alt")?.trim()
             ?.takeIf { it.isNotBlank() }
-            ?: selectFirst("img")?.attr("title")?.trim()?.takeIf { it.isNotBlank() }
+            ?: image?.attr("title")?.trim()?.takeIf { it.isNotBlank() }
+            ?: selectFirst("a")?.text()?.trim()?.takeIf { it.isNotBlank() }
             ?: return null
         val href = selectFirst("a[href]")?.attr("href").absoluteUrl() ?: return null
-        val posterUrl = selectFirst("img")?.getImageAttr().absoluteUrl()
+        val posterUrl = image?.getImageAttr()?.absoluteUrl()
 
         return newMovieSearchResponse(title, href, TvType.NSFW) {
             this.posterUrl = posterUrl
