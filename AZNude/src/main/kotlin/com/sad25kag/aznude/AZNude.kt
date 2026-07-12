@@ -34,9 +34,13 @@ class AZNude : MainAPI() {
     override suspend fun getMainPage(page: Int, request: MainPageRequest): HomePageResponse {
         val url = buildPagedTagUrl(request.data, page)
         val document = app.get(url, headers = browserHeaders).document
-        val home = document.select("div.media-list div.media-list-item, div.media-list-item.video-list-item, div.media-list-item.movie-list-item, div.movie-list-item, div.video-list-item")
-            .mapNotNull { it.toMainPageResult() }
-            .distinctBy { it.url }
+        val home = if (request.data.contains("/browse/movies/", true)) {
+            document.select("div.media-list-item.movie-list-item, div.movie-list-item, div.media-list div.media-list-item")
+                .mapNotNull { it.toMovieCategoryResult() }
+        } else {
+            document.select("div.media-list-item.video-list-item, div.video-list-item, div.media-list div.media-list-item")
+                .mapNotNull { it.toMainPageResult() }
+        }.distinctBy { it.url }
 
         return newHomePageResponse(
             request.name,
@@ -57,6 +61,21 @@ class AZNude : MainAPI() {
         val timeText = selectFirst("span.video-timestamp")?.text()
 
         if (isTooShort(timeText)) return null
+        return newMovieSearchResponse(title, href, TvType.NSFW) {
+            this.posterUrl = posterUrl
+            this.posterHeaders = mapOf("Referer" to "$mainUrl/")
+        }
+    }
+
+
+    private fun Element.toMovieCategoryResult(): SearchResponse? {
+        val title = selectFirst("img")?.attr("alt")?.trim()
+            ?.takeIf { it.isNotBlank() }
+            ?: selectFirst("img")?.attr("title")?.trim()?.takeIf { it.isNotBlank() }
+            ?: return null
+        val href = selectFirst("a[href]")?.attr("href").absoluteUrl() ?: return null
+        val posterUrl = selectFirst("img")?.getImageAttr().absoluteUrl()
+
         return newMovieSearchResponse(title, href, TvType.NSFW) {
             this.posterUrl = posterUrl
             this.posterHeaders = mapOf("Referer" to "$mainUrl/")
