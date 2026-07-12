@@ -12,6 +12,7 @@ import com.lagradost.cloudstream3.MainPageRequest
 import com.lagradost.cloudstream3.mainPageOf
 import com.lagradost.cloudstream3.Score
 import com.lagradost.cloudstream3.SearchResponse
+import com.lagradost.cloudstream3.SearchResponseList
 import com.lagradost.cloudstream3.SubtitleFile
 import com.lagradost.cloudstream3.TvType
 import com.lagradost.cloudstream3.app
@@ -20,6 +21,7 @@ import com.lagradost.cloudstream3.newEpisode
 import com.lagradost.cloudstream3.newHomePageResponse
 import com.lagradost.cloudstream3.newMovieLoadResponse
 import com.lagradost.cloudstream3.newMovieSearchResponse
+import com.lagradost.cloudstream3.newSearchResponseList
 import com.lagradost.cloudstream3.newSubtitleFile
 import com.lagradost.cloudstream3.newTvSeriesLoadResponse
 import com.lagradost.cloudstream3.newTvSeriesSearchResponse
@@ -97,9 +99,13 @@ class AyoNonton : MainAPI() {
         )
     }
 
-    override suspend fun search(query: String): List<SearchResponse> {
-        val url = "$mainUrl/?s=${query.encodeUri()}"
-        return app.get(url, headers = siteHeaders(url)).document.let(::parseListingPage)
+    override suspend fun search(query: String, page: Int): SearchResponseList? {
+        val url = "$mainUrl/page/$page/?s=${query.encodeUri()}"
+        val results = app.get(url, headers = siteHeaders(url)).document.let(::parseListingPage)
+        return newSearchResponseList(
+            results,
+            hasNext = results.isNotEmpty()
+        )
     }
 
     override suspend fun load(url: String): LoadResponse {
