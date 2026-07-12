@@ -38,12 +38,16 @@ class AZNude : MainAPI() {
             .mapNotNull { it.toMainPageResult() }
             .distinctBy { it.url }
 
-        return newHomePageResponse(request.name, home)
+        return newHomePageResponse(
+            request.name,
+            home,
+            hasNext = home.isNotEmpty()
+        )
     }
 
     private fun buildPagedTagUrl(baseUrl: String, page: Int): String {
-        val clean = baseUrl.trimEnd('/') + "/"
-        return if (page <= 1) "${clean}1.html" else "${clean}${page}.html"
+        val prefix = baseUrl.substringBeforeLast("/")
+        return "$prefix/${page.coerceAtLeast(1)}.html"
     }
 
     private fun Element.toMainPageResult(): SearchResponse? {
