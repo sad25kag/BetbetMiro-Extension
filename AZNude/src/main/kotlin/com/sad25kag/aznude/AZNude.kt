@@ -34,7 +34,7 @@ class AZNude : MainAPI() {
     override suspend fun getMainPage(page: Int, request: MainPageRequest): HomePageResponse {
         val url = buildPagedTagUrl(request.data, page)
         val document = app.get(url, headers = browserHeaders).document
-        val home = document.select("div.media-list div.media-list-item, div.media-list-item.video-list-item")
+        val home = document.select("div.media-list div.media-list-item, div.media-list-item.video-list-item, div.media-list-item.movie-list-item, div.movie-list-item, div.video-list-item")
             .mapNotNull { it.toMainPageResult() }
             .distinctBy { it.url }
 
