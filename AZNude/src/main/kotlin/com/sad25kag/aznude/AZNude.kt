@@ -98,7 +98,7 @@ class AZNude : MainAPI() {
             val xst = tokenData.token.orEmpty()
             if (sid.isBlank() || xst.isBlank()) return null
 
-            val apiUrl = "$searchApi/exp/initial-search?q=${query.urlEncode()}&page=$page&gender=f&type=null&sortByDate=DESC&sortByViews=views_alltime&dateRange=anytime"
+            val apiUrl = "$searchApi/exp/initial-search?q=${query.urlEncode()}&start=${(page - 1) * 20}&gender=f&type=null&sortByDate=DESC&sortByViews=views_alltime&dateRange=anytime"
             val jsonString = app.get(
                 apiUrl,
                 referer = "$mainUrl/",
