@@ -324,7 +324,7 @@ class BilibiliProvider : MainAPI() {
             Log.e(TAG, "Search error: ${e.message}", e)
         }
         
-        return results
+        return newSearchResponseList(results, hasNext = results.isNotEmpty())
     }
 
     override suspend fun load(url: String): LoadResponse? {

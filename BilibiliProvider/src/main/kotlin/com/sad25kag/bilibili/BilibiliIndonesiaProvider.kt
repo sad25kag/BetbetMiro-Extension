@@ -54,7 +54,7 @@ class BilibiliIndonesiaProvider : MainAPI() {
         page: Int,
         request: MainPageRequest
     ): HomePageResponse {
-        val results = source.search(request.data, page)
+        val results = source.search(request.data, page)?.items ?: emptyList()
         return newHomePageResponse(
             arrayListOf(HomePageList(request.name, results, isHorizontalImages = true)),
             hasNext = results.isNotEmpty()
