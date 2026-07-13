@@ -279,7 +279,7 @@ class BilibiliProvider : MainAPI() {
 
     override suspend fun quickSearch(query: String): List<SearchResponse> = search(query)
 
-    override suspend fun search(query: String, page: Int = 1): List<SearchResponse> {
+    override suspend fun search(query: String, page: Int): SearchResponseList? {
         val results = mutableListOf<SearchResponse>()
         
         try {
