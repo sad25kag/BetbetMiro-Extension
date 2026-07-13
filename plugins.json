@@ -433,36 +433,16 @@
         "fileHash": "sha256-e98b4b7327f2c2de7759f54e632c8abc8b67359563b78c7300d3073068f10c8c"
     },
     {
-        "url": "https://raw.githubusercontent.com/sad25kag/BetbetMiro-Extension/builds/BetbetLiveTV.cs3",
-        "status": 3,
-        "version": 8,
-        "name": "BetbetLiveTV",
-        "internalName": "BetbetLiveTV",
-        "authors": [
-            "sad25kag"
-        ],
-        "description": "Live TV public-stream provider using a conservative IPTV-org whitelist. No login, account sharing, private token, DRM, proxy, or restreaming.",
-        "fileSize": 36869,
-        "repositoryUrl": "https://github.com/sad25kag/BetbetMiro-Extension",
-        "language": "id",
-        "tvTypes": [
-            "Live"
-        ],
-        "iconUrl": "https://www.google.com/s2/favicons?domain=globetv.app&sz=%size%",
-        "apiVersion": 1,
-        "fileHash": "sha256-602da32bb1be5f6ef90277aaba5e275f0272413683a9fb1f0c06617633c399b1"
-    },
-    {
         "url": "https://raw.githubusercontent.com/sad25kag/BetbetMiro-Extension/builds/BilibiliProvider.cs3",
         "status": 3,
-        "version": 12,
+        "version": 13,
         "name": "BilibiliProvider",
         "internalName": "BilibiliProvider",
         "authors": [
             "sad25kag"
         ],
         "description": "Bilibili TV - Anime, film, serial, dan konten Asia dari bilibili.tv",
-        "fileSize": 81267,
+        "fileSize": 81293,
         "repositoryUrl": "https://github.com/sad25kag/BetbetMiro-Extension",
         "language": "id",
         "tvTypes": [
@@ -472,7 +452,7 @@
         ],
         "iconUrl": "https://play-lh.googleusercontent.com/G9s84Cm1TDnKDX2P8nipS_s60cuCnYtjBRRLespF8nivjXmbV9tF1fY37clZhXMLaA",
         "apiVersion": 1,
-        "fileHash": "sha256-54d357cabb2ef6447fa44d99b8eeffca2510f57ac508c7d10868f7966309b789"
+        "fileHash": "sha256-31e61ac37ca863c02fa78f5c789b5370292b79b55f403b8ddaf0e38563b61f9b"
     },
     {
         "url": "https://raw.githubusercontent.com/sad25kag/BetbetMiro-Extension/builds/Cinefreak.cs3",
