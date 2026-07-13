@@ -279,12 +279,12 @@ class BilibiliProvider : MainAPI() {
 
     override suspend fun quickSearch(query: String): List<SearchResponse> = search(query)
 
-    override suspend fun search(query: String): List<SearchResponse> {
+    override suspend fun search(query: String, page: Int = 1): List<SearchResponse> {
         val results = mutableListOf<SearchResponse>()
         
         try {
             val encodedQuery = URLEncoder.encode(query, "UTF-8")
-            val searchUrl = "$WEB_API/search_v2?keyword=$encodedQuery&platform=web&pn=1&ps=30"
+            val searchUrl = "$WEB_API/search_v2?keyword=$encodedQuery&platform=web&pn=$page&ps=30"
             
             Log.d(TAG, "Search URL: $searchUrl")
             val response = app.get(searchUrl, headers = headers).text

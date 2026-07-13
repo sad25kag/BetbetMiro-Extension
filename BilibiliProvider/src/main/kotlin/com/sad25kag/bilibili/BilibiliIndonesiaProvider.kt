@@ -1,3 +1,5 @@
+@file:OptIn(Prerelease::class)
+
 package com.sad25kag.bilibili
 
 import com.lagradost.cloudstream3.*
@@ -52,16 +54,16 @@ class BilibiliIndonesiaProvider : MainAPI() {
         page: Int,
         request: MainPageRequest
     ): HomePageResponse {
-        val results = source.search(request.data)
+        val results = source.search(request.data, page)
         return newHomePageResponse(
             arrayListOf(HomePageList(request.name, results, isHorizontalImages = true)),
-            hasNext = false
+            hasNext = results.isNotEmpty()
         )
     }
 
     override suspend fun quickSearch(query: String): List<SearchResponse> = source.quickSearch(query)
 
-    override suspend fun search(query: String): List<SearchResponse> = source.search(query)
+    override suspend fun search(query: String): List<SearchResponse> = source.search(query, 1)
 
     override suspend fun load(url: String): LoadResponse? = source.load(url)
 
