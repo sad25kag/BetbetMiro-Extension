@@ -274,7 +274,7 @@ class BilibiliProvider : MainAPI() {
             Log.e(TAG, "Error loading main page: ${e.message}", e)
         }
 
-        return newHomePageResponse(arrayListOf(HomePageList(request.name, home, isHorizontalImages = true)), hasNext = home.size >= 15)
+        return newHomePageResponse(arrayListOf(HomePageList(request.name, home, isHorizontalImages = true)), hasNext = home.isNotEmpty())
     }
 
     override suspend fun quickSearch(query: String): List<SearchResponse> = search(query)
