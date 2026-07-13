@@ -1,5 +1,25 @@
 [
     {
+        "url": "https://raw.githubusercontent.com/sad25kag/BetbetMiro-Extension/maintenance/BetbetLiveTV.cs3",
+        "status": 3,
+        "version": 8,
+        "name": "BetbetLiveTV",
+        "internalName": "BetbetLiveTV",
+        "authors": [
+            "sad25kag"
+        ],
+        "description": "Live TV public-stream provider using a conservative IPTV-org whitelist. No login, account sharing, private token, DRM, proxy, or restreaming.",
+        "fileSize": 36869,
+        "repositoryUrl": "https://github.com/sad25kag/BetbetMiro-Extension",
+        "language": "id",
+        "tvTypes": [
+            "Live"
+        ],
+        "iconUrl": "https://www.google.com/s2/favicons?domain=globetv.app&sz=%size%",
+        "apiVersion": 1,
+        "fileHash": "sha256-602da32bb1be5f6ef90277aaba5e275f0272413683a9fb1f0c06617633c399b1"
+    },
+    {
         "url": "https://raw.githubusercontent.com/sad25kag/BetbetMiro-Extension/maintenance/BioskopKeren.cs3",
         "status": 3,
         "version": 13,
