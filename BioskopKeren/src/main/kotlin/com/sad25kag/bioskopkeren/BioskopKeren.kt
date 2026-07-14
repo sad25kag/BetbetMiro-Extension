@@ -82,7 +82,7 @@ class BioskopKeren : MainAPI() {
 
     override suspend fun search(query: String, page: Int): SearchResponseList? {
         val cleanQuery = query.trim()
-        if (cleanQuery.isBlank()) return toNewSearchResponseList(emptyList(), hasNext = false)
+        if (cleanQuery.isBlank()) return emptyList<SearchResponse>().toNewSearchResponseList(hasNext = false)
 
         val encoded = URLEncoder.encode(cleanQuery, "UTF-8")
         val urls = listOf(
@@ -110,7 +110,7 @@ class BioskopKeren : MainAPI() {
             if (results.isNotEmpty()) return@forEach
         }
 
-        return \1)
+        return results.values.toList().toNewSearchResponseList(hasNext = hasNextPage(results))
     }
 
     override suspend fun quickSearch(query: String): List<SearchResponse>? {
@@ -480,7 +480,7 @@ class BioskopKeren : MainAPI() {
     private fun expandServerValue(value: String, pageUrl: String): List<String> {
         val results = linkedSetOf<String>()
         val clean = value.trim().decodeEscaped()
-        if (clean.isBlank() || clean == "#") return emptyList<SearchResponse>().toNewSearchResponseList(false)
+        if (clean.isBlank() || clean == "#") return emptyList()
 
         resolveUrl(clean, pageUrl)?.let { results.add(it) }
 
