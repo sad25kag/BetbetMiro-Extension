@@ -7,6 +7,7 @@ import com.lagradost.cloudstream3.LoadResponse
 import com.lagradost.cloudstream3.MainAPI
 import com.lagradost.cloudstream3.MainPageRequest
 import com.lagradost.cloudstream3.SearchResponse
+import com.lagradost.cloudstream3.SearchResponseList
 import com.lagradost.cloudstream3.SubtitleFile
 import com.lagradost.cloudstream3.newSubtitleFile
 import com.lagradost.cloudstream3.TvType
@@ -79,7 +80,7 @@ class BioskopKeren : MainAPI() {
         )
     }
 
-    override suspend fun search(query: String, page: Int): List<SearchResponse> {
+    override suspend fun search(query: String, page: Int): SearchResponseList? {
         val cleanQuery = query.trim()
         if (cleanQuery.isBlank()) return toNewSearchResponseList(emptyList(), hasNext = false)
 
@@ -109,14 +110,11 @@ class BioskopKeren : MainAPI() {
             if (results.isNotEmpty()) return@forEach
         }
 
-        return toNewSearchResponseList(
-            results.values.toList(),
-            hasNext = results.isNotEmpty()
-        )
+        return results.values.toList().toNewSearchResponseList(hasNext = results.isNotEmpty())
     }
 
     override suspend fun quickSearch(query: String): List<SearchResponse>? {
-        return search(query, 1)
+        return emptyList()
     }
 
     override suspend fun load(url: String): LoadResponse? {
@@ -482,7 +480,7 @@ class BioskopKeren : MainAPI() {
     private fun expandServerValue(value: String, pageUrl: String): List<String> {
         val results = linkedSetOf<String>()
         val clean = value.trim().decodeEscaped()
-        if (clean.isBlank() || clean == "#") return emptyList()
+        if (clean.isBlank() || clean == "#") return emptyList<SearchResponse>().toNewSearchResponseList(false)
 
         resolveUrl(clean, pageUrl)?.let { results.add(it) }
 
