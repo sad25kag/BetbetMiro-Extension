@@ -110,7 +110,7 @@ class BioskopKeren : MainAPI() {
             if (results.isNotEmpty()) return@forEach
         }
 
-        return results.values.toList().toNewSearchResponseList(hasNext = results.isNotEmpty())
+        return \1)
     }
 
     override suspend fun quickSearch(query: String): List<SearchResponse>? {
