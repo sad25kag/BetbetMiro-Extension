@@ -1,4 +1,5 @@
 package com.sad25kag.bioskopkeren
+import com.lagradost.cloudstream3.toNewSearchResponseList
 
 import com.lagradost.cloudstream3.HomePageList
 import com.lagradost.cloudstream3.HomePageResponse
@@ -78,9 +79,9 @@ class BioskopKeren : MainAPI() {
         )
     }
 
-    override suspend fun search(query: String, page: Int): SearchResponseList? {
+    override suspend fun search(query: String, page: Int): List<SearchResponse> {
         val cleanQuery = query.trim()
-        if (cleanQuery.isBlank()) return newSearchResponseList(emptyList(), hasNext = false)
+        if (cleanQuery.isBlank()) return toNewSearchResponseList(emptyList(), hasNext = false)
 
         val encoded = URLEncoder.encode(cleanQuery, "UTF-8")
         val urls = listOf(
@@ -108,14 +109,14 @@ class BioskopKeren : MainAPI() {
             if (results.isNotEmpty()) return@forEach
         }
 
-        return newSearchResponseList(
+        return toNewSearchResponseList(
             results.values.toList(),
             hasNext = results.isNotEmpty()
         )
     }
 
     override suspend fun quickSearch(query: String): List<SearchResponse>? {
-        return search(query, 1)?.let { emptyList() } ?: emptyList()
+        return search(query, 1)
     }
 
     override suspend fun load(url: String): LoadResponse? {
