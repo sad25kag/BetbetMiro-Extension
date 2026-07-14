@@ -464,7 +464,34 @@ class BioskopKeren : MainAPI() {
                 .forEach { results.add(it) }
         }
 
+        // BioskopKeren renders the real playback link as a bare <a href="https://vidhide.org/embed/...">
+        // element sitting in the player area (no iframe/data-src wrapper at all), so it is invisible to
+        // every selector above. Catch it directly by matching anchor hrefs that look like a video embed.
+        document.select("a[href]").forEach { element ->
+            element.attr("href")
+                .takeIf { it.isNotBlank() }
+                ?.let { resolveUrl(it, pageUrl) }
+                ?.takeIf { isLikelyEmbedUrl(it) }
+                ?.let { results.add(it) }
+        }
+
         return results.toList()
+    }
+
+    private fun isLikelyEmbedUrl(url: String): Boolean {
+        if (isProviderUrl(url) || isBadPlaybackUrl(url)) return false
+        val lower = url.lowercase()
+        return lower.contains("/embed/") ||
+            lower.contains("vidhide") ||
+            lower.contains("doodstream") ||
+            lower.contains("dood.") ||
+            lower.contains("streamtape") ||
+            lower.contains("filemoon") ||
+            lower.contains("mixdrop") ||
+            lower.contains("streamwish") ||
+            lower.contains("filelions") ||
+            lower.contains("upstream") ||
+            lower.contains("vtube")
     }
 
     private fun collectServerPageUrls(document: Document, pageUrl: String): List<String> {
