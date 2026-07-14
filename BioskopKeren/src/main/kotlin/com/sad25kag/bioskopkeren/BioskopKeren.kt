@@ -76,7 +76,7 @@ class BioskopKeren : MainAPI() {
 
         return newHomePageResponse(
             HomePageList(request.name, cards, isHorizontalImages = false),
-            hasNext = results.isNotEmpty()
+            hasNext = hasNextPage(document, page)
         )
     }
 
