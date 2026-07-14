@@ -110,7 +110,7 @@ class BioskopKeren : MainAPI() {
             if (results.isNotEmpty()) return@forEach
         }
 
-        return results.values.toList().toNewSearchResponseList(hasNext = hasNextPage(results))
+        return results.values.toList().toNewSearchResponseList(hasNext = hasNextPage(document, page))
     }
 
     override suspend fun quickSearch(query: String): List<SearchResponse>? {
