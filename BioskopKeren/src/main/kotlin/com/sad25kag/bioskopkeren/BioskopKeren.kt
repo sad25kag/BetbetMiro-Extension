@@ -76,7 +76,7 @@ class BioskopKeren : MainAPI() {
 
         return newHomePageResponse(
             HomePageList(request.name, cards, isHorizontalImages = false),
-            hasNext = hasNextPage(document, page)
+            hasNext = results.isNotEmpty()
         )
     }
 
@@ -110,7 +110,7 @@ class BioskopKeren : MainAPI() {
             if (results.isNotEmpty()) return@forEach
         }
 
-        return results.values.toList().toNewSearchResponseList(hasNext = hasNextPage(document, page))
+        return results.values.toList().toNewSearchResponseList(hasNext = results.isNotEmpty())
     }
 
     override suspend fun quickSearch(query: String): List<SearchResponse>? {
