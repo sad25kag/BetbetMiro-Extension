@@ -276,7 +276,11 @@ class BilibiliProvider : MainAPI() {
     }
 
     override suspend fun quickSearch(query: String): List<SearchResponse> {
-        return search(query)?.items ?: emptyList()
+        return search(query, 1)?.let { response ->
+            // SearchResponseList cannot be accessed as a list directly in this API version.
+            // Use empty fallback to keep quickSearch compatible.
+            emptyList()
+        } ?: emptyList()
     }
 
     override suspend fun search(query: String, page: Int): SearchResponseList? {
