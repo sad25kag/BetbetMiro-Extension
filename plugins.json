@@ -1,35 +1,15 @@
 [
     {
-        "url": "https://raw.githubusercontent.com/sad25kag/BetbetMiro-Extension/maintenance/BetbetLiveTV.cs3",
-        "status": 3,
-        "version": 8,
-        "name": "BetbetLiveTV",
-        "internalName": "BetbetLiveTV",
-        "authors": [
-            "sad25kag"
-        ],
-        "description": "Live TV public-stream provider using a conservative IPTV-org whitelist. No login, account sharing, private token, DRM, proxy, or restreaming.",
-        "fileSize": 36869,
-        "repositoryUrl": "https://github.com/sad25kag/BetbetMiro-Extension",
-        "language": "id",
-        "tvTypes": [
-            "Live"
-        ],
-        "iconUrl": "https://www.google.com/s2/favicons?domain=globetv.app&sz=%size%",
-        "apiVersion": 1,
-        "fileHash": "sha256-602da32bb1be5f6ef90277aaba5e275f0272413683a9fb1f0c06617633c399b1"
-    },
-    {
         "url": "https://raw.githubusercontent.com/sad25kag/BetbetMiro-Extension/maintenance/BioskopKeren.cs3",
         "status": 3,
-        "version": 13,
+        "version": 14,
         "name": "BioskopKeren",
         "internalName": "BioskopKeren",
         "authors": [
             "BetbetMiro"
         ],
         "description": "Provider CloudStream untuk BioskopKeren.",
-        "fileSize": 50254,
+        "fileSize": 50365,
         "repositoryUrl": "https://github.com/sad25kag/BetbetMiro-Extension",
         "language": "id",
         "tvTypes": [
@@ -37,7 +17,7 @@
         ],
         "iconUrl": "http://134.209.20.140/wp-content/uploads/2026/04/BIOSKOPKEREN.png",
         "apiVersion": 1,
-        "fileHash": "sha256-28ae4bdbdb4112b6a17cbea5f3ca7fd4f8d04cc7c0b35d1ba0accc69e444780d"
+        "fileHash": "sha256-48b412abd28b86b560ce9c1c3cc4abd3a0e0ad50889df6ac4898163c0830da4a"
     },
     {
         "url": "https://raw.githubusercontent.com/sad25kag/BetbetMiro-Extension/maintenance/CGVIndo.cs3",
