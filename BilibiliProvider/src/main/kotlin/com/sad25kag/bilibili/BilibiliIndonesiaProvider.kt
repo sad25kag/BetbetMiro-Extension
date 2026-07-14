@@ -1,5 +1,3 @@
-@file:OptIn(Prerelease::class)
-
 package com.sad25kag.bilibili
 
 import com.lagradost.cloudstream3.*
