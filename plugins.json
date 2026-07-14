@@ -435,14 +435,14 @@
     {
         "url": "https://raw.githubusercontent.com/sad25kag/BetbetMiro-Extension/builds/BilibiliProvider.cs3",
         "status": 3,
-        "version": 13,
+        "version": 15,
         "name": "BilibiliProvider",
         "internalName": "BilibiliProvider",
         "authors": [
             "sad25kag"
         ],
         "description": "Bilibili TV - Anime, film, serial, dan konten Asia dari bilibili.tv",
-        "fileSize": 81293,
+        "fileSize": 81636,
         "repositoryUrl": "https://github.com/sad25kag/BetbetMiro-Extension",
         "language": "id",
         "tvTypes": [
@@ -452,7 +452,7 @@
         ],
         "iconUrl": "https://play-lh.googleusercontent.com/G9s84Cm1TDnKDX2P8nipS_s60cuCnYtjBRRLespF8nivjXmbV9tF1fY37clZhXMLaA",
         "apiVersion": 1,
-        "fileHash": "sha256-31e61ac37ca863c02fa78f5c789b5370292b79b55f403b8ddaf0e38563b61f9b"
+        "fileHash": "sha256-e2fb6c0d3365c16ea59ea0a94d1f5e928ecdfd00ba59b8e9f66d882141f24e84"
     },
     {
         "url": "https://raw.githubusercontent.com/sad25kag/BetbetMiro-Extension/builds/Cinefreak.cs3",
