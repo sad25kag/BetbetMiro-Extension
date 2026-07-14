@@ -78,14 +78,16 @@ class BioskopKeren : MainAPI() {
         )
     }
 
-    override suspend fun search(query: String): List<SearchResponse> {
+    override suspend fun search(query: String, page: Int): SearchResponseList? {
         val cleanQuery = query.trim()
-        if (cleanQuery.isBlank()) return emptyList()
+        if (cleanQuery.isBlank()) return newSearchResponseList(emptyList(), hasNext = false)
 
         val encoded = URLEncoder.encode(cleanQuery, "UTF-8")
         val urls = listOf(
-            "$mainUrl/?s=$encoded&post_type%5B%5D=post&post_type%5B%5D=tv",
-            "$mainUrl/?s=$encoded"
+            if (page <= 1) "$mainUrl/?s=$encoded&post_type%5B%5D=post&post_type%5B%5D=tv"
+            else "$mainUrl/page/$page/?s=$encoded&post_type%5B%5D=post&post_type%5B%5D=tv",
+            if (page <= 1) "$mainUrl/?s=$encoded"
+            else "$mainUrl/page/$page/?s=$encoded"
         )
 
         val results = linkedMapOf<String, SearchResponse>()
@@ -106,11 +108,14 @@ class BioskopKeren : MainAPI() {
             if (results.isNotEmpty()) return@forEach
         }
 
-        return results.values.toList()
+        return newSearchResponseList(
+            results.values.toList(),
+            hasNext = results.isNotEmpty()
+        )
     }
 
     override suspend fun quickSearch(query: String): List<SearchResponse>? {
-        return search(query)
+        return search(query, 1)?.let { emptyList() } ?: emptyList()
     }
 
     override suspend fun load(url: String): LoadResponse? {
