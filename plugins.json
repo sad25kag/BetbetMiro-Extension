@@ -2,14 +2,14 @@
     {
         "url": "https://raw.githubusercontent.com/sad25kag/BetbetMiro-Extension/maintenance/BioskopKeren.cs3",
         "status": 3,
-        "version": 14,
+        "version": 15,
         "name": "BioskopKeren",
         "internalName": "BioskopKeren",
         "authors": [
             "BetbetMiro"
         ],
         "description": "Provider CloudStream untuk BioskopKeren.",
-        "fileSize": 51620,
+        "fileSize": 53099,
         "repositoryUrl": "https://github.com/sad25kag/BetbetMiro-Extension",
         "language": "id",
         "tvTypes": [
@@ -17,7 +17,7 @@
         ],
         "iconUrl": "http://134.209.20.140/wp-content/uploads/2026/04/BIOSKOPKEREN.png",
         "apiVersion": 1,
-        "fileHash": "sha256-0b09662b0504ad201bbb0c0cab48efdef664737849dbd96a460a538bec165bd7"
+        "fileHash": "sha256-e89f60bfcaf5b28290485e40aa0eaa19ddc1c7ca96808e26b831f73c557bd617"
     },
     {
         "url": "https://raw.githubusercontent.com/sad25kag/BetbetMiro-Extension/maintenance/CGVIndo.cs3",
