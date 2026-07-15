@@ -331,9 +331,11 @@ class BioskopKeren : MainAPI() {
 
         val html = response.text.decodeEscaped()
         val m3u8 = Regex(
-            """https?://[^"'\\s]+(?:\\.m3u8|/hls/[^"'\\s]+)""",
+            """https?://[^"'\\s<>]+(?:\\.m3u8|m3u8_[^"'\\s<>]+|/hls/[^"'\\s<>]+)""",
             RegexOption.IGNORE_CASE
-        ).find(html)?.value?.replace("\\/", "/")
+        ).find(html)?.value
+            ?.replace("\\/", "/")
+            ?.replace("\\u0026", "&")?.value?.replace("\\/", "/")
 
         if (m3u8.isNullOrBlank()) {
             bkLog("vidhideM3u8=false")
