@@ -445,6 +445,8 @@ class BioskopKeren : MainAPI() {
             ".player-wrap iframe[src], .player-wrap iframe[data-src], " +
                 ".gmr-pagi-player iframe[src], .gmr-pagi-player iframe[data-src], " +
                 ".gmr-embed-responsive iframe[src], .gmr-embed-responsive iframe[data-src], " +
+                ".dooplay_player_option iframe[src], .dooplay_player_option iframe[data-src], " +
+                "#playeroptions iframe[src], #playeroptions iframe[data-src], " +
                 "iframe[src], iframe[data-src], embed[src], source[src], video[src]"
         ).forEach { element ->
             listOf("src", "data-src", "href")
@@ -455,8 +457,10 @@ class BioskopKeren : MainAPI() {
 
         document.select(
             ".player-wrap option[value], .gmr-pagi-player option[value], " +
+                ".dooplay_player_option option[value], #playeroptions option[value], " +
                 ".server option[value], .mirror option[value], select option[value], " +
-                "[data-iframe], [data-frame], [data-src], [data-url], [data-link]"
+                "[data-iframe], [data-frame], [data-src], [data-url], [data-link], " +
+                "[data-embed]"
         ).forEach { element ->
             listOf("value", "data-iframe", "data-frame", "data-src", "data-url", "data-link")
                 .mapNotNull { attr -> element.attr(attr).takeIf { it.isNotBlank() } }
@@ -473,6 +477,17 @@ class BioskopKeren : MainAPI() {
                 ?.let { resolveUrl(it, pageUrl) }
                 ?.takeIf { isLikelyEmbedUrl(it) }
                 ?.let { results.add(it) }
+        }
+
+        // Fallback: some WordPress movie themes hide embed URLs inside inline scripts.
+        document.select("script").forEach { script ->
+            val body = script.html()
+            Regex("""https?://[^\\s"']+""")
+                .findAll(body)
+                .map { it.value.replace("\\/", "/") }
+                .mapNotNull { resolveUrl(it, pageUrl) }
+                .filter { isLikelyEmbedUrl(it) }
+                .forEach { results.add(it) }
         }
 
         return results.toList()
