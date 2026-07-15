@@ -20,6 +20,8 @@ import com.lagradost.cloudstream3.newHomePageResponse
 import com.lagradost.cloudstream3.newMovieLoadResponse
 import com.lagradost.cloudstream3.newMovieSearchResponse
 import com.lagradost.cloudstream3.utils.ExtractorLink
+import com.lagradost.cloudstream3.utils.newExtractorLink
+import com.lagradost.cloudstream3.utils.ExtractorLinkType
 import com.lagradost.cloudstream3.utils.loadExtractor
 import org.jsoup.Jsoup
 import org.jsoup.nodes.Document
@@ -339,14 +341,15 @@ class BioskopKeren : MainAPI() {
         }
 
         callback.invoke(
-            ExtractorLink(
-                "VidHide",
-                "VidHide",
-                m3u8,
-                referer,
-                720,
-                isM3u8 = true
-            )
+            newExtractorLink(
+                source = "VidHide",
+                name = "VidHide",
+                url = m3u8,
+                type = ExtractorLinkType.M3U8
+            ) {
+                this.referer = referer
+                this.quality = 720
+            }
         )
 
         bkLog("vidhideM3u8=true")
