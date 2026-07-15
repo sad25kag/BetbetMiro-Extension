@@ -239,6 +239,11 @@ class BioskopKeren : MainAPI() {
         val extractorReferer = getExtractorReferer(iframeUrl, pageUrl)
         bkLog("resolveIframe url=$iframeUrl host=${safeHost(iframeUrl)} referer=$extractorReferer")
 
+        if (extractVidHide(iframeUrl, extractorReferer, callback)) {
+            bkLog("vidhideDirect=true url=$iframeUrl")
+            return true
+        }
+
         if (tryLoadExtractorWithReferers(
                 iframeUrl,
                 listOf(extractorReferer, pageUrl, iframeUrl, "$mainUrl/"),
@@ -303,6 +308,49 @@ class BioskopKeren : MainAPI() {
 
         bkLog("resolveIframe nestedResult=$found url=$iframeUrl")
         return found
+    }
+
+
+    private suspend fun extractVidHide(
+        url: String,
+        referer: String,
+        callback: (ExtractorLink) -> Unit
+    ): Boolean {
+        if (!url.contains("vidhide", ignoreCase = true)) return false
+
+        val response = runCatching {
+            app.get(
+                url,
+                headers = siteHeaders,
+                referer = referer,
+                timeout = 30L
+            )
+        }.getOrNull() ?: return false
+
+        val html = response.text.decodeEscaped()
+        val m3u8 = Regex(
+            """https?://[^"'\\s]+(?:\\.m3u8|/hls/[^"'\\s]+)""",
+            RegexOption.IGNORE_CASE
+        ).find(html)?.value?.replace("\\/", "/")
+
+        if (m3u8.isNullOrBlank()) {
+            bkLog("vidhideM3u8=false")
+            return false
+        }
+
+        callback.invoke(
+            ExtractorLink(
+                "VidHide",
+                "VidHide",
+                m3u8,
+                referer,
+                720,
+                isM3u8 = true
+            )
+        )
+
+        bkLog("vidhideM3u8=true")
+        return true
     }
 
     private suspend fun tryLoadExtractorWithReferers(
