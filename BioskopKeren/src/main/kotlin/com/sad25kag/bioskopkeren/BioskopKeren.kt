@@ -335,7 +335,7 @@ class BioskopKeren : MainAPI() {
             RegexOption.IGNORE_CASE
         ).find(html)?.value
             ?.replace("\\/", "/")
-            ?.replace("\\u0026", "&")?.value?.replace("\\/", "/")
+            ?.replace("\\u0026", "&")
 
         if (m3u8.isNullOrBlank()) {
             bkLog("vidhideM3u8=false")
