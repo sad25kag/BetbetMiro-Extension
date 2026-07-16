@@ -121,14 +121,14 @@
     {
         "url": "https://raw.githubusercontent.com/sad25kag/BetbetMiro-Extension/release/CamWh.cs3",
         "status": 1,
-        "version": 11,
+        "version": 12,
         "name": "CamWh",
         "internalName": "CamWh",
         "authors": [
             "sad25kag"
         ],
         "description": "Provider NSFW untuk konten video dewasa dari CamWH.",
-        "fileSize": 22498,
+        "fileSize": 23126,
         "repositoryUrl": "https://github.com/sad25kag/BetbetMiro-Extension",
         "language": "id",
         "tvTypes": [
@@ -136,7 +136,7 @@
         ],
         "iconUrl": "https://camwh.com/contents/ugmtofwqltgh/theme/logo.png",
         "apiVersion": 1,
-        "fileHash": "sha256-fbf9b8b97462c31bb4fd60955b89dbaeb0654860a572db6b1c5fa44a05d4af99"
+        "fileHash": "sha256-e5a6be7712760c39bae04fe36185f858d39fdb11acd249e78fc884cc865ec63c"
     },
     {
         "url": "https://raw.githubusercontent.com/sad25kag/BetbetMiro-Extension/release/Desisins.cs3",
