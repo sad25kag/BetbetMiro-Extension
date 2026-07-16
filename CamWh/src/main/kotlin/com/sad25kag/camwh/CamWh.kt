@@ -10,6 +10,8 @@ import java.net.URLEncoder
 
 class CamWh : MainAPI() {
     override var mainUrl = "https://camwh.com"
+
+    private val baseReferer = "$mainUrl/"
     override var name = "CamWh"
     override val hasMainPage = true
     override val hasQuickSearch = true
@@ -70,7 +72,7 @@ class CamWh : MainAPI() {
         val document = app.get(
             buildPagedUrl(request.data, page),
             headers = defaultHeaders,
-            referer = "$mainUrl/"
+            referer = baseReferer
         ).document
 
         val items = document.select("div.item, .list-videos .item, .thumb, .video-item")
@@ -107,10 +109,12 @@ class CamWh : MainAPI() {
     }
 
     override suspend fun load(url: String): LoadResponse {
+        val normalizedUrl = normalizeUrl(url) ?: throw ErrorLoadingException("URL CamWh tidak valid.")
+
         val document = app.get(
-            url,
+            normalizedUrl,
             headers = defaultHeaders,
-            referer = "$mainUrl/"
+            referer = baseReferer
         ).document
 
         val title = document.selectFirst("div.headline h1, h1")
@@ -151,7 +155,7 @@ class CamWh : MainAPI() {
             .mapNotNull { it.toSearchResult() }
             .distinctBy { it.url }
 
-        return newMovieLoadResponse(title, url, TvType.NSFW, url) {
+        return newMovieLoadResponse(title, normalizedUrl, TvType.NSFW, normalizedUrl) {
             this.posterUrl = poster
             this.plot = description
             this.tags = tags
@@ -183,7 +187,7 @@ class CamWh : MainAPI() {
                     url = videoUrl,
                     type = inferType(videoUrl)
                 ) {
-                    this.referer = "$mainUrl/"
+                    this.referer = baseReferer
                     this.quality = getQualityFromName(label)
                     this.headers = streamHeaders()
                 }
@@ -209,10 +213,12 @@ class CamWh : MainAPI() {
             }
         }
 
+        val normalizedData = normalizeUrl(data) ?: data
+
         val response = app.get(
-            data,
+            normalizedData,
             headers = defaultHeaders,
-            referer = "$mainUrl/"
+            referer = baseReferer
         )
         val document = response.document
 
@@ -248,8 +254,8 @@ class CamWh : MainAPI() {
         var capturedFileUrl = ""
 
         webview.resolveUsingWebView(
-            url = data,
-            referer = "$mainUrl/",
+            url = normalizedData,
+            referer = baseReferer,
             requestCallBack = { request ->
                 val currentUrl = request.url.toString()
 
@@ -266,7 +272,7 @@ class CamWh : MainAPI() {
             val redirected = app.get(
                 capturedFileUrl,
                 headers = streamHeaders(),
-                referer = "$mainUrl/",
+                referer = baseReferer,
                 allowRedirects = false
             ).headers["Location"] ?: capturedFileUrl
 
@@ -284,7 +290,7 @@ class CamWh : MainAPI() {
 
         if (title.isBlank()) return null
 
-        val href = fixUrlNull(anchor.attr("href")) ?: return null
+        val href = normalizeUrl(anchor.attr("href")) ?: return null
         val img = selectFirst("img")
         val poster = fixUrlNull(
             img?.attr("data-original")
@@ -296,6 +302,30 @@ class CamWh : MainAPI() {
 
         return newMovieSearchResponse(title, href, TvType.NSFW) {
             this.posterUrl = poster
+        }
+    }
+
+    private fun normalizeUrl(rawUrl: String): String? {
+        val trimmed = rawUrl.trim()
+        if (trimmed.isBlank()) return null
+
+        val url = if (trimmed.startsWith("http", ignoreCase = true)) {
+            trimmed
+        } else {
+            "$mainUrl/${trimmed.trimStart('/')}"
+        }
+
+        val host = runCatching {
+            java.net.URI(url).host?.lowercase()
+        }.getOrNull() ?: return null
+
+        return if (
+            host == "camwh.com" ||
+            host.endsWith(".camwh.com")
+        ) {
+            url
+        } else {
+            null
         }
     }
 
@@ -320,7 +350,7 @@ class CamWh : MainAPI() {
         return mapOf(
             "Accept" to "*/*",
             "User-Agent" to USER_AGENT,
-            "Referer" to "$mainUrl/",
+            "Referer" to baseReferer,
             "Origin" to mainUrl,
             "Range" to "bytes=0-"
         )
@@ -343,7 +373,7 @@ class CamWh : MainAPI() {
             app.get(
                 fixed,
                 headers = streamHeaders(),
-                referer = "$mainUrl/",
+                referer = baseReferer,
                 allowRedirects = false
             ).headers["Location"] ?: fixed
         }.getOrDefault(fixed)
@@ -376,6 +406,6 @@ class CamWh : MainAPI() {
     private val defaultHeaders = mapOf(
         "Accept" to "text/html,application/xhtml+xml,application/xml;q=0.9,*/*;q=0.8",
         "User-Agent" to USER_AGENT,
-        "Referer" to "$mainUrl/"
+        "Referer" to baseReferer
     )
 }
