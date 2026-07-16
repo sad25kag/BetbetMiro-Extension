@@ -54,7 +54,7 @@ class BondageValley : MainAPI() {
     override suspend fun search(query: String): List<SearchResponse> {
         if (query.isBlank()) return emptyList()
 
-        val url = "$mainUrl/search/${query.urlEncoded()}"
+        val url = "$mainUrl/search?keyword=${query.urlEncoded()}"
         val document = app.get(url, headers = defaultHeaders, referer = "$mainUrl/").document
 
         val results = document
@@ -62,7 +62,7 @@ class BondageValley : MainAPI() {
             .mapNotNull { anchor -> anchor.toSearchResult() }
             .filter { it.name.isAllowedTitle() }
             .distinctBy { it.url }
-            .take(50)
+            
 
         if (results.isNotEmpty()) return results
 
@@ -73,7 +73,7 @@ class BondageValley : MainAPI() {
             .mapNotNull { anchor -> anchor.toSearchResult() }
             .filter { it.name.isAllowedTitle() }
             .distinctBy { it.url }
-            .take(50)
+            
     }
 
     override suspend fun load(url: String): LoadResponse {
