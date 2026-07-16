@@ -21,51 +21,9 @@ class CamWh : MainAPI() {
     override val vpnStatus = VPNStatus.MightBeNeeded
 
     override val mainPage = mainPageOf(
-        "$mainUrl/latest-updates/" to "Update Terbaru",
-        "$mainUrl/top-rated/" to "Rating Tertinggi",
-        "$mainUrl/most-popular/" to "Paling Dilihat",
-
-        // Valid categories from https://camwh.com/categories/
-        "$mainUrl/categories/male-videos/" to "Male Videos",
-        "$mainUrl/categories/onlyfans-leaks/" to "Onlyfans Leaks",
-        "$mainUrl/categories/video-record/" to "Video Record",
-        "$mainUrl/categories/new-record-private/" to "New Record Private",
-        "$mainUrl/categories/chaturbate-record-video/" to "Chaturbate Record Video",
-        "$mainUrl/categories/fansy-content/" to "Fansy Content",
-        "$mainUrl/categories/video-record-chaturbate/" to "Video Record Chaturbate",
-        "$mainUrl/categories/camwhores-archive/" to "Camwhores Archive",
-        "$mainUrl/categories/private-video-hd/" to "Private Video HD",
-        "$mainUrl/categories/chaturbate-video/" to "Chaturbate Video",
-        "$mainUrl/categories/chaturbate-record/" to "Chaturbate Record",
-        "$mainUrl/categories/video-private-chaturbate/" to "Video Private Chaturbate",
-        "$mainUrl/categories/video-private-best/" to "Video Private Best",
-        "$mainUrl/categories/patreon-video/" to "Patreon Video",
-        "$mainUrl/categories/strip-leaks/" to "Strip Leaks",
-        "$mainUrl/categories/naked-model/" to "Naked Model",
-        "$mainUrl/categories/private-record-video/" to "Private Record Video",
-        "$mainUrl/categories/chaturbate-video-record/" to "Chaturbate Video Record",
-        "$mainUrl/categories/nude-girl/" to "Nude Girl",
-        "$mainUrl/categories/best-cam-private/" to "Best Cam Private",
-        "$mainUrl/categories/cum-goal/" to "Cum Goal",
-        "$mainUrl/categories/ticket-show/" to "Ticket Show",
-        "$mainUrl/categories/best-private/" to "Best Private",
-        "$mainUrl/categories/spy-record/" to "Spy Record",
-        "$mainUrl/categories/video-chaturbate/" to "Video Chaturbate",
-        "$mainUrl/categories/sexy-model/" to "Sexy Model",
-        "$mainUrl/categories/orgasm-video/" to "Orgasm Video",
-        "$mainUrl/categories/chaturbate-hidden-show/" to "Chaturbate Hidden Show",
-        "$mainUrl/categories/anal-private/" to "Anal Private",
-        "$mainUrl/categories/first-squirt/" to "First Squirt",
-        "$mainUrl/categories/stripchat-leaks/" to "Stripchat Leaks",
-        "$mainUrl/categories/record/" to "Record",
-        "$mainUrl/categories/new-strip-videos/" to "New Strip Videos",
-        "$mainUrl/categories/latest-stripchat/" to "Latest Stripchat",
-        "$mainUrl/categories/hot-stripchat/" to "Hot Stripchat",
-        "$mainUrl/categories/trans-videos/" to "Trans Videos",
-        "$mainUrl/categories/newest-strip-videos/" to "Newest Strip Videos",
-        "$mainUrl/categories/latest-record/" to "Latest Record",
-        "$mainUrl/categories/naked/" to "Naked",
-        "$mainUrl/categories/cam-girl/" to "Cam Girl"
+        "$mainUrl/latest-updates/" to "Video Terbaru",
+        "$mainUrl/top-rated/" to "Terkenal",
+        "$mainUrl/most-popular/" to "Banyak Ditonton"
     )
 
     override suspend fun getMainPage(page: Int, request: MainPageRequest): HomePageResponse {
