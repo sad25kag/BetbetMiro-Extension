@@ -1,28 +1,8 @@
 [
     {
-        "url": "https://raw.githubusercontent.com/sad25kag/BetbetMiro-Extension/maintenance/BioskopKeren.cs3",
-        "status": 3,
-        "version": 15,
-        "name": "BioskopKeren",
-        "internalName": "BioskopKeren",
-        "authors": [
-            "BetbetMiro"
-        ],
-        "description": "Provider CloudStream untuk BioskopKeren.",
-        "fileSize": 53154,
-        "repositoryUrl": "https://github.com/sad25kag/BetbetMiro-Extension",
-        "language": "id",
-        "tvTypes": [
-            "Movie"
-        ],
-        "iconUrl": "http://134.209.20.140/wp-content/uploads/2026/04/BIOSKOPKEREN.png",
-        "apiVersion": 1,
-        "fileHash": "sha256-610bc1002099fd15f813bd0b98543ffd582f703304d40f04e4b95c77707f070b"
-    },
-    {
         "url": "https://raw.githubusercontent.com/sad25kag/BetbetMiro-Extension/maintenance/CGVIndo.cs3",
         "status": 3,
-        "version": 12,
+        "version": 13,
         "name": "CGVIndo",
         "internalName": "CGVIndo",
         "authors": [
@@ -30,7 +10,7 @@
             "BetbetMiro"
         ],
         "description": "CGVIndo provider untuk source http://167.71.211.231/ dengan kategori evidence-based dan parser Muvipro. Sementara ditandai nonaktif karena loadLinks/playback masih belum menghasilkan tautan video yang terbukti, walau mainUrl, MainPage, search, dan load/detail dipertahankan.",
-        "fileSize": 49076,
+        "fileSize": 49111,
         "repositoryUrl": "https://github.com/sad25kag/BetbetMiro-Extension",
         "language": "id",
         "tvTypes": [
@@ -40,7 +20,7 @@
         ],
         "iconUrl": "https://www.google.com/s2/favicons?domain=167.71.211.231&sz=%size%",
         "apiVersion": 1,
-        "fileHash": "sha256-d76be0bf73ec3ab0a86e59733428735759030deb787591a8763e7cb76a58140b"
+        "fileHash": "sha256-56e07d9dbd5efeb8a78e89703a17538e995d36af19fd6c2ee9c4aa851e956743"
     },
     {
         "url": "https://raw.githubusercontent.com/sad25kag/BetbetMiro-Extension/maintenance/CNCVerse.cs3",
