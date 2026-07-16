@@ -38,7 +38,6 @@ class BondageValley : MainAPI() {
             .mapNotNull { anchor -> anchor.toSearchResult() }
             .filter { it.name.isAllowedTitle() }
             .distinctBy { it.url }
-            .take(40)
 
         val hasNext = document.select("a[href*=page_id=${page + 1}], a[href*='?page_id='], .pagination a, ul.pagination a").isNotEmpty()
 
@@ -53,7 +52,7 @@ class BondageValley : MainAPI() {
     override suspend fun search(query: String): List<SearchResponse> {
         if (query.isBlank()) return emptyList()
 
-        val url = "$mainUrl/search?keyword=${query.urlEncoded()}"
+        val url = buildSearchUrl(query)
         val document = app.get(url, headers = defaultHeaders, referer = "$mainUrl/").document
 
         val results = document
@@ -317,6 +316,15 @@ class BondageValley : MainAPI() {
 
         val lower = lowercase()
         return blocked.none { lower.contains(it) }
+    }
+
+    private fun buildSearchUrl(query: String, page: Int = 1): String {
+        val encoded = query.urlEncoded()
+        return if (page <= 1) {
+            "$mainUrl/search?keyword=$encoded"
+        } else {
+            "$mainUrl/search?keyword=$encoded&page_id=$page"
+        }
     }
 
     private fun buildPagedUrl(url: String, page: Int): String {
