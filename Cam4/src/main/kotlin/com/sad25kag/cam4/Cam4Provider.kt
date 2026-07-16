@@ -9,6 +9,8 @@ import java.net.URLEncoder
 
 class Cam4Provider : MainAPI() {
     override var mainUrl = "https://www.cam4.com"
+
+    private val baseReferer = "$mainUrl/"
     override var name = "Cam4"
     override val hasMainPage = true
     override val hasQuickSearch = true
@@ -31,7 +33,7 @@ class Cam4Provider : MainAPI() {
         val response = app.get(
             url,
             headers = defaultHeaders,
-            referer = "$mainUrl/"
+            referer = baseReferer
         ).parsedSafe<Response>()
 
         val items = response?.users.orEmpty()
@@ -53,7 +55,7 @@ class Cam4Provider : MainAPI() {
         val response = app.get(
             searchUrl,
             headers = defaultHeaders,
-            referer = "$mainUrl/"
+            referer = baseReferer
         ).parsedSafe<Response>() ?: return emptyList()
 
         return response.users
@@ -68,7 +70,7 @@ class Cam4Provider : MainAPI() {
         val document = app.get(
             "$mainUrl/$username",
             headers = htmlHeaders,
-            referer = "$mainUrl/"
+            referer = baseReferer
         ).document
 
         val title = document.selectFirst("meta[property=og:title]")
@@ -152,6 +154,14 @@ class Cam4Provider : MainAPI() {
 
     private fun extractUsername(raw: String): String? {
         val parsed = runCatching { Uri.parse(raw) }.getOrNull()
+
+        parsed?.host?.let { host ->
+            if (!host.equals("cam4.com", ignoreCase = true) &&
+                !host.endsWith(".cam4.com", ignoreCase = true)) {
+                return null
+            }
+        }
+
         return parsed?.pathSegments?.firstOrNull()
             ?.trim()
             ?.takeIf { it.isNotBlank() }
@@ -188,13 +198,13 @@ class Cam4Provider : MainAPI() {
     private val defaultHeaders = mapOf(
         "Accept" to "application/json,text/plain,*/*",
         "User-Agent" to USER_AGENT,
-        "Referer" to "$mainUrl/",
+        "Referer" to baseReferer,
         "Origin" to mainUrl,
     )
 
     private val htmlHeaders = mapOf(
         "Accept" to "text/html,application/xhtml+xml,application/xml;q=0.9,*/*;q=0.8",
         "User-Agent" to USER_AGENT,
-        "Referer" to "$mainUrl/",
+        "Referer" to baseReferer,
     )
 }
