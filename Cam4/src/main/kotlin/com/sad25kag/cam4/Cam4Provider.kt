@@ -21,10 +21,10 @@ class Cam4Provider : MainAPI() {
     override val vpnStatus = VPNStatus.MightBeNeeded
 
     override val mainPage = mainPageOf(
-        "/api/directoryCams?directoryJson=true&online=true&url=true&orderBy=VIDEO_QUALITY&resultsPerPage=60" to "Semua",
-        "/api/directoryCams?directoryJson=true&online=true&url=true&orderBy=NEWEST&resultsPerPage=60" to "Terbaru",
-        "/api/directoryCams?directoryJson=true&online=true&url=true&orderBy=VIDEO_QUALITY&gender=female&broadcastType=female_group&broadcastType=solo&broadcastType=male_female_group&resultsPerPage=60" to "Perempuan",
-        "/api/directoryCams?directoryJson=true&online=true&url=true&orderBy=VIDEO_QUALITY&broadcastType=male_group&broadcastType=female_group&broadcastType=male_female_group&resultsPerPage=60" to "Pasangan"
+        "/api/directoryCams?directoryJson=true&online=true&url=true&orderBy=VIDEO_QUALITY" to "Semua",
+        "/api/directoryCams?directoryJson=true&online=true&url=true&orderBy=NEWEST" to "Terbaru",
+        "/api/directoryCams?directoryJson=true&online=true&url=true&orderBy=VIDEO_QUALITY&gender=female&broadcastType=female_group&broadcastType=solo&broadcastType=male_female_group" to "Perempuan",
+        "/api/directoryCams?directoryJson=true&online=true&url=true&orderBy=VIDEO_QUALITY&broadcastType=male_group&broadcastType=female_group&broadcastType=male_female_group" to "Pasangan"
     )
 
     override suspend fun getMainPage(page: Int, request: MainPageRequest): HomePageResponse {
@@ -50,7 +50,7 @@ class Cam4Provider : MainAPI() {
 
     override suspend fun search(query: String): List<SearchResponse> {
         val encodedQuery = URLEncoder.encode(query, "UTF-8")
-        val searchUrl = "$mainUrl/api/directoryCams?directoryJson=true&online=true&url=true&search=$encodedQuery&orderBy=VIDEO_QUALITY&resultsPerPage=60"
+        val searchUrl = "$mainUrl/api/directoryCams?directoryJson=true&online=true&url=true&search=$encodedQuery&orderBy=VIDEO_QUALITY"
 
         val response = app.get(
             searchUrl,
