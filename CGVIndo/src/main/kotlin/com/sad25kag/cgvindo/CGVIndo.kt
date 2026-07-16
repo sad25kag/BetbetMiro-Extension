@@ -36,7 +36,7 @@ import java.util.Base64
 import java.util.Locale
 
 class CGVIndo : MainAPI() {
-    override var mainUrl = "http://167.71.211.231"
+    override var mainUrl = "http://143.198.202.77"
     override var name = "CGVIndo"
     override val hasMainPage = true
     override val hasQuickSearch = true
@@ -44,12 +44,14 @@ class CGVIndo : MainAPI() {
     override var lang = "id"
     override val supportedTypes = setOf(TvType.Movie, TvType.TvSeries, TvType.AsianDrama)
 
+    private val baseReferer = "$mainUrl/"
+
     private val defaultHeaders = mapOf(
         "User-Agent" to USER_AGENT,
         "Accept" to "text/html,application/xhtml+xml,application/xml;q=0.9,*/*;q=0.8",
         "Accept-Language" to "id-ID,id;q=0.9,en-US;q=0.8,en;q=0.7",
         "Cache-Control" to "no-cache",
-        "Referer" to "$mainUrl/"
+        "Referer" to baseReferer
     )
 
     override val mainPage = mainPageOf(
@@ -636,7 +638,7 @@ class CGVIndo : MainAPI() {
         put("Accept", "*/*")
         put("Referer", referer)
         put("Origin", originOf(referer))
-        if (url.contains("167.71.211.231")) put("Host", "167.71.211.231")
+        if (url.contains("143.198.202.77")) put("Host", "143.198.202.77")
     }
 
     private fun originOf(url: String): String = runCatching {
