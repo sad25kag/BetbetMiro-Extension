@@ -82,13 +82,13 @@
     {
         "url": "https://raw.githubusercontent.com/sad25kag/BetbetMiro-Extension/release/BondageValley.cs3",
         "status": 1,
-        "version": 7,
+        "version": 8,
         "name": "BondageValley",
         "internalName": "BondageValley",
         "authors": [
             "sad25kag"
         ],
-        "fileSize": 23126,
+        "fileSize": 23180,
         "repositoryUrl": "https://github.com/sad25kag/BetbetMiro-Extension",
         "language": "id",
         "tvTypes": [
@@ -96,7 +96,7 @@
         ],
         "iconUrl": "https://www.google.com/s2/favicons?domain=bondagevalley.cc&sz=%size%",
         "apiVersion": 1,
-        "fileHash": "sha256-4c934877b31ae31dfac1dda735db3cea698b891befb7a31ed1d322adcc8a0c49"
+        "fileHash": "sha256-30dc3e890ff39097e3f877d20364a564dca1ae88338985e9ccbdd63039fde6d8"
     },
     {
         "url": "https://raw.githubusercontent.com/sad25kag/BetbetMiro-Extension/release/Cam4.cs3",
