@@ -27,7 +27,6 @@ class BondageValley : MainAPI() {
         "$mainUrl" to "Semua Video",
         "$mainUrl/videos/latest" to "Video Terbaru",
         "$mainUrl/videos/top" to "Video Terbaik",
-        "$mainUrl/videos/model" to "Models"
     )
 
     override suspend fun getMainPage(page: Int, request: MainPageRequest): HomePageResponse {
