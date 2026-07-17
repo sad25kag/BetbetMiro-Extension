@@ -78,12 +78,19 @@ open class Cinefreak : MainAPI() {
         "others" to "Others",
         "spanish" to "Spanish",
     )
-    private val headers = mapOf("User-Agent" to "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/131.0.0.0 Safari/537.36 Edg/131.0.0.0","Cookie" to "xla=s4t")
+    private val headers = mapOf(
+        "User-Agent" to "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/131.0.0.0 Safari/537.36 Edg/131.0.0.0",
+        "Accept" to "text/html,application/xhtml+xml,application/xml;q=0.9,*/*;q=0.8",
+        "Accept-Language" to "id-ID,id;q=0.9,en-US;q=0.8",
+        "Referer" to "$mainUrl/",
+        "Cache-Control" to "no-cache",
+        "Cookie" to "xla=s4t"
+    )
 
     override suspend fun getMainPage(
         page: Int, request: MainPageRequest
     ): HomePageResponse {
-        val doc = app.get("$mainUrl/${request.data}/page/$page/",).document
+        val doc = app.get("$mainUrl/${request.data}/page/$page/", headers = headers).document
         val home = doc.select("div.card-grid a").mapNotNull { toResult(it) }
         return newHomePageResponse(request.name, home, true)
     }
@@ -91,7 +98,7 @@ open class Cinefreak : MainAPI() {
     private fun toResult(post: Element): SearchResponse {
         val titleText = post.select("h3").text()
         val title = cleanTitle(titleText)
-        val url = post.attr("href")
+        val url = fixUrl(post.attr("href"), mainUrl)
         val poster = post.select("img").attr("data-lazy-src").ifBlank { post.select("img").attr("src") }
         val score = Score.from10(post.select("div.rating").text())
         return newMovieSearchResponse(title, url, TvType.Movie) {
@@ -105,7 +112,8 @@ open class Cinefreak : MainAPI() {
     override suspend fun search(query: String, page: Int): SearchResponseList {
 
         val results = app.get(
-            "$mainUrl/search-api.php?q=${query}&pg=$page"
+            "$mainUrl/search-api.php?q=${query}&pg=$page",
+            headers = headers
         ).parsedSafe<SearchData>()
             ?.results
             .orEmpty()
@@ -114,7 +122,7 @@ open class Cinefreak : MainAPI() {
             val href = if (obj.l.startsWith("http")) {
                 obj.l
             } else {
-                "$mainUrl/${obj.l}/"
+                fixUrl(obj.l, mainUrl)
             }
 
             val type = when {
@@ -135,7 +143,7 @@ open class Cinefreak : MainAPI() {
 
     override suspend fun load(url: String): LoadResponse {
 
-        val doc = app.get(url, headers = headers).document
+        val doc = app.get(fixUrl(url, mainUrl), headers = headers).document
 
         val fullTitleText = doc.select("h1.page-title").text()
         var title = fullTitleText.substringBefore(" Download").substringBefore(" [").trim()
@@ -180,7 +188,7 @@ open class Cinefreak : MainAPI() {
                 .attr("data-lazy-src")
                 .ifBlank { it.select("img").attr("src") }
 
-            val href = it.select("a").attr("href")
+            val href = fixUrl(it.select("a").attr("href"), mainUrl)
 
             newMovieSearchResponse("", href, TvType.Movie) {
                 posterUrl = recPoster
