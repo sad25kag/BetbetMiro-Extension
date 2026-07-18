@@ -34,8 +34,8 @@ class DGSProvider : MainAPI() {
 
     override suspend fun quickSearch(query: String): List<SearchResponse>? = search(query)
 
-    override suspend fun search(query: String): List<SearchResponse>? {
-        val document = app.get(searchUrl(mainUrl, query), headers = DGSUtils.headers, referer = mainUrl).document
+    override suspend fun search(query: String, page: Int): List<SearchResponse>? {
+        val document = app.get(searchUrl(mainUrl, query, page), headers = DGSUtils.headers, referer = mainUrl).document
         return DGSParser.parseListing(this, document)
     }
 
