@@ -457,14 +457,14 @@
     {
         "url": "https://raw.githubusercontent.com/sad25kag/BetbetMiro-Extension/builds/Cinefreak.cs3",
         "status": 1,
-        "version": 8,
+        "version": 9,
         "name": "Cinefreak",
         "internalName": "Cinefreak",
         "authors": [
             "sad25kag"
         ],
         "description": "Bangla/Hindi Movies/Series",
-        "fileSize": 68592,
+        "fileSize": 68793,
         "repositoryUrl": "https://github.com/sad25kag/BetbetMiro-Extension",
         "language": "id",
         "tvTypes": [
@@ -474,7 +474,7 @@
         ],
         "iconUrl": "https://raw.githubusercontent.com/sad25kag/TVVVV/refs/heads/main/Icons/cinefreak.png",
         "apiVersion": 1,
-        "fileHash": "sha256-3e5b09ceca69ee48e58aab2971f65c1e0df24b9519c903d4ae2c9b1fe5b9177f"
+        "fileHash": "sha256-3f43c676bcfffc33b4be7b2e9335dd3080db81a70a165d3f17902db4e13e92a6"
     },
     {
         "url": "https://raw.githubusercontent.com/sad25kag/BetbetMiro-Extension/builds/Cinemax21Provider.cs3",
