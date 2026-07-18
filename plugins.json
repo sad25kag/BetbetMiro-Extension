@@ -161,14 +161,14 @@
     {
         "url": "https://raw.githubusercontent.com/sad25kag/BetbetMiro-Extension/release/DGS.cs3",
         "status": 1,
-        "version": 5,
+        "version": 6,
         "name": "DGS",
         "internalName": "DGS",
         "authors": [
             "sad25kag"
         ],
         "description": "DeepGoreTube / DGS provider with HAR-backed categories, detail parsing, and HLS resolver flow.",
-        "fileSize": 45395,
+        "fileSize": 45360,
         "repositoryUrl": "https://github.com/sad25kag/BetbetMiro-Extension",
         "language": "id",
         "tvTypes": [
@@ -176,7 +176,7 @@
         ],
         "iconUrl": "https://www.google.com/s2/favicons?domain=deepgoretube.site&sz=256",
         "apiVersion": 1,
-        "fileHash": "sha256-0273c7491adaddc5db2c2bfb5bdb34c692ced50987048a61441fdf553ccbb93f"
+        "fileHash": "sha256-33228daecbbdc526c548f4dfc21baa96b2170cf225e2ad34d790261c1ba9c0a2"
     },
     {
         "url": "https://raw.githubusercontent.com/sad25kag/BetbetMiro-Extension/release/EPorner.cs3",
