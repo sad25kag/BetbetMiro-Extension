@@ -1,38 +1,15 @@
 [
     {
-        "url": "https://raw.githubusercontent.com/sad25kag/BetbetMiro-Extension/maintenance/CGVIndo.cs3",
-        "status": 3,
-        "version": 13,
-        "name": "CGVIndo",
-        "internalName": "CGVIndo",
-        "authors": [
-            "sad25kag",
-            "BetbetMiro"
-        ],
-        "description": "CGVIndo provider untuk source http://167.71.211.231/ dengan kategori evidence-based dan parser Muvipro. Sementara ditandai nonaktif karena loadLinks/playback masih belum menghasilkan tautan video yang terbukti, walau mainUrl, MainPage, search, dan load/detail dipertahankan.",
-        "fileSize": 49111,
-        "repositoryUrl": "https://github.com/sad25kag/BetbetMiro-Extension",
-        "language": "id",
-        "tvTypes": [
-            "Movie",
-            "TvSeries",
-            "AsianDrama"
-        ],
-        "iconUrl": "https://www.google.com/s2/favicons?domain=167.71.211.231&sz=%size%",
-        "apiVersion": 1,
-        "fileHash": "sha256-56e07d9dbd5efeb8a78e89703a17538e995d36af19fd6c2ee9c4aa851e956743"
-    },
-    {
         "url": "https://raw.githubusercontent.com/sad25kag/BetbetMiro-Extension/maintenance/CNCVerse.cs3",
         "status": 1,
-        "version": 62,
+        "version": 63,
         "name": "CNCVerse",
         "internalName": "CNCVerse",
         "authors": [
             "sad25kag"
         ],
         "description": "Netflix, PrimeVideo, Disney+ Hotstar Contents in Multiple Languages",
-        "fileSize": 68933,
+        "fileSize": 68937,
         "repositoryUrl": "https://github.com/sad25kag/BetbetMiro-Extension",
         "language": "id",
         "tvTypes": [
@@ -41,7 +18,7 @@
         ],
         "iconUrl": "https://github.com/NivinCNC/CNCVerse-Cloud-Stream-Extension/raw/refs/heads/master/CNC%20Verse/icon.png",
         "apiVersion": 1,
-        "fileHash": "sha256-b290dcdd21acabb0f84b2dfe9f9229ab0812b560a571585742f6b137834303a3"
+        "fileHash": "sha256-c7b194058a5ea2ef113a399544a24646c77b48197ff6ee812deb0e95e279eefe"
     },
     {
         "url": "https://raw.githubusercontent.com/sad25kag/BetbetMiro-Extension/maintenance/DrakorAsia.cs3",
