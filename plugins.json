@@ -479,14 +479,14 @@
     {
         "url": "https://raw.githubusercontent.com/sad25kag/BetbetMiro-Extension/builds/Cinemax21Provider.cs3",
         "status": 1,
-        "version": 10,
+        "version": 11,
         "name": "Cinemax21Provider",
         "internalName": "Cinemax21Provider",
         "authors": [
             "sad25kag"
         ],
         "description": "CineMax21 \u2014 Streaming Movie and TV Series",
-        "fileSize": 241631,
+        "fileSize": 241703,
         "repositoryUrl": "https://github.com/sad25kag/BetbetMiro-Extension",
         "language": "id",
         "tvTypes": [
@@ -496,7 +496,7 @@
         ],
         "iconUrl": "https://klikxxi.me/wp-content/uploads/2024/02/cropped-site-icon.png",
         "apiVersion": 1,
-        "fileHash": "sha256-86483a9d7177c336ded03f0ecb4bae1410c7e0b8a0e5da69602b693f66643963"
+        "fileHash": "sha256-9ef90642b354429be8b6e9d9c387f862c566b851a21dc5eca1882dbc96d5c000"
     },
     {
         "url": "https://raw.githubusercontent.com/sad25kag/BetbetMiro-Extension/builds/DailymotionProvider.cs3",
