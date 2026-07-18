@@ -135,7 +135,7 @@ class DailymotionProvider : MainAPI() {
     override suspend fun search(
         query: String,
         page: Int
-    ): List<SearchResponse>? {
+    ): SearchResponseList? {
         val cleanQuery = query.trim()
         if (cleanQuery.isBlank()) return emptyList()
 
@@ -145,13 +145,17 @@ class DailymotionProvider : MainAPI() {
             limit = 40
         ) ?: return emptyList()
 
-        return response.list
+        val results = response.list
             .orEmpty()
             .mapNotNull {
                 it.toSearchResponse(
                     inferTypeFromTitle(it.title.orEmpty())
                 )
             }
+
+        return results.toNewSearchResponseList(
+            hasNext = response.hasMore == true
+        )
     }
 
     override suspend fun load(url: String): LoadResponse? {
