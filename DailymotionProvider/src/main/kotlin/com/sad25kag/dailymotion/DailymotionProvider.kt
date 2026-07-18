@@ -11,6 +11,8 @@ import com.lagradost.cloudstream3.LoadResponse
 import com.lagradost.cloudstream3.MainAPI
 import com.lagradost.cloudstream3.MainPageRequest
 import com.lagradost.cloudstream3.SearchResponse
+import com.lagradost.cloudstream3.SearchResponseList
+import com.lagradost.cloudstream3.toNewSearchResponseList
 import com.lagradost.cloudstream3.SubtitleFile
 import com.lagradost.cloudstream3.TvType
 import com.lagradost.cloudstream3.USER_AGENT
@@ -137,13 +139,13 @@ class DailymotionProvider : MainAPI() {
         page: Int
     ): SearchResponseList? {
         val cleanQuery = query.trim()
-        if (cleanQuery.isBlank()) return emptyList()
+        if (cleanQuery.isBlank()) return null
 
         val response = fetchVideoPage(
             query = searchQuery(cleanQuery, sort = "relevance"),
             page = page,
             limit = 40
-        ) ?: return emptyList()
+        ) ?: return null
 
         val results = response.list
             .orEmpty()
