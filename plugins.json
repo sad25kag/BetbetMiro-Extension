@@ -501,14 +501,14 @@
     {
         "url": "https://raw.githubusercontent.com/sad25kag/BetbetMiro-Extension/builds/DailymotionProvider.cs3",
         "status": 1,
-        "version": 12,
+        "version": 13,
         "name": "DailymotionProvider",
         "internalName": "DailymotionProvider",
         "authors": [
             "sad25kag"
         ],
         "description": "Dailymotion public video catalog with source-backed homepage, search, detail, and internal HLS playback resolver.",
-        "fileSize": 36236,
+        "fileSize": 36356,
         "repositoryUrl": "https://github.com/sad25kag/BetbetMiro-Extension",
         "tvTypes": [
             "Movie",
@@ -521,7 +521,7 @@
         ],
         "iconUrl": "https://www.google.com/s2/favicons?domain=www.dailymotion.com&sz=%size%",
         "apiVersion": 1,
-        "fileHash": "sha256-e0e15fb7ec5bfa9044b4ca72ddb71494d0f9c44c88330f70e4f8c94716ca70ad"
+        "fileHash": "sha256-6ca430fb78857092bb5f626f388caa2562bbb653b942bebf22d0a057597435ad"
     },
     {
         "url": "https://raw.githubusercontent.com/sad25kag/BetbetMiro-Extension/builds/DonghuaFilm.cs3",
