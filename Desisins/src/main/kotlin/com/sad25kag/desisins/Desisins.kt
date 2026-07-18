@@ -74,7 +74,7 @@ class Desisins : MainAPI() {
             runCatching {
                 val document = app.get("$base/?s=$encoded", headers = headers, referer = "$base/").document
                 results += document.select(
-                    "div.home_post_cont, article, .post, .g1-collection-item, .entry-tpl-grid, .item"
+                    "article, .post, .g1-collection-item, .entry-tpl-grid, .item, .post-item, div.home_post_cont"
                 ).mapNotNull { it.toSearchResult() }
             }
         }
