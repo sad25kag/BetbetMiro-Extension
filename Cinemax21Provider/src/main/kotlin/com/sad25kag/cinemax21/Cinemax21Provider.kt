@@ -46,6 +46,11 @@ open class Cinemax21Provider : TmdbProvider() {
 
     val wpRedisInterceptor by lazy { CloudflareKiller() }
 
+    private val apiHeaders = mapOf(
+        "User-Agent" to USER_AGENT,
+        "Accept" to "application/json",
+    )
+
     companion object {
         private const val tmdbAPI = "https://api.themoviedb.org/3"
         const val gdbot = "https://gdtot.pro"
@@ -264,7 +269,7 @@ open class Cinemax21Provider : TmdbProvider() {
         val type = if (request.data.contains("/movie", ignoreCase = true)) "movie" else "tv"
         val pageUrl = "${request.data}$adultQuery&page=$page"
 
-        val home = app.get(pageUrl)
+        val home = app.get(pageUrl, headers = apiHeaders)
             .parsedSafe<Results>()
             ?.results
             ?.mapNotNull { media -> media.toSearchResponse(type) }
@@ -300,7 +305,7 @@ open class Cinemax21Provider : TmdbProvider() {
 
     override suspend fun search(query: String): List<SearchResponse>? {
         val encodedQuery = URLEncoder.encode(query, "UTF-8")
-        return app.get("$tmdbAPI/search/multi?api_key=$apiKey&language=en-US&query=$encodedQuery&page=1&include_adult=${settingsForProvider.enableAdult}")
+        return app.get("$tmdbAPI/search/multi?api_key=$apiKey&language=en-US&query=$encodedQuery&page=1&include_adult=${settingsForProvider.enableAdult}", headers = apiHeaders)
             .parsedSafe<Results>()
             ?.results
             ?.mapNotNull { media -> media.toSearchResponse() }
@@ -331,7 +336,7 @@ open class Cinemax21Provider : TmdbProvider() {
         } else {
             "$tmdbAPI/tv/${data.id}?api_key=$apiKey&append_to_response=$append&include_video_language=id,en"
         }
-        val res = app.get(resUrl).parsedSafe<MediaDetail>()
+        val res = app.get(resUrl, headers = apiHeaders).parsedSafe<MediaDetail>()
             ?: throw ErrorLoadingException("Invalid Json Response")
 
         val title = res.title ?: res.name ?: return null
@@ -370,7 +375,7 @@ open class Cinemax21Provider : TmdbProvider() {
         return if (type == TvType.TvSeries) {
             val lastSeason = res.lastEpisodeToAir?.seasonNumber
             val episodes = res.seasons?.mapNotNull { season ->
-                app.get("$tmdbAPI/${data.type}/${data.id}/season/${season.seasonNumber}?api_key=$apiKey")
+                app.get("$tmdbAPI/${data.type}/${data.id}/season/${season.seasonNumber}?api_key=$apiKey", headers = apiHeaders)
                     .parsedSafe<MediaDetailEpisodes>()?.episodes?.map { eps ->
                         newEpisode(
                             data = LinkData(
