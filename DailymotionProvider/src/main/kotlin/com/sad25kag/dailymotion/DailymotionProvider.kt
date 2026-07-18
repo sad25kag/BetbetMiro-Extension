@@ -132,23 +132,26 @@ class DailymotionProvider : MainAPI() {
 
     override suspend fun quickSearch(query: String): List<SearchResponse> = search(query)
 
-    override suspend fun search(query: String): List<SearchResponse> {
+    override suspend fun search(
+        query: String,
+        page: Int
+    ): SearchResponseList? {
         val cleanQuery = query.trim()
-        if (cleanQuery.isBlank()) return emptyList()
+        if (cleanQuery.isBlank()) return null
 
-        val apiUrl = buildVideoListUrl(
+        val response = fetchVideoPage(
             query = searchQuery(cleanQuery, sort = "relevance"),
-            page = 1,
+            page = page,
             limit = 40
-        )
+        ) ?: return null
 
-        return app.get(apiUrl, headers = apiHeaders)
-            .text
-            .let { parseDailymotionJson<VideoSearchResponse>(it) }
-            ?.list
+        val results = response.list
             .orEmpty()
             .mapNotNull { it.toSearchResponse(inferTypeFromTitle(it.title.orEmpty())) }
-            .distinctBy { it.url }
+
+        return results.toNewSearchResponseList(
+            hasNext = response.hasMore == true
+        )
     }
 
     override suspend fun load(url: String): LoadResponse? {
