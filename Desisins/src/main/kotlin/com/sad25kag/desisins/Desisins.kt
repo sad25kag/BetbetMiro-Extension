@@ -74,7 +74,7 @@ class Desisins : MainAPI() {
             runCatching {
                 val document = app.get("$base/?s=$encoded", headers = headers, referer = "$base/").document
                 results += document.select(
-                    "article, .post, .g1-collection-item, .entry-tpl-grid, .item, .post-item, div.home_post_cont"
+                    "div.home_post_cont, article, .post, .g1-collection-item, .entry-tpl-grid, .item"
                 ).mapNotNull { it.toSearchResult() }
             }
         }
@@ -196,10 +196,27 @@ class Desisins : MainAPI() {
     }
 
     private fun Element.toSearchResult(): SearchResponse? {
-        val anchor = selectFirst("h3 > a[href], h2 > a[href], .entry-title a[href], a[href]")
+        val href = selectFirst("a[href]")?.attr("href")
             ?: return null
 
-        return anchor.toSearchResultFromAnchor(this)
+        val title = (
+            selectFirst("h1, h2, h3, .entry-title, .title, .tt")
+                ?.text()
+                ?: selectFirst("a[href]")?.text()
+                ?: return null
+        ).trim()
+
+        val poster = selectFirst("img")?.let {
+            it.attr("src").ifBlank { it.attr("data-src") }
+        }
+
+        return newMovieSearchResponse(
+            title,
+            fixUrl(href),
+            TvType.Movie
+        ) {
+            this.posterUrl = poster
+        }
     }
 
     private fun Element.toSearchResultFromAnchor(container: Element = this): SearchResponse? {
