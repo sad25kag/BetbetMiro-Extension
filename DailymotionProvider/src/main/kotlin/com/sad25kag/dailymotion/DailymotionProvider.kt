@@ -132,7 +132,21 @@ class DailymotionProvider : MainAPI() {
         )
     }
 
-    override suspend fun quickSearch(query: String): List<SearchResponse> = search(query)
+    override suspend fun quickSearch(query: String): List<SearchResponse> {
+        val response = fetchVideoPage(
+            query = searchQuery(query.trim(), sort = "relevance"),
+            page = 1,
+            limit = 20
+        ) ?: return emptyList()
+
+        return response.list
+            .orEmpty()
+            .mapNotNull {
+                it.toSearchResponse(
+                    inferTypeFromTitle(it.title.orEmpty())
+                )
+            }
+    }
 
     override suspend fun search(
         query: String,
