@@ -7,6 +7,8 @@ import com.lagradost.cloudstream3.LoadResponse
 import com.lagradost.cloudstream3.MainAPI
 import com.lagradost.cloudstream3.MainPageRequest
 import com.lagradost.cloudstream3.SearchResponse
+import com.lagradost.cloudstream3.SearchResponseList
+import com.lagradost.cloudstream3.toNewSearchResponseList
 import com.lagradost.cloudstream3.SubtitleFile
 import com.lagradost.cloudstream3.newSubtitleFile
 import com.lagradost.cloudstream3.TvType
@@ -34,9 +36,15 @@ class DGSProvider : MainAPI() {
 
     override suspend fun quickSearch(query: String): List<SearchResponse>? = search(query)
 
-    override suspend fun search(query: String, page: Int): List<SearchResponse>? {
+    override suspend fun search(query: String, page: Int): SearchResponseList? {
         val document = app.get(searchUrl(mainUrl, query, page), headers = DGSUtils.headers, referer = mainUrl).document
-        return DGSParser.parseListing(this, document)
+        val results = DGSParser.parseListing(this, document)
+
+        return results.toNewSearchResponseList(
+            hasNext = document.selectFirst(
+                "a.next, .next, a[href*='paged=']"
+            ) != null
+        )
     }
 
     override suspend fun load(url: String): LoadResponse? {
