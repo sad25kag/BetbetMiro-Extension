@@ -135,23 +135,23 @@ class DailymotionProvider : MainAPI() {
     override suspend fun search(
         query: String,
         page: Int
-    ): SearchResponseList? {
+    ): List<SearchResponse>? {
         val cleanQuery = query.trim()
-        if (cleanQuery.isBlank()) return null
+        if (cleanQuery.isBlank()) return emptyList()
 
         val response = fetchVideoPage(
             query = searchQuery(cleanQuery, sort = "relevance"),
             page = page,
             limit = 40
-        ) ?: return null
+        ) ?: return emptyList()
 
-        val results = response.list
+        return response.list
             .orEmpty()
-            .mapNotNull { it.toSearchResponse(inferTypeFromTitle(it.title.orEmpty())) }
-
-        return results.toNewSearchResponseList(
-            hasNext = response.hasMore == true
-        )
+            .mapNotNull {
+                it.toSearchResponse(
+                    inferTypeFromTitle(it.title.orEmpty())
+                )
+            }
     }
 
     override suspend fun load(url: String): LoadResponse? {
