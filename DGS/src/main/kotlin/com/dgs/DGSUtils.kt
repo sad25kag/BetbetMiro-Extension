@@ -91,7 +91,14 @@ object DGSUtils {
         }
     }
 
-    fun searchUrl(mainUrl: String, query: String, page: Int = 1): String = "$mainUrl/search/${query.urlEncoded()}/"
+    fun searchUrl(mainUrl: String, query: String, page: Int = 1): String {
+        val encoded = query.urlEncoded()
+        return if (page > 1) {
+            "$mainUrl/?s=$encoded&paged=$page&search=&content_type=video"
+        } else {
+            "$mainUrl/?s=$encoded&search=&content_type=video"
+        }
+    }
 
     fun isDGSUrl(url: String): Boolean {
         val host = runCatching { URI(url).host.orEmpty().lowercase(Locale.ROOT) }.getOrDefault(url.lowercase(Locale.ROOT))
