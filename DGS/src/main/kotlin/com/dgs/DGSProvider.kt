@@ -41,9 +41,7 @@ class DGSProvider : MainAPI() {
         val results = DGSParser.parseListing(this, document)
 
         return results.toNewSearchResponseList(
-            hasNext = document.selectFirst(
-                "a.next, .next, a[href*='paged=']"
-            ) != null
+            hasNext = results.isNotEmpty()
         )
     }
 
