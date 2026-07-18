@@ -98,7 +98,7 @@ open class Cinefreak : MainAPI() {
     private fun toResult(post: Element): SearchResponse {
         val titleText = post.select("h3").text()
         val title = cleanTitle(titleText)
-        val url = fixUrl(post.attr("href"), mainUrl)
+        val url = fixUrl(post.attr("href"))
         val poster = post.select("img").attr("data-lazy-src").ifBlank { post.select("img").attr("src") }
         val score = Score.from10(post.select("div.rating").text())
         return newMovieSearchResponse(title, url, TvType.Movie) {
@@ -122,7 +122,7 @@ open class Cinefreak : MainAPI() {
             val href = if (obj.l.startsWith("http")) {
                 obj.l
             } else {
-                fixUrl(obj.l, mainUrl)
+                fixUrl(obj.l)
             }
 
             val type = when {
@@ -143,7 +143,7 @@ open class Cinefreak : MainAPI() {
 
     override suspend fun load(url: String): LoadResponse {
 
-        val doc = app.get(fixUrl(url, mainUrl), headers = headers).document
+        val doc = app.get(fixUrl(url), headers = headers).document
 
         val fullTitleText = doc.select("h1.page-title").text()
         var title = fullTitleText.substringBefore(" Download").substringBefore(" [").trim()
@@ -188,7 +188,7 @@ open class Cinefreak : MainAPI() {
                 .attr("data-lazy-src")
                 .ifBlank { it.select("img").attr("src") }
 
-            val href = fixUrl(it.select("a").attr("href"), mainUrl)
+            val href = fixUrl(it.select("a").attr("href"))
 
             newMovieSearchResponse("", href, TvType.Movie) {
                 posterUrl = recPoster
