@@ -141,14 +141,14 @@
     {
         "url": "https://raw.githubusercontent.com/sad25kag/BetbetMiro-Extension/release/Desisins.cs3",
         "status": 1,
-        "version": 9,
+        "version": 10,
         "name": "Desisins",
         "internalName": "Desisins",
         "authors": [
             "sad25kag"
         ],
         "description": "18+ webseries clips from Desisins.",
-        "fileSize": 19893,
+        "fileSize": 20179,
         "repositoryUrl": "https://github.com/sad25kag/BetbetMiro-Extension",
         "language": "id",
         "tvTypes": [
@@ -156,7 +156,7 @@
         ],
         "iconUrl": "https://shorts.desisins.com/wp-content/uploads/2023/04/cropped-favicon-2-32x32.png",
         "apiVersion": 1,
-        "fileHash": "sha256-3f793b10cf2c910880f7cdce6806e89488c5b9b78f8f046a8a1b5e11da69c634"
+        "fileHash": "sha256-bc3d29010ca6a9b7b198f1d4cf97ecafa56cbc6112bedf446cf859b1b80ffcb4"
     },
     {
         "url": "https://raw.githubusercontent.com/sad25kag/BetbetMiro-Extension/release/DGS.cs3",
