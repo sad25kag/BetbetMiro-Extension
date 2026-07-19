@@ -37,17 +37,9 @@ class DonghuaFilm : MainAPI() {
     )
 
     override val mainPage = mainPageOf(
-        "anime/?order=update&status=&type=" to "New Donghua",
-        "anime/?order=update&status=completed&type=" to "Completed",
-        "anime/?order=popular&status=&type=" to "Popular",
-        "genres/action/" to "Action",
-        "genres/adventure/" to "Adventure",
-        "genres/fanstasy/" to "Fantasy",
-        "genres/historical/" to "Historical",
-        "genres/martial-arts/" to "Martial Arts",
-        "genres/xuanhuan/" to "Xuanhuan",
-        "genres/romance/" to "Romance",
-        "genres/sci-fi/" to "Sci-Fi",
+        "anime/?order=update&status=&type=" to "Baru Rilis",
+        "anime/?order=update&status=completed&type=" to "Udah Selesai",
+        "anime/?order=popular&status=&type=" to "Terkenal",
     )
 
     override suspend fun getMainPage(page: Int, request: MainPageRequest): HomePageResponse {
@@ -264,7 +256,7 @@ class DonghuaFilm : MainAPI() {
 
         val results = mutableListOf<SearchResponse>()
 
-        // ── Priority 1: series cards with /anime/ URL (sidebar "New Donghua" etc.) ──
+        // ── Priority 1: series cards with /anime/ URL (sidebar "Baru Rilis" etc.) ──
         working.select("a[href*='/anime/']").forEach { a ->
             val card = a.toSeriesCard() ?: return@forEach
             results.add(card)
