@@ -526,14 +526,14 @@
     {
         "url": "https://raw.githubusercontent.com/sad25kag/BetbetMiro-Extension/builds/DonghuaFilm.cs3",
         "status": 1,
-        "version": 12,
+        "version": 13,
         "name": "DonghuaFilm",
         "internalName": "DonghuaFilm",
         "authors": [
             "sad25kag"
         ],
         "description": "DonghuaFilm - Nonton Donghua Gratis Sub Indonesia.",
-        "fileSize": 52825,
+        "fileSize": 52771,
         "repositoryUrl": "https://github.com/sad25kag/BetbetMiro-Extension",
         "language": "id",
         "tvTypes": [
@@ -543,7 +543,7 @@
         ],
         "iconUrl": "https://donghuafilm.com/favicon.ico",
         "apiVersion": 1,
-        "fileHash": "sha256-8eae1f02db4d526458d6b178b1eedc918754eafba9e940aeceaab505da9fa3ad"
+        "fileHash": "sha256-90b9855941774b3c7b7617e45fd83ee723e8a4a3156cfb280f97cff148e40b84"
     },
     {
         "url": "https://raw.githubusercontent.com/sad25kag/BetbetMiro-Extension/builds/DonghuaID.cs3",
