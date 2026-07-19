@@ -47,10 +47,7 @@ class DonghuaFilm : MainAPI() {
         val document = app.get(url, headers = browserHeaders, referer = "$mainUrl/").document
         val parsed = parseCards(document, request.data)
             .distinctBy { it.url.normalizedKey() }
-        val hasNext = parsed.isNotEmpty() && document.selectFirst(
-            "a.next, .pagination a.next, a.next.page-numbers, link[rel=next], "
-                    + "a[href*='/page/${page + 1}/'], a[href*='page=${page + 1}']"
-        ) != null
+        val hasNext = parsed.isNotEmpty()
         return newHomePageResponse(HomePageList(request.name, parsed, isHorizontalImages = false), hasNext = hasNext)
     }
 
