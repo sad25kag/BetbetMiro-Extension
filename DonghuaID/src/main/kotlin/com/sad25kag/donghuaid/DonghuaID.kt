@@ -477,9 +477,21 @@ class DonghuaID : MainAPI() {
     private fun String.absoluteUrl(baseUrl: String = mainUrl): String? {
         val value = trim().trim('"', '\'').replace("\\/", "/")
         if (value.isBlank() || value.startsWith("javascript:", true) || value == "#" || value.startsWith("data:", true)) return null
-        if (value.startsWith("//")) return "https:$value"
-        if (value.startsWith("http://", true) || value.startsWith("https://", true)) return value
-        return runCatching { URI(baseUrl).resolve(value).toString() }.getOrNull()
+
+        val resolved = when {
+            value.startsWith("//") -> "https:$value"
+            value.startsWith("http://", true) || value.startsWith("https://", true) -> value
+            else -> runCatching { URI(baseUrl).resolve(value).toString() }.getOrNull()
+        } ?: return null
+
+        return resolved.normalizeWebUrl()
+    }
+
+    private fun String.normalizeWebUrl(): String {
+        return replace(Regex("(?<!:)//+"), "/")
+            .trim()
+            .replace("\\s".toRegex(), "")
+            .trimEnd('/')
     }
 
     private fun String.normalizedKey(): String = substringBefore("#").trimEnd('/').lowercase(Locale.ROOT)
