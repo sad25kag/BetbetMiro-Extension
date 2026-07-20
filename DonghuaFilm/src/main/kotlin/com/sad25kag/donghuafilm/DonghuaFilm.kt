@@ -232,14 +232,24 @@ class DonghuaFilm : MainAPI() {
 
     private fun buildPageUrl(path: String, page: Int): String {
         val cleanPath = path.trim().trimStart('/')
-        if (cleanPath.isBlank()) return if (page <= 1) "$mainUrl/" else "$mainUrl/page/$page/"
-        val base = if (cleanPath.startsWith("http", true)) cleanPath.trimEnd('/')
-        else "$mainUrl/$cleanPath".trimEnd('/')
-        if (page <= 1) return if (base.contains("?")) base else "$base/"
-        return when {
-            base.contains("page=") -> base.replace(Regex("""page=\d+"""), "page=$page")
-            base.contains("?") -> "$base&page=$page"
-            else -> "$base/page/$page/"
+
+        val base = if (cleanPath.startsWith("http", true)) {
+            cleanPath.trimEnd('/')
+        } else {
+            "$mainUrl/$cleanPath".trimEnd('/')
+        }
+
+        if (page <= 1) return if (base.endsWith("/")) base else "$base/"
+
+        // DonghuaFilm uses /page/{number}/ for archive and category pages.
+        // Keep existing query parameters while inserting pagination before query.
+        val uri = URI(base)
+        val pathPart = uri.path.trimEnd('/')
+
+        return if (uri.query.isNullOrBlank()) {
+            "$mainUrl$pathPart/page/$page/"
+        } else {
+            "$mainUrl$pathPart/page/$page/?${uri.query}"
         }
     }
 
