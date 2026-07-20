@@ -42,7 +42,7 @@ class DonghuaID : MainAPI() {
         "User-Agent" to USER_AGENT,
         "Accept" to "text/html,application/xhtml+xml,application/xml;q=0.9,*/*;q=0.8",
         "Accept-Language" to "id-ID,id;q=0.9,en-US;q=0.7,en;q=0.5",
-        "Referer" to "$mainUrl/",
+        "Referer" to mainUrl,
     )
 
     override val mainPage = mainPageOf(
@@ -273,7 +273,7 @@ class DonghuaID : MainAPI() {
 
         return newAnimeSearchResponse(title, href, tvType) {
             this.posterUrl = poster
-            this.posterHeaders = mapOf("Referer" to "$mainUrl/")
+            this.posterHeaders = mapOf("Referer" to mainUrl)
         }
     }
 
