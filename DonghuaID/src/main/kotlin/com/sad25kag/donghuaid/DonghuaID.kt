@@ -54,8 +54,8 @@ class DonghuaID : MainAPI() {
 
     override suspend fun getMainPage(page: Int, request: MainPageRequest): HomePageResponse {
         val url = buildPagedUrl(request.data, page)
-        val document = app.get(url, headers = siteHeaders, referer = "$mainUrl/").document
-        val results = parseDonghuaCards(document, includeSidebar = request.data == "$mainUrl/")
+        val document = app.get(url, headers = siteHeaders, referer = mainUrl).document
+        val results = parseDonghuaCards(document, includeSidebar = page == 1 && request.data.removeSuffix("/") == mainUrl.removeSuffix("/"))
             .distinctBy { it.url.normalizedKey() }
         val hasNext = document.selectFirst(
             "a.next[href], a.next.page-numbers[href], link[rel=next], .hpage a[href*='page=${page + 1}'], a[href*='/page/${page + 1}/'], a[href*='page=${page + 1}']"
@@ -106,7 +106,7 @@ class DonghuaID : MainAPI() {
     }
 
     override suspend fun load(url: String): LoadResponse {
-        val document = app.get(url, headers = siteHeaders, referer = "$mainUrl/").document
+        val document = app.get(url, headers = siteHeaders, referer = mainUrl).document
         val title = cleanTitle(
             document.selectFirst("h1.entry-title, h1[itemprop=name], .infox h1, .entry-title, h1")?.text()
                 ?: document.selectFirst("meta[property=og:title]")?.attr("content")
@@ -177,7 +177,7 @@ class DonghuaID : MainAPI() {
         }
 
         suspend fun runSourceFlow(watchUrl: String): Boolean {
-            val document = app.get(watchUrl, headers = siteHeaders, referer = "$mainUrl/").document
+            val document = app.get(watchUrl, headers = siteHeaders, referer = mainUrl).document
             val serverOptions = document.select(".mobius option[value], .mirror option[value], .servers option[value], select option[value]")
                 .filter { option -> option.attr("value").trim().isNotBlank() }
 
@@ -198,7 +198,7 @@ class DonghuaID : MainAPI() {
             return emitted.isNotEmpty()
         }
 
-        val inputDocument = app.get(data, headers = siteHeaders, referer = "$mainUrl/").document
+        val inputDocument = app.get(data, headers = siteHeaders, referer = mainUrl).document
 
         // If the test/app accidentally sends a detail URL into loadLinks, keep the source flow:
         // detail -> first episode/watch link -> watch page -> .mobius option -> decode -> iframe -> loadExtractor.
