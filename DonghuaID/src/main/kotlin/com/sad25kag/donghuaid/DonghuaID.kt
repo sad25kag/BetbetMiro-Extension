@@ -67,23 +67,45 @@ class DonghuaID : MainAPI() {
 
     override suspend fun search(query: String): List<SearchResponse> {
         if (query.isBlank()) return emptyList()
+
         val encoded = URLEncoder.encode(query, "UTF-8")
-        val routes = listOf(
-            "$mainUrl/?s=$encoded",
-            "$mainUrl/page/1/?s=$encoded",
-            "$mainUrl/anime/?status=&type=&sub=&order=&keyword=$encoded",
-            "$mainUrl/anime/?s=$encoded",
-        )
-        return routes.flatMap { route ->
-            runCatching {
-                parseDonghuaCards(app.get(route, headers = siteHeaders, referer = "$mainUrl/").document, includeSidebar = false)
+        val results = mutableListOf<SearchResponse>()
+
+        var page = 1
+        while (true) {
+            val url = if (page == 1) {
+                "$mainUrl/?s=$encoded"
+            } else {
+                "$mainUrl/page/$page/?s=$encoded"
+            }
+
+            val pageResults = runCatching {
+                parseDonghuaCards(
+                    app.get(url, headers = siteHeaders, referer = mainUrl).document,
+                    includeSidebar = false
+                )
             }.getOrDefault(emptyList())
+
+            if (pageResults.isEmpty()) break
+
+            results.addAll(pageResults)
+
+            val hasNext = pageResults.isNotEmpty()
+            if (!hasNext) break
+
+            page++
+            if (page > 50) break
         }
-            .filter { result -> result.name.contains(query, true) || result.url.contains(query.slugHint(), true) }
+
+        return results
+            .filter { result ->
+                result.name.contains(query, true) ||
+                result.url.contains(query.slugHint(), true)
+            }
             .distinctBy { it.url.normalizedKey() }
     }
 
-    override suspend fun load(url: String): LoadResponse {
+(url: String): LoadResponse {
         val document = app.get(url, headers = siteHeaders, referer = "$mainUrl/").document
         val title = cleanTitle(
             document.selectFirst("h1.entry-title, h1[itemprop=name], .infox h1, .entry-title, h1")?.text()
@@ -260,15 +282,18 @@ class DonghuaID : MainAPI() {
             ?: return null
 
         val title = cleanCardTitle(rawTitle).takeIf { it.length > 2 } ?: return null
-        val poster = selectFirst("img")?.imageUrl(href) ?: anchor.selectFirst("img")?.imageUrl(href)
+        val poster = selectFirst("img")?.imageUrl(href)
+            ?: anchor.selectFirst("img")?.imageUrl(href)
+
         val typeText = listOf(
             selectFirst(".typez")?.text(),
             selectFirst(".epx")?.text(),
             text(),
             href,
         ).joinToString(" ") { it.orEmpty() }
+
         val tvType = when {
-            typeText.contains("Movie", true) -> TvType.AnimeMovie
+            href.contains("/movie/", true) || typeText.contains("Movie", true) -> TvType.AnimeMovie
             typeText.contains("OVA", true) -> TvType.OVA
             else -> TvType.Anime
         }
