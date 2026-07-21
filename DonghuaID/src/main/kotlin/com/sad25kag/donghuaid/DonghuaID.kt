@@ -357,17 +357,6 @@ class DonghuaID : MainAPI() {
         } else {
             "$path/page/$page/"
         }
-    } else {
-                rawUrl.replace("{page}", page.toString())
-            }
-        }
-        if (page <= 1) return rawUrl
-        val clean = rawUrl.trimEnd('/')
-        return when {
-            clean.contains("page=") -> clean.replace(Regex("""page=\d+"""), "page=$page")
-            clean.contains("?") -> "$clean&page=$page"
-            else -> "$clean/page/$page/"
-        }
     }
 
     private fun detectStatus(infoText: String): ShowStatus? {
