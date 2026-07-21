@@ -555,7 +555,7 @@
             "sad25kag"
         ],
         "description": "DonghuaID - Download dan streaming donghua subtitle Indonesia",
-        "fileSize": 58542,
+        "fileSize": 58539,
         "repositoryUrl": "https://github.com/sad25kag/BetbetMiro-Extension",
         "language": "id",
         "tvTypes": [
@@ -565,7 +565,7 @@
         ],
         "iconUrl": "https://t2.gstatic.com/faviconV2?client=SOCIAL&type=FAVICON&fallback_opts=TYPE,SIZE,URL&url=https://donghuaid.live/&size=%size%",
         "apiVersion": 1,
-        "fileHash": "sha256-b7badf64f86616fcb98703d8adecdde2235eb0972ad8543ace92897fed5be471"
+        "fileHash": "sha256-77e84c1f258b914c2f153777b268ee431fd76eeb625da580dc26b7f6810a9f08"
     },
     {
         "url": "https://raw.githubusercontent.com/sad25kag/BetbetMiro-Extension/builds/Donghuastream.cs3",
