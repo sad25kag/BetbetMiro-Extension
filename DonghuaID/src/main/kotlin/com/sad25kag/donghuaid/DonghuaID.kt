@@ -105,7 +105,7 @@ class DonghuaID : MainAPI() {
             .distinctBy { it.url.normalizedKey() }
     }
 
-(url: String): LoadResponse {
+    override suspend fun load(url: String): LoadResponse {
         val document = app.get(url, headers = siteHeaders, referer = "$mainUrl/").document
         val title = cleanTitle(
             document.selectFirst("h1.entry-title, h1[itemprop=name], .infox h1, .entry-title, h1")?.text()
