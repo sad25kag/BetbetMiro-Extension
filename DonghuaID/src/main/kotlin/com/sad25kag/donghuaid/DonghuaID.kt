@@ -47,9 +47,9 @@ class DonghuaID : MainAPI() {
 
     override val mainPage = mainPageOf(
         "$mainUrl/" to "Latest Release",
-        "$mainUrl/anime/?status=ongoing&type=&sub=&order=&page={page}" to "Ongoing",
-        "$mainUrl/anime/?status=completed&type=&sub=&order=&page={page}" to "Completed",
-        "$mainUrl/movie/?page={page}" to "Movie",
+        "$mainUrl/anime/page/{page}/?status=ongoing&type=&sub=&order=" to "Ongoing",
+        "$mainUrl/anime/page/{page}/?status=completed&type=&sub=&order=" to "Completed",
+        "$mainUrl/movie/page/{page}/" to "Movie",
     )
 
     override suspend fun getMainPage(page: Int, request: MainPageRequest): HomePageResponse {
