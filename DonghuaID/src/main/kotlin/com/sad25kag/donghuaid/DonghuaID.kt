@@ -49,6 +49,7 @@ class DonghuaID : MainAPI() {
         "$mainUrl/" to "Latest Release",
         "$mainUrl/anime/?status=ongoing&type=&sub=&order=&page={page}" to "Ongoing",
         "$mainUrl/anime/?status=completed&type=&sub=&order=&page={page}" to "Completed",
+        "$mainUrl/movie/?page={page}" to "Movie",
     )
 
     override suspend fun getMainPage(page: Int, request: MainPageRequest): HomePageResponse {
@@ -106,8 +107,9 @@ class DonghuaID : MainAPI() {
         val episodes = parseEpisodes(document, url).distinctBy { it.data.normalizedKey() }
 
         val type = when {
+            url.contains("/movie/", true) -> TvType.AnimeMovie
             episodes.size > 1 -> TvType.Anime
-            infoText.contains("Movie", true) || tags.any { it.equals("Movie", true) } || url.contains("movie", true) -> TvType.AnimeMovie
+            infoText.contains("Movie", true) || tags.any { it.equals("Movie", true) } -> TvType.AnimeMovie
             infoText.contains("OVA", true) || tags.any { it.equals("OVA", true) } -> TvType.OVA
             else -> TvType.Anime
         }
