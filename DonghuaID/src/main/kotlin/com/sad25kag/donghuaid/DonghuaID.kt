@@ -338,13 +338,26 @@ class DonghuaID : MainAPI() {
     }
 
     private fun buildPagedUrl(rawUrl: String, page: Int): String {
+        if (page <= 1) {
+            return rawUrl.replace("/page/{page}/", "/")
+                .replace("/page/{page}", "/")
+                .replace("{page}", "1")
+        }
+
         if (rawUrl.contains("{page}")) {
-            return if (page <= 1) {
-                rawUrl
-                    .replace("/page/{page}/", "/")
-                    .replace("/page/{page}", "/")
-                    .replace("page={page}", "page=1")
-            } else {
+            return rawUrl.replace("{page}", page.toString())
+        }
+
+        val parts = rawUrl.split("?", limit = 2)
+        val path = parts[0].removeSuffix("/")
+        val query = parts.getOrNull(1)
+
+        return if (query != null) {
+            "$path/page/$page/?$query"
+        } else {
+            "$path/page/$page/"
+        }
+    } else {
                 rawUrl.replace("{page}", page.toString())
             }
         }
