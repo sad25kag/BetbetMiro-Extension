@@ -54,7 +54,7 @@ class Donghub : MainAPI() {
 
     private fun Element.toSearchResult(): SearchResponse? {
         val anchor = selectFirst("div.bsx > a[href], h2 > a[href], h3 > a[href], a[href]") ?: return null
-        val href = anchor.attr("href").absoluteUrl(mainUrl)
+        val href = fixUrl(anchor.attr("href"))
 
         if (href.isBlank()) return null
         if (href.contains("/genres/", true) ||
@@ -172,7 +172,7 @@ class Donghub : MainAPI() {
     }
 
     private fun Element.toEpisodeOrNull(seriesPoster: String?): Episode? {
-        val href = attr("href").absoluteUrl(mainUrl)
+        val href = fixUrl(attr("href"))
         if (href.isBlank()) return null
 
         val epTitle = selectFirst(".epl-title, span, .epcur")
@@ -203,7 +203,7 @@ class Donghub : MainAPI() {
 
     private fun Element.toRecommendResult(): SearchResponse? {
         val anchor = selectFirst("a[href]") ?: return null
-        val href = anchor.attr("href").absoluteUrl(mainUrl)
+        val href = fixUrl(anchor.attr("href"))
 
         if (href.isBlank()) return null
         if (href.contains("/genres/", true) ||
