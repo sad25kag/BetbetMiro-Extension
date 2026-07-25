@@ -24,11 +24,6 @@ open class Donghuastream : MainAPI() {
         "$mainUrl/anime/?status=&type=&order=update&page={page}" to "Update Terbaru",
         "$mainUrl/anime/?status=completed&type=&order=update&page={page}" to "Completed",
         "$mainUrl/anime/?status=&type=special&order=update&page={page}" to "Special",
-        "$mainUrl/genres/adventure/pagg/{page}/" to "Adventure",
-        "$mainUrl/genres/another-world/pagg/{page}/" to "Another World",
-        "$mainUrl/genres/reincarnated/pagg/{page}/" to "Reincarnated",
-        "$mainUrl/genres/romance/pagg/{page}/" to "Romance",
-        "$mainUrl/genres/swords-fight/pagg/{page}/" to "Sword Fight"
     )
 
     override suspend fun getMainPage(page: Int, request: MainPageRequest): HomePageResponse {
@@ -63,7 +58,7 @@ open class Donghuastream : MainAPI() {
     override suspend fun search(query: String): List<SearchResponse> {
         val out = mutableListOf<SearchResponse>()
         for (page in 1..3) {
-            val doc = app.get(if (page == 1) "$mainUrl/?s=$query" else "$mainUrl/pagg/$page/?s=$query").document
+            val doc = app.get("$mainUrl/pagg/$page/?s=$query").document
             val batch = doc.select("div.listupd > article").mapNotNull { it.toCard() }
             if (batch.isEmpty()) break
             if (!out.containsAll(batch)) out.addAll(batch) else break
@@ -151,6 +146,6 @@ open class Donghuastream : MainAPI() {
     }
 
     private fun resolvePage(raw: String, page: Int): String {
-        return raw.replace("{page}", page.toString()).let { if (page <= 1) it.replace("/pagg/1/", "/") else it }
+        return raw.replace("{page}", page.toString()).let { if (page <= 1) it.replace("/page/1/", "/") else it }
     }
 }
