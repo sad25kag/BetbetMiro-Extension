@@ -90,7 +90,8 @@ class Donghub : MainAPI() {
         val list = mutableListOf<SearchResponse>()
         val encoded = query.urlEncoded()
 
-        for (i in 1..3) {
+        var i = 1
+        while (true) {
             val url = if (i == 1) "$mainUrl/?s=$encoded" else "$mainUrl/page/$i/?s=$encoded"
             val result = app.get(
                 url,
@@ -103,6 +104,7 @@ class Donghub : MainAPI() {
 
             if (result.isEmpty()) break
             list.addAll(result)
+            i++
         }
 
         return list
