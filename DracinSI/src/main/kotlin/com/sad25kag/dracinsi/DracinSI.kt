@@ -95,7 +95,7 @@ class DracinSI : MainAPI() {
     override suspend fun quickSearch(query: String): List<SearchResponse>? = search(query)
 
     override suspend fun load(url: String): LoadResponse {
-        val fixedUrl = url.absoluteUrl(mainUrl) ?: url
+        val fixedUrl = fixUrl(url) ?: url
         val document = app.get(fixedUrl, headers = headers, referer = "$mainUrl/").document
 
         if (fixedUrl.contains("/episode-", true) || fixedUrl.contains("watch.php", true)) {
@@ -160,14 +160,14 @@ class DracinSI : MainAPI() {
         subtitleCallback: (SubtitleFile) -> Unit,
         callback: (ExtractorLink) -> Unit
     ): Boolean {
-        val pageUrl = data.absoluteUrl(mainUrl) ?: data
+        val pageUrl = fixUrl(data) ?: data
         val text = app.get(pageUrl, headers = headers, referer = "$mainUrl/").text
         val document = Jsoup.parse(text, pageUrl)
         val emitted = linkedSetOf<String>()
         var delivered = 0
 
         suspend fun emit(raw: String?, sourceName: String = name, refererUrl: String = pageUrl) {
-            val fixed = raw?.absoluteUrl(refererUrl)?.cleanMediaUrl() ?: return
+            val fixed = fixUrl(raw?)?.cleanMediaUrl() ?: return
             if (fixed.isBlank() || !emitted.add(fixed)) return
 
             if (fixed.isDirectMedia()) {
@@ -216,7 +216,7 @@ class DracinSI : MainAPI() {
 
     private fun Element.toSearchResult(): SearchResponse? {
         val anchor = if (tagName().equals("a", true) && hasAttr("href")) this else selectFirst("a[href]") ?: return null
-        val href = anchor.attr("href").absoluteUrl(mainUrl) ?: return null
+        val href = fixUrl(anchor.attr("href")) ?: return null
         if (!href.startsWith(mainUrl) || (!href.contains("/drama/", true) && !href.contains("watch.php?id=", true))) return null
 
         val scope = anchor.selectFirst(".card")
