@@ -591,14 +591,14 @@
     {
         "url": "https://raw.githubusercontent.com/sad25kag/BetbetMiro-Extension/builds/Donghub.cs3",
         "status": 1,
-        "version": 14,
+        "version": 15,
         "name": "Donghub",
         "internalName": "Donghub",
         "authors": [
             "sad25kag"
         ],
         "description": "Donghub untuk donghua dan anime subtitle Indonesia.",
-        "fileSize": 36533,
+        "fileSize": 36538,
         "repositoryUrl": "https://github.com/sad25kag/BetbetMiro-Extension",
         "language": "id",
         "tvTypes": [
@@ -608,7 +608,7 @@
         ],
         "iconUrl": "https://t2.gstatic.com/faviconV2?client=SOCIAL&type=FAVICON&fallback_opts=TYPE,SIZE,URL&url=https://donghub.vip&size=%size%",
         "apiVersion": 1,
-        "fileHash": "sha256-1bbedd2563082cbad69644ab443a72eb1a9f6cbd7e9806c79fd28334aa8bffb9"
+        "fileHash": "sha256-8c1b78462e170dc5536873fada63b1084cebe491a9f16b88ff596397bab0604f"
     },
     {
         "url": "https://raw.githubusercontent.com/sad25kag/BetbetMiro-Extension/builds/DracinSI.cs3",
