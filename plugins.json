@@ -613,7 +613,7 @@
     {
         "url": "https://raw.githubusercontent.com/sad25kag/BetbetMiro-Extension/builds/DracinSI.cs3",
         "status": 1,
-        "version": 3,
+        "version": 4,
         "name": "DracinSI",
         "internalName": "DracinSI",
         "authors": [
@@ -630,7 +630,7 @@
         ],
         "iconUrl": "https://www.google.com/s2/favicons?domain=dramacinasubindo.com&sz=%size%",
         "apiVersion": 1,
-        "fileHash": "sha256-f38e317d3886f9ae80ba93acd72aae4c6bf78171ebfe927eaaf70b4d1aeb7bad"
+        "fileHash": "sha256-5042c6fb117a293a4835be5f1d30bdb8dc79c96adb8bc83bd7e4fd3f4747afff"
     },
     {
         "url": "https://raw.githubusercontent.com/sad25kag/BetbetMiro-Extension/builds/Drakor.cs3",
@@ -658,14 +658,14 @@
     {
         "url": "https://raw.githubusercontent.com/sad25kag/BetbetMiro-Extension/builds/DrakoridProvider.cs3",
         "status": 1,
-        "version": 13,
+        "version": 14,
         "name": "DrakoridProvider",
         "internalName": "DrakoridProvider",
         "authors": [
             "sad25kag"
         ],
         "description": "Drakor.id - drama Asia subtitle Indonesia.",
-        "fileSize": 41801,
+        "fileSize": 41768,
         "repositoryUrl": "https://github.com/sad25kag/BetbetMiro-Extension",
         "language": "id",
         "tvTypes": [
@@ -675,7 +675,7 @@
         ],
         "iconUrl": "https://t2.gstatic.com/faviconV2?client=SOCIAL&type=FAVICON&fallback_opts=TYPE,SIZE,URL&url=https://drakorid.cam&size=%size%",
         "apiVersion": 1,
-        "fileHash": "sha256-2251dfdc89e802b2a17a8d071c2b604cdd6772a8266c645944cefa40c8353d39"
+        "fileHash": "sha256-f2914ffa59d4e591c090435e5b22b3fb885e93c9ffc699be7131955f43d16d8e"
     },
     {
         "url": "https://raw.githubusercontent.com/sad25kag/BetbetMiro-Extension/builds/DrakorKita.cs3",
