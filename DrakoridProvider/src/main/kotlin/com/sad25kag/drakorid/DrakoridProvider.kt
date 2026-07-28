@@ -69,10 +69,10 @@ class DrakoridProvider : MainAPI() {
         val allowEpisodeCards = request.data.isBlank() || request.data.contains("order=update", true)
         val items = document.extractSearchResults(allowEpisodeCards = allowEpisodeCards)
             .distinctBy { it.url }
-            .take(40)
+            
         return newHomePageResponse(
             HomePageList(request.name, items),
-            hasNext = page == 1 && items.isNotEmpty() && document.select("a.next, .pagination a, a[href*='/page/']").isNotEmpty()
+            hasNext = items.isNotEmpty() && document.select("a.next, .pagination a, a[href*='/page/']").isNotEmpty()
         )
     }
     override suspend fun search(query: String): List<SearchResponse> {
